@@ -1096,12 +1096,13 @@ export interface Faq {
 export interface FarmDining {
   id: number;
   hero: {
-    badge?: string | null;
+    badgeLabel: string;
+    badgeMonogram: string;
     headline: string;
     sub: string;
     image: number | Media;
     /**
-     * e.g. "One seating nightly", "₹1,400 per person"
+     * e.g. "One seating, nightly", "₹1,400 per person, farm dinner"
      */
     facts?:
       | {
@@ -1114,57 +1115,88 @@ export interface FarmDining {
     secondaryCtaLabel?: string | null;
     secondaryCtaHref?: string | null;
   };
-  uniquePoints?:
-    | {
-        number: string;
-        title: string;
-        body: string;
-        id?: string | null;
-      }[]
-    | null;
-  experienceRows?:
-    | {
-        image: number | Media;
-        tagNumber: string;
-        tagLabel: string;
-        title: string;
-        body: string;
-        id?: string | null;
-      }[]
-    | null;
-  gallery?:
-    | {
-        image: number | Media;
-        caption?: string | null;
-        sizeVariant?: ('default' | 'wide' | 'tall') | null;
-        id?: string | null;
-      }[]
-    | null;
-  suitableFor?:
-    | {
-        title: string;
-        body: string;
-        image?: (number | null) | Media;
-        /**
-         * Featured card shows the image as a background; others show just an icon.
-         */
-        featured?: boolean | null;
-        id?: string | null;
-      }[]
-    | null;
-  faqItems?:
-    | {
-        question: string;
-        answer: string;
-        id?: string | null;
-      }[]
-    | null;
-  reserve?: {
+  unique: {
+    eyebrow: string;
+    heading: string;
+    sub?: string | null;
+    items?:
+      | {
+          number: string;
+          title: string;
+          body: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  experience: {
+    eyebrow: string;
+    heading: string;
+    items?:
+      | {
+          image: number | Media;
+          tagNumber: string;
+          tagLabel: string;
+          title: string;
+          body: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  gallery: {
+    eyebrow: string;
+    heading: string;
+    items?:
+      | {
+          image: number | Media;
+          caption?: string | null;
+          sizeVariant?: ('default' | 'wide' | 'tall' | 'wideTall') | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  suitable: {
+    eyebrow: string;
+    heading: string;
+    items?:
+      | {
+          icon: 'couple' | 'family' | 'team' | 'celebration';
+          title: string;
+          body: string;
+          /**
+           * Only shown on the featured card.
+           */
+          image?: (number | null) | Media;
+          /**
+           * The featured card is the large dark one, showing the image as a background.
+           */
+          featured?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  faq: {
+    eyebrow: string;
+    heading: string;
+    items?:
+      | {
+          question: string;
+          answer: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  reserve: {
+    eyebrow: string;
+    heading: string;
     image?: (number | null) | Media;
     dateLabel?: string | null;
+    datePlaceholder?: string | null;
     partySizeLabel?: string | null;
+    partySizePlaceholder?: string | null;
     dietaryLabel?: string | null;
+    dietaryPlaceholder?: string | null;
     submitLabel?: string | null;
+    note?: string | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1716,7 +1748,8 @@ export interface FarmDiningSelect<T extends boolean = true> {
   hero?:
     | T
     | {
-        badge?: T;
+        badgeLabel?: T;
+        badgeMonogram?: T;
         headline?: T;
         sub?: T;
         image?: T;
@@ -1731,56 +1764,94 @@ export interface FarmDiningSelect<T extends boolean = true> {
         secondaryCtaLabel?: T;
         secondaryCtaHref?: T;
       };
-  uniquePoints?:
+  unique?:
     | T
     | {
-        number?: T;
-        title?: T;
-        body?: T;
-        id?: T;
+        eyebrow?: T;
+        heading?: T;
+        sub?: T;
+        items?:
+          | T
+          | {
+              number?: T;
+              title?: T;
+              body?: T;
+              id?: T;
+            };
       };
-  experienceRows?:
+  experience?:
     | T
     | {
-        image?: T;
-        tagNumber?: T;
-        tagLabel?: T;
-        title?: T;
-        body?: T;
-        id?: T;
+        eyebrow?: T;
+        heading?: T;
+        items?:
+          | T
+          | {
+              image?: T;
+              tagNumber?: T;
+              tagLabel?: T;
+              title?: T;
+              body?: T;
+              id?: T;
+            };
       };
   gallery?:
     | T
     | {
-        image?: T;
-        caption?: T;
-        sizeVariant?: T;
-        id?: T;
+        eyebrow?: T;
+        heading?: T;
+        items?:
+          | T
+          | {
+              image?: T;
+              caption?: T;
+              sizeVariant?: T;
+              id?: T;
+            };
       };
-  suitableFor?:
+  suitable?:
     | T
     | {
-        title?: T;
-        body?: T;
-        image?: T;
-        featured?: T;
-        id?: T;
+        eyebrow?: T;
+        heading?: T;
+        items?:
+          | T
+          | {
+              icon?: T;
+              title?: T;
+              body?: T;
+              image?: T;
+              featured?: T;
+              id?: T;
+            };
       };
-  faqItems?:
+  faq?:
     | T
     | {
-        question?: T;
-        answer?: T;
-        id?: T;
+        eyebrow?: T;
+        heading?: T;
+        items?:
+          | T
+          | {
+              question?: T;
+              answer?: T;
+              id?: T;
+            };
       };
   reserve?:
     | T
     | {
+        eyebrow?: T;
+        heading?: T;
         image?: T;
         dateLabel?: T;
+        datePlaceholder?: T;
         partySizeLabel?: T;
+        partySizePlaceholder?: T;
         dietaryLabel?: T;
+        dietaryPlaceholder?: T;
         submitLabel?: T;
+        note?: T;
       };
   updatedAt?: T;
   createdAt?: T;

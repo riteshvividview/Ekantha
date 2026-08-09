@@ -20,7 +20,13 @@ async function main() {
   const mediaCache = new Map<string, number>()
 
   async function media(filename: string, alt: string): Promise<number> {
-    const url = `${HOSTINGER}/${filename}`
+    return mediaFromUrl(`${HOSTINGER}/${filename}`, alt)
+  }
+
+  /** Same as `media()`, but for source images hosted on a domain other
+   *  than the HOSTINGER uploads folder (pinimg, pexels, istockphoto,
+   *  etc. — several FarmDining.html source images aren't on HOSTINGER). */
+  async function mediaFromUrl(url: string, alt: string): Promise<number> {
     if (mediaCache.has(url)) return mediaCache.get(url)!
 
     const existing = await payload.find({ collection: 'media', where: { alt: { equals: alt } }, limit: 1 })
@@ -29,6 +35,7 @@ async function main() {
       return existing.docs[0].id
     }
 
+    const filename = url.split('/').pop()?.split('?')[0] || 'image.jpg'
     payload.logger.info(`Downloading ${filename}...`)
     const res = await fetch(url)
     if (!res.ok) throw new Error(`Failed to download ${url}: ${res.status}`)
@@ -876,6 +883,206 @@ async function main() {
     },
   })
   payload.logger.info('✓ FAQs seeded.')
+
+  payload.logger.info('Seeding Farm Dining global...')
+  const fdHeroImg = await mediaFromUrl(
+    'https://i.pinimg.com/736x/a8/4f/0b/a84f0b902109e5eb845eec51cf00c5fc.jpg',
+    'Dinner table set under bamboo, lit by lamps',
+  )
+  const fdExp1Img = await mediaFromUrl(
+    'https://images.pexels.com/photos/33777987/pexels-photo-33777987.jpeg?cs=srgb&dl=pexels-nc-farm-bureau-mark-33777987.jpg&fm=jpg',
+    'The kitchen garden the farm dine draws from',
+  )
+  const fdExp2Img = await mediaFromUrl(
+    'https://images.trvl-media.com/lodging/112000000/111020000/111011900/111011840/1d0a0417.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill',
+    'The open-sided bamboo dining hut',
+  )
+  const fdExp3Img = await mediaFromUrl(
+    'https://images.pexels.com/photos/35383651/pexels-photo-35383651.jpeg?cs=srgb&dl=pexels-strannik-sk-35383651.jpg&fm=jpg',
+    'Open field under the stars at night',
+  )
+  const fdGallery1 = await media('park-view-scaled.jpg', 'The bamboo stalks, mid-afternoon')
+  const fdGallery2 = await mediaFromUrl('https://i.pinimg.com/736x/9d/8b/96/9d8b96700ab5ffd2d2219840c047c523.jpg', 'The long table, set')
+  const fdGallery3 = await mediaFromUrl('https://storybox.karmanitalia.it/hs-fs/hubfs/ululi_ulula.jpg?width=900&height=600&name=ululi_ulula.jpg', 'Lamps, at dusk')
+  const fdGallery4 = await mediaFromUrl(
+    'https://static.vecteezy.com/system/resources/thumbnails/068/938/970/small_2x/gravel-path-leading-through-lush-vegetable-garden-with-apricots-and-herbs-photo.jpg',
+    'The kitchen garden path',
+  )
+  const fdGallery5 = await mediaFromUrl('https://m.media-amazon.com/images/I/81vpt9xDD5L.jpg', "Plates, as they're served")
+  const fdGallery6 = await mediaFromUrl(
+    'https://media.istockphoto.com/id/1421236485/photo/starry-night-in-grassland.jpg?s=612x612&w=0&k=20&c=EvrwgoOtYbX3OF65YsVHj1lG_rkdnXKloOGEw6X-hyQ=',
+    'The open field, at night',
+  )
+  const fdSuitableImg = await media('anniversary-dinner-with-candlelit-ambiance-scaled.jpg', 'A date night table, candlelit')
+  const fdReserveImg = await media('interior-railroad-station.jpg', 'The table, lit and ready')
+
+  await payload.updateGlobal({
+    slug: 'farm-dining',
+    data: {
+      hero: {
+        badgeLabel: 'Bamboo Farm Dine',
+        badgeMonogram: 'VE',
+        headline: 'Dinner, Under Bamboo.',
+        sub: "A long table set between bamboo stalks, lit by lamps, fed by what the farm grew that week. No menus printed in advance — the kitchen decides the morning of, based on what's ready to be picked.",
+        image: fdHeroImg,
+        facts: [
+          { text: '<b>One</b> seating, nightly' },
+          { text: '<b>Reservation</b> required, 24 hours ahead' },
+          { text: '<b>₹1,400</b> per person, farm dinner' },
+        ],
+        primaryCtaLabel: 'Reserve Now →',
+        primaryCtaHref: '#reserve',
+        secondaryCtaLabel: 'See The Experience',
+        secondaryCtaHref: '#experience',
+      },
+      unique: {
+        eyebrow: 'what makes it different',
+        heading: "a dinner that isn't replicated.",
+        sub: 'Farm dining is common enough to have become a formula. This is the version we built before it was one.',
+        items: [
+          {
+            number: '01',
+            title: 'No Fixed Menu',
+            body: 'The kitchen decides the same morning, based on what\'s ready to be picked — not a laminated card.',
+          },
+          {
+            number: '02',
+            title: 'Set Inside The Grove',
+            body: 'The table sits between real, growing bamboo stalks — not a themed replica built to look like one.',
+          },
+          {
+            number: '03',
+            title: 'One Seating, Nightly',
+            body: 'A single seating means no one is rushed for the next table. Dinner ends when the conversation does.',
+          },
+          {
+            number: '04',
+            title: 'Lit By Lamp, Not Electricity',
+            body: 'Oil lamps strung along the table and the path — no overhead lighting, no generator hum.',
+          },
+        ],
+      },
+      experience: {
+        eyebrow: 'the experience',
+        heading: "three things you'll notice.",
+        items: [
+          {
+            image: fdExp1Img,
+            tagNumber: '01',
+            tagLabel: 'setting',
+            title: 'The Farm Setting',
+            body: "The table sits at the edge of the working farm, an arm's length from the kitchen garden it draws from. Produce is walked from field to table, sometimes still warm from the day's sun. You're not dining near a farm — you're dining inside one, mid-shift.",
+          },
+          {
+            image: fdExp2Img,
+            tagNumber: '02',
+            tagLabel: 'structure',
+            title: 'The Dining Hut',
+            body: 'A simple bamboo-and-thatch structure, open on all sides — a roof against rain, nothing more. There are no walls to close the field out, which is the entire point of building it this way.',
+          },
+          {
+            image: fdExp3Img,
+            tagNumber: '03',
+            tagLabel: 'atmosphere',
+            title: 'Open-Field Ambience',
+            body: 'Crickets instead of a playlist. The smell of a distant bonfire. With almost no artificial light, the stars do most of the decorating — which is why the best tables are the ones furthest from the lamps.',
+          },
+        ],
+      },
+      gallery: {
+        eyebrow: 'gallery',
+        heading: 'a table, in pieces.',
+        items: [
+          { image: fdGallery1, caption: 'the bamboo stalks, mid-afternoon', sizeVariant: 'wideTall' },
+          { image: fdGallery2, caption: 'the long table, set', sizeVariant: 'default' },
+          { image: fdGallery3, caption: 'lamps, at dusk', sizeVariant: 'default' },
+          { image: fdGallery4, caption: 'the kitchen garden path', sizeVariant: 'tall' },
+          { image: fdGallery5, caption: "plates, as they're served", sizeVariant: 'wide' },
+          { image: fdGallery6, caption: 'the open field, at night', sizeVariant: 'default' },
+        ],
+      },
+      suitable: {
+        eyebrow: 'suitable for',
+        heading: 'who comes to the table.',
+        items: [
+          {
+            icon: 'couple',
+            title: 'Date Nights',
+            body: 'Two chairs, one lamp, and a table long enough that no one else needs to be at it. Our most-requested seating.',
+            image: fdSuitableImg,
+            featured: true,
+          },
+          {
+            icon: 'family',
+            title: 'Family Dinners',
+            body: 'Long enough for three generations, open enough that children can get up mid-meal without disturbing anyone.',
+            featured: false,
+          },
+          {
+            icon: 'team',
+            title: 'Team Gatherings',
+            body: 'Offsites that end the day at this table instead of a hotel banquet hall — conversation travels better outdoors.',
+            featured: false,
+          },
+          {
+            icon: 'celebration',
+            title: 'Celebrations',
+            body: "Birthdays and anniversaries that want a table, not a hall — we'll help you shape the evening around it.",
+            featured: false,
+          },
+        ],
+      },
+      faq: {
+        eyebrow: 'frequently asked',
+        heading: 'before you reserve.',
+        items: [
+          {
+            question: 'Is there a fixed menu?',
+            answer:
+              "No. The kitchen decides the same morning, based on what's ready to be picked from the garden that day. If you have allergies or strong dislikes, tell us when you reserve and the menu will work around them.",
+          },
+          {
+            question: 'How many people can it seat?',
+            answer:
+              "The long table comfortably seats up to 14. Larger groups can be accommodated with advance notice, though the feel of the evening changes past that size — ask us and we'll be honest about whether it still works.",
+          },
+          {
+            question: 'What happens if it rains?',
+            answer:
+              'The dining hut has a full roof, so light rain changes nothing. In heavy weather, we move the table under the covered section beside the main house — the food and the lamps stay the same.',
+          },
+          {
+            question: 'Do you accommodate dietary restrictions?',
+            answer:
+              "Yes — vegetarian, vegan, and most common allergies are handled without fuss, as long as we know a day ahead. Since the menu isn't fixed to begin with, this is usually easier here than at a restaurant.",
+          },
+          {
+            question: 'How far in advance should I reserve?',
+            answer: "At least 24 hours, since the kitchen shops and cooks for the exact number confirmed. For weekends and celebrations, a few days' notice is safer.",
+          },
+          {
+            question: 'Is this open to guests not staying overnight?',
+            answer:
+              "Yes. Bamboo Farm Dine is open to day visitors as well as overnight guests — you don't need to be holding a stay to reserve a seat at the table.",
+          },
+        ],
+      },
+      reserve: {
+        eyebrow: 'reserve now',
+        heading: "tell us how many,\nwe'll set the table.",
+        image: fdReserveImg,
+        dateLabel: 'date',
+        datePlaceholder: '17 may',
+        partySizeLabel: 'how many',
+        partySizePlaceholder: '4 guests',
+        dietaryLabel: 'dietary notes',
+        dietaryPlaceholder: 'vegetarian, one nut allergy',
+        submitLabel: 'reserve now →',
+        note: "One seating, nightly. We'll confirm within a few hours and ask nothing further until you arrive.",
+      },
+    },
+  })
+  payload.logger.info('✓ Farm Dining seeded.')
 
   payload.logger.info('Done. Ctrl+C not needed — process will exit.')
   process.exit(0)

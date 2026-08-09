@@ -1,0 +1,540 @@
+/* ── 01. Banner — split screen ─────────────────────────────────── */
+
+.fdHero {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  min-height: 86vh;
+  min-height: 86svh;
+  background: var(--silver);
+}
+@media (max-width: 860px) {
+  .fdHero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+}
+
+.fdHeroText {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(3rem, 8vw, 6rem) clamp(1.5rem, 5vw, 5rem);
+}
+
+.fdHeroBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.5rem 1.1rem 0.5rem 0.5rem;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(0.72rem, 1.6vw, 0.82rem);
+  color: var(--ink-soft);
+  margin-bottom: clamp(1.25rem, 3vw, 2rem);
+  width: fit-content;
+}
+.fdHeroBadge .dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+}
+
+.fdHeroHeadline {
+  font-size: clamp(2rem, 5.6vw, 4rem);
+  max-width: 13ch;
+  margin-bottom: clamp(1.25rem, 3vw, 2rem);
+}
+
+.fdHeroSub {
+  font-family: var(--font-body);
+  font-size: clamp(0.92rem, 2vw, 1.1rem);
+  line-height: 1.75;
+  color: var(--ink-soft);
+  max-width: 46ch;
+  margin-bottom: clamp(1.75rem, 4vw, 2.5rem);
+}
+
+.fdHeroFacts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: clamp(1.75rem, 4vw, 2.5rem);
+  font-family: var(--font-body);
+  font-size: clamp(0.8rem, 1.8vw, 0.9rem);
+  color: var(--ink-soft);
+}
+.fdHeroFacts b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.fdHeroCtas {
+  display: flex;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.fdHeroVisual {
+  position: relative;
+  background: var(--ink);
+  overflow: hidden;
+  min-height: 40vh;
+}
+.fdHeroVisual img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.fdHeroVisual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 70%, rgba(157, 92, 38, 0.16), transparent 55%),
+    linear-gradient(180deg, rgba(10, 10, 11, 0.1), rgba(10, 10, 11, 0.35));
+}
+
+/* Local `.section-head` — FarmDining.html defines its own simple stacked
+   block, distinct from the shared globals.css two-column grid version. */
+.sectionHead {
+  margin-bottom: clamp(2.25rem, 5.5vw, 4.5rem);
+  max-width: 640px;
+}
+.sectionHead p {
+  font-family: var(--font-body);
+  font-size: clamp(0.92rem, 2.1vw, 1.05rem);
+  line-height: 1.7;
+  color: var(--ink-soft);
+  margin-top: 0.75rem;
+}
+.bgBlack .sectionHead p {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+/* ── 02. What Makes It Unique — numbered stat-style row ────────── */
+
+.uniqueRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+@media (max-width: 860px) {
+  .uniqueRow {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 480px) {
+  .uniqueRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+.uniqueItem {
+  padding: clamp(1.5rem, 3vw, 2rem) clamp(1.25rem, 2.5vw, 1.75rem) clamp(1.5rem, 3vw, 2rem) 0;
+  border-left: 1px solid var(--line);
+  padding-left: clamp(1.25rem, 2.5vw, 1.75rem);
+}
+
+.uniqueNum {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  color: var(--ink-faint);
+  line-height: 1;
+  margin-bottom: 1rem;
+}
+.uniqueTitle {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1rem, 2.2vw, 1.15rem);
+  color: var(--ink);
+  margin-bottom: 0.6rem;
+}
+.uniqueBody {
+  font-family: var(--font-body);
+  font-size: clamp(0.82rem, 1.8vw, 0.9rem);
+  line-height: 1.65;
+  color: var(--ink-soft);
+}
+
+/* ── 03. The Experience — alternating zigzag rows ──────────────── */
+
+.expRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+  padding: clamp(2.5rem, 6vw, 4rem) 0;
+  border-bottom: 1px solid var(--line);
+}
+.expRow:last-of-type {
+  border-bottom: none;
+}
+.expRow.reverse .expVisual {
+  order: 2;
+}
+@media (max-width: 780px) {
+  .expRow {
+    grid-template-columns: 1fr;
+  }
+  .expRow.reverse .expVisual {
+    order: -1;
+  }
+}
+
+.expVisual {
+  aspect-ratio: 5 / 4;
+  background: var(--silver);
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+.expVisual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.expTag {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(0.66rem, 1.4vw, 0.75rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 0.75rem;
+}
+.expTitle {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.4rem, 3.2vw, 2rem);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 0.85rem;
+}
+.expTitle em {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 400;
+}
+.expBody {
+  font-family: var(--font-body);
+  font-size: clamp(0.88rem, 2vw, 1rem);
+  line-height: 1.75;
+  color: var(--ink-soft);
+  max-width: 46ch;
+}
+
+/* ── 04. Gallery — bento grid, mixed tile sizes ────────────────── */
+
+.bentoGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: clamp(110px, 16vw, 160px);
+  gap: clamp(0.6rem, 1.5vw, 1rem);
+}
+@media (max-width: 700px) {
+  .bentoGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.bentoItem {
+  position: relative;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 500ms var(--ease-slow);
+}
+.bentoItem:hover {
+  transform: translateY(-4px);
+}
+.bentoItem img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.bentoCap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0.5rem 0.75rem;
+  font-family: var(--font-body);
+  font-size: clamp(0.66rem, 1.4vw, 0.75rem);
+  color: var(--ink-soft);
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.92), transparent);
+}
+.bentoItem.tall {
+  grid-row: span 2;
+}
+.bentoItem.wide {
+  grid-column: span 2;
+}
+
+/* ── 05. Suitable For — asymmetric bento ───────────────────────── */
+
+.suitGrid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: clamp(1rem, 2.5vw, 1.5rem);
+}
+@media (max-width: 780px) {
+  .suitGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 480px) {
+  .suitGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.suitCard {
+  position: relative;
+  background: var(--silver);
+  border-radius: 20px;
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 200px;
+  overflow: hidden;
+  transition: transform 500ms var(--ease-slow);
+}
+.suitCard:hover {
+  transform: translateY(-6px);
+}
+.suitCard.featured {
+  grid-row: span 2;
+  min-height: 420px;
+  background: var(--ink);
+  color: var(--white);
+}
+@media (max-width: 780px) {
+  .suitCard.featured {
+    grid-column: span 2;
+    grid-row: span 1;
+    min-height: 220px;
+  }
+}
+@media (max-width: 480px) {
+  .suitCard.featured {
+    grid-column: span 1;
+  }
+}
+
+.suitMedia {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  transition: transform 700ms var(--ease-slow);
+}
+.suitCard:hover .suitMedia {
+  transform: scale(1.06);
+}
+.suitCard.featured::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(10, 10, 11, 0.15) 0%, rgba(10, 10, 11, 0.55) 60%, rgba(10, 10, 11, 0.88) 100%);
+}
+
+.suitIcon,
+.suitTitle,
+.suitBody {
+  position: relative;
+  z-index: 2;
+}
+.suitIcon {
+  width: 34px;
+  height: 34px;
+  margin-bottom: 1rem;
+}
+.suitIcon svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.suitTitle {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1rem, 2.4vw, 1.3rem);
+  margin-bottom: 0.5rem;
+}
+.suitBody {
+  font-family: var(--font-body);
+  font-size: clamp(0.8rem, 1.8vw, 0.92rem);
+  line-height: 1.6;
+  opacity: 0.75;
+}
+
+/* ── 06. FAQ — native accordion, single-open ───────────────────── */
+
+.faqList {
+  max-width: 780px;
+}
+.faqItem {
+  border-bottom: 1px solid var(--line);
+}
+.faqItem summary {
+  list-style: none;
+  cursor: pointer;
+  padding: clamp(1.25rem, 3vw, 1.75rem) 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(0.95rem, 2.2vw, 1.15rem);
+  color: var(--ink);
+}
+.faqItem summary::-webkit-details-marker {
+  display: none;
+}
+.faqPlus {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  transition:
+    transform 300ms var(--ease-slow),
+    background 250ms;
+}
+.faqItem[open] summary .faqPlus {
+  transform: rotate(45deg);
+  background: var(--ink);
+  color: var(--white);
+  border-color: var(--ink);
+}
+.faqAnswer {
+  padding: 0 0 clamp(1.25rem, 3vw, 1.75rem);
+  font-family: var(--font-body);
+  font-size: clamp(0.85rem, 1.9vw, 0.95rem);
+  line-height: 1.75;
+  color: var(--ink-soft);
+  max-width: 60ch;
+}
+
+/* ── 07. Reserve Now CTA — split dark banner ───────────────────── */
+
+.reserveCta {
+  padding: 0;
+}
+.reserveGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 60vh;
+}
+@media (max-width: 800px) {
+  .reserveGrid {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+}
+
+.reserveVisual {
+  position: relative;
+  background: #17130f;
+  overflow: hidden;
+  min-height: 320px;
+}
+.reserveVisual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.reserveVisual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10, 10, 11, 0.15), rgba(10, 10, 11, 0.55));
+}
+
+.reserveFormWrap {
+  padding: clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 5vw, 4rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.reserveForm {
+  margin-top: clamp(1.5rem, 4vw, 2.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.1rem, 2.5vw, 1.5rem);
+}
+.reserveField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.reserveField .label {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(0.68rem, 1.5vw, 0.75rem);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+.reserveField input {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1rem, 2.4vw, 1.2rem);
+  letter-spacing: -0.01em;
+  color: var(--white);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.5rem 0;
+  outline: none;
+  width: 100%;
+  transition: border-color 320ms var(--ease-slow);
+}
+.reserveField input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+.reserveField input:focus {
+  border-color: var(--white);
+}
+
+.reserveNote {
+  margin-top: clamp(1.25rem, 3vw, 2rem);
+  font-family: var(--font-body);
+  font-size: clamp(0.78rem, 1.7vw, 0.85rem);
+  color: rgba(255, 255, 255, 0.5);
+  max-width: 50ch;
+  line-height: 1.7;
+}
