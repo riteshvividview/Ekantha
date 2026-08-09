@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>stay // vana ekantha</title>
+<meta name="description" content="Three ways to stay at Vana Ekantha — Mango House, Stone House, or the Full House." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap" rel="stylesheet" />
+
+<style>
+#ve-stay-page {
+  --white: #ffffff;
+  --silver: #f3f4f6;
+  --ink: #121214;
+  --ink-soft: rgba(18, 18, 20, 0.62);
+  --ink-faint: rgba(18, 18, 20, 0.42);
+  --line: rgba(18, 18, 20, 0.12);
+  --line-strong: rgba(18, 18, 20, 0.22);
+  --black: #0a0a0b;
+
+  --font-display: 'Google Sans Flex', Arial, sans-serif;
+  --font-accent: 'Instrument Serif', Georgia, serif;
+  --font-body: 'DM Sans', Arial, sans-serif;
+
+  --ease-slow: cubic-bezier(0.6, 0.05, 0.3, 1);
+  --ease-soft: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  --pad-x: clamp(1rem, 5vw, 7rem);
+  --pad-y: clamp(3rem, 8vw, 9rem);
+}
+
+#ve-stay-page, #ve-stay-page * { box-sizing: border-box; margin: 0; padding: 0; }
+
+#ve-stay-page { scroll-behavior: smooth; }
+
+#ve-stay-page {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: clamp(15px, 2vw, 18px);
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--white);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (min-width: 1024px) {
+#ve-stay-page { cursor: none; }
+}
+
+#ve-stay-page ::selection { background: var(--ink); color: var(--white); }
+
+#ve-stay-page a { color: inherit; text-decoration: none; }
+
+#ve-stay-page button { font: inherit; border: none; background: none; color: inherit; cursor: pointer; }
+
+#ve-stay-page img,
+#ve-stay-page svg { display: block; max-width: 100%; }
+
+@media (min-width: 1024px) {
+#ve-stay-page button,
+#ve-stay-page a,
+#ve-stay-page .hover-zone { cursor: none; }
+}
+
+#ve-stay-page .display-xl {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.1rem, 6.4vw, 4.6rem);
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+#ve-stay-page .display-xl em {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--ink);
+}
+
+#ve-stay-page .section-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.5rem, 3.6vw, 2.7rem);
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+#ve-stay-page .section-title em {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 400;
+}
+
+#ve-stay-page .eyebrow {
+  font-family: var(--font-body);
+  font-size: clamp(0.68rem, 1.4vw, 0.78rem);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+#ve-stay-page .eyebrow::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--ink);
+  display: inline-block;
+}
+
+/* .ve-cursor-dot / .ve-hold-pill are relocated to the real document.body at
+   runtime, outside the #ve-stay-page subtree, so they can't rely on custom
+   properties declared on #ve-stay-page — values are hardcoded here instead. */
+.ve-cursor-dot {
+  position: fixed;
+  top: 0; left: 0;
+  width: 7px; height: 7px;
+  background: #121214;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 2147483647;
+  transform: translate(-50%, -50%);
+  transition: width 320ms cubic-bezier(0.6, 0.05, 0.3, 1), height 320ms cubic-bezier(0.6, 0.05, 0.3, 1),
+              background-color 320ms cubic-bezier(0.6, 0.05, 0.3, 1), border 320ms cubic-bezier(0.6, 0.05, 0.3, 1);
+}
+
+.ve-cursor-dot.swollen {
+  width: 32px; height: 32px;
+  background: transparent;
+  border: 1px solid #121214;
+}
+
+body.on-dark .ve-cursor-dot { background: #ffffff; }
+
+body.on-dark .ve-cursor-dot.swollen { background: transparent; border-color: #ffffff; }
+
+body.on-light .ve-cursor-dot { background: #121214; }
+
+body.on-light .ve-cursor-dot.swollen { background: transparent; border-color: #121214; }
+
+@media (hover: none), (max-width: 1023px) {
+.ve-cursor-dot { display: none; }
+
+#ve-stay-page { cursor: auto; }
+}
+
+.ve-hold-pill {
+  position: fixed;
+  bottom: 1.25rem; right: 1.25rem;
+  z-index: 2147483646;
+  background: #121214;
+  color: #ffffff;
+  padding: clamp(0.7rem, 2vw, 0.95rem) clamp(1.2rem, 3vw, 1.7rem);
+  border-radius: 999px;
+  font-family: 'DM Sans', Arial, sans-serif;
+  font-weight: 500;
+  font-size: clamp(0.75rem, 1.8vw, 0.85rem);
+  letter-spacing: 0.01em;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  transition: opacity 500ms cubic-bezier(0.6, 0.05, 0.3, 1), transform 500ms cubic-bezier(0.6, 0.05, 0.3, 1), background 280ms;
+  max-width: calc(100vw - 2.5rem);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.14);
+}
+
+.ve-hold-pill.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+.ve-hold-pill:hover { background: #2a2a2d; }
+
+.ve-hold-pill::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: block;
+  flex-shrink: 0;
+}
+
+#ve-stay-page .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: clamp(0.85rem, 2vw, 1.05rem) clamp(1.5rem, 3vw, 2rem);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(0.85rem, 1.8vw, 0.95rem);
+  letter-spacing: 0.005em;
+  white-space: nowrap;
+  transition: background 260ms, color 260ms, border-color 260ms, transform 320ms var(--ease-slow);
+}
+
+#ve-stay-page .btn-primary {
+  background: var(--ink);
+  color: var(--white);
+}
+
+#ve-stay-page .btn-primary:hover { background: #2a2a2d; transform: translateY(-2px); }
+
+#ve-stay-page .btn-ghost {
+  background: var(--white);
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+}
+
+#ve-stay-page .btn-ghost:hover { border-color: var(--ink); transform: translateY(-2px); }
+
+#ve-stay-page .btn-on-dark {
+  background: var(--white);
+  color: var(--black);
+}
+
+#ve-stay-page .btn-on-dark:hover { background: var(--silver); transform: translateY(-2px); }
+
+#ve-stay-page .btn-small {
+  padding: clamp(0.65rem, 1.6vw, 0.8rem) clamp(1.2rem, 2.5vw, 1.6rem);
+  font-size: clamp(0.78rem, 1.6vw, 0.85rem);
+}
+
+#ve-stay-page section { padding: var(--pad-y) var(--pad-x); position: relative; }
+
+#ve-stay-page .bg-silver { background: var(--silver); }
+
+#ve-stay-page .bg-white { background: var(--white); }
+
+#ve-stay-page .bg-black { background: var(--black); color: var(--white); }
+
+#ve-stay-page .section-head {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  align-items: end;
+  margin-bottom: clamp(2.25rem, 5.5vw, 4.5rem);
+}
+
+@media (max-width: 700px) {
+#ve-stay-page .section-head { grid-template-columns: 1fr; }
+}
+
+#ve-stay-page .section-head p {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: clamp(0.92rem, 2.1vw, 1.05rem);
+  line-height: 1.7;
+  color: var(--ink-soft);
+  max-width: 46ch;
+}
+
+#ve-stay-page .bg-black .section-head p { color: rgba(255,255,255,0.62); }
+
+#ve-stay-page .bg-black .eyebrow { color: rgba(255,255,255,0.7); }
+
+#ve-stay-page .bg-black .eyebrow::before { background: var(--white); }
+
+#ve-stay-page .hero {
+  min-height: 92vh;
+  min-height: 92svh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: left;
+  padding: clamp(6rem, 12vh, 8rem) var(--pad-x) clamp(3rem, 8vh, 5rem);
+  background: var(--silver);
+  position: relative;
+  overflow: hidden;
+}
+
+#ve-stay-page .hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url('https://bisque-lobster-585068.hostingersite.com/wp-content/uploads/2026/07/low-angle-shot-church-with-staple-bright-sky-scaled.jpg');
+  background-size: cover;
+  background-position: center center;
+  filter: grayscale(1) brightness(1.55) contrast(0.92);
+  opacity: 0.8;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, transparent 8%, rgba(0,0,0,0.55) 45%, black 100%);
+  mask-image: linear-gradient(to right, transparent 0%, transparent 8%, rgba(0,0,0,0.55) 45%, black 100%);
+}
+
+#ve-stay-page .hero-badge,
+#ve-stay-page .hero h1,
+#ve-stay-page .hero-sub,
+#ve-stay-page .hero-rating,
+#ve-stay-page .hero-ctas { position: relative; z-index: 1; }
+
+#ve-stay-page .hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.5rem 1.1rem 0.5rem 0.5rem;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(0.72rem, 1.6vw, 0.82rem);
+  color: var(--ink-soft);
+  margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+}
+
+#ve-stay-page .hero-badge .dot {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem;
+}
+
+#ve-stay-page .hero h1 { max-width: 20ch; margin-bottom: clamp(1.25rem, 3vw, 2rem); }
+
+#ve-stay-page .hero-sub {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: clamp(0.95rem, 2.2vw, 1.15rem);
+  line-height: 1.7;
+  color: var(--ink-soft);
+  max-width: 52ch;
+  margin: 0 0 clamp(2rem, 5vw, 3rem);
+}
+
+#ve-stay-page .hero-rating {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.9rem;
+  margin-bottom: clamp(1.75rem, 4vw, 2.75rem);
+  flex-wrap: wrap;
+}
+
+#ve-stay-page .hero-rating .stars { display: inline-flex; gap: 0.15rem; font-size: 1rem; letter-spacing: 0.1em; color: var(--ink); }
+
+#ve-stay-page .hero-rating .rating-text { font-family: var(--font-body); font-weight: 500; font-size: clamp(0.8rem, 1.8vw, 0.92rem); color: var(--ink-soft); }
+
+#ve-stay-page .hero-ctas { display: flex; align-items: center; justify-content: flex-start; gap: 0.9rem; flex-wrap: wrap; }
+
+/* ── Why Stay: expanding accordion panels ─────────────────────── */
+
+#ve-stay-page .acc-row {
+  display: flex;
+  gap: clamp(0.6rem, 1.5vw, 0.9rem);
+  height: clamp(320px, 34vw, 420px);
+}
+
+@media (max-width: 700px) {
+#ve-stay-page .acc-row { flex-direction: column; height: auto; gap: 0.75rem; }
+}
+
+#ve-stay-page .acc-panel {
+  position: relative;
+  flex: 1 1 0%;
+  min-width: 0;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid var(--line);
+  color: var(--white);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(1.4rem, 2.8vw, 1.9rem);
+  cursor: pointer;
+  transition: flex-grow 700ms var(--ease-slow), border-color 700ms var(--ease-slow);
+}
+
+@media (min-width: 701px) {
+#ve-stay-page .acc-panel:hover,
+#ve-stay-page .acc-panel.active { flex-grow: 2.4; border-color: var(--ink); }
+}
+
+@media (max-width: 700px) {
+#ve-stay-page .acc-panel { flex: none; justify-content: flex-start; }
+#ve-stay-page .acc-panel.active { border-color: var(--ink); }
+}
+
+#ve-stay-page .acc-media { position: absolute; inset: 0; z-index: 0; }
+#ve-stay-page .acc-media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 900ms var(--ease-slow); }
+#ve-stay-page .acc-panel:hover .acc-media img,
+#ve-stay-page .acc-panel.active .acc-media img { transform: scale(1.06); }
+
+#ve-stay-page .acc-scrim {
+  position: absolute; inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(10,10,11,0.15) 0%, rgba(10,10,11,0.1) 35%, rgba(10,10,11,0.72) 100%);
+  transition: background 700ms var(--ease-slow);
+}
+
+#ve-stay-page .acc-panel:hover .acc-scrim,
+#ve-stay-page .acc-panel.active .acc-scrim { background: linear-gradient(180deg, rgba(10,10,11,0.35) 0%, rgba(10,10,11,0.35) 35%, rgba(10,10,11,0.88) 100%); }
+
+#ve-stay-page .acc-panel-top { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; margin-bottom: auto; }
+
+@media (max-width: 700px) {
+#ve-stay-page .acc-panel-top { margin-bottom: 1rem; }
+}
+
+#ve-stay-page .acc-num {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.6rem, 3.2vw, 2.1rem);
+  color: rgba(255,255,255,0.5);
+}
+
+#ve-stay-page .acc-icon {
+  position: relative;
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 700ms var(--ease-slow), border-color 700ms var(--ease-slow);
+}
+
+#ve-stay-page .acc-panel:hover .acc-icon,
+#ve-stay-page .acc-panel.active .acc-icon { background: var(--white); border-color: var(--white); }
+
+#ve-stay-page .acc-icon svg { width: 20px; height: 20px; stroke: var(--white); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; transition: stroke 700ms var(--ease-slow); }
+
+#ve-stay-page .acc-panel:hover .acc-icon svg,
+#ve-stay-page .acc-panel.active .acc-icon svg { stroke: var(--ink); }
+
+#ve-stay-page .acc-label {
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(0.7rem, 1.5vw, 0.8rem);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 1rem;
+}
+
+#ve-stay-page .acc-content {
+  position: relative;
+  z-index: 2;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(10px);
+  overflow: hidden;
+  /* on the way out (mouse-leave), hide immediately with no delay — only the
+     reveal direction below needs to wait for the panel to finish widening */
+  transition: max-height 10ms linear, opacity 300ms var(--ease-slow), transform 300ms var(--ease-slow);
+}
+
+/* Reveal only starts once .acc-panel's own flex-grow (700ms) has essentially
+   finished, so the title/body never reflow mid-width-change — the panel
+   expands first, THEN the text fades/slides in as a separate, sequenced step. */
+#ve-stay-page .acc-panel:hover .acc-content,
+#ve-stay-page .acc-panel.active .acc-content {
+  max-height: 240px;
+  opacity: 1;
+  transform: translateY(0);
+  transition: max-height 10ms linear 620ms, opacity 450ms var(--ease-slow) 620ms, transform 450ms var(--ease-slow) 620ms;
+}
+
+@media (max-width: 700px) {
+#ve-stay-page .acc-content { max-height: none; opacity: 1; transform: none; }
+}
+
+#ve-stay-page .acc-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.1rem, 2.4vw, 1.35rem);
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  color: var(--white);
+  margin-top: 0.9rem;
+  margin-bottom: 0.6rem;
+  white-space: normal;
+}
+
+#ve-stay-page .acc-body { font-family: var(--font-body); font-size: clamp(0.85rem, 1.8vw, 0.92rem); line-height: 1.65; color: rgba(255,255,255,0.8); }
+
+#ve-stay-page .track-wrap { position: relative; overflow-x: hidden; }
+
+#ve-stay-page .h-track {
+  /* position:relative makes .h-track itself the offsetParent for its .h-card
+     children, so card.offsetLeft is measured in the same coordinate space as
+     track.scrollLeft. Without this, offsetParent bubbles up to .track-wrap
+     instead, and every offsetLeft used by the drag-to-scroll snap logic below
+     is off by a constant amount — the symptom is cards ending up cut off /
+     misaligned after a drag release instead of snapping flush. */
+  position: relative;
+  display: flex;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  overflow-x: auto;
+  /* real padding on the scroll container itself (not just the spacer div)
+     as a second, independent mechanism for the leading/trailing gap — some
+     browsers/embeds don't reliably paint a scroll container's own padding
+     at scroll position 0, so this doesn't solely rely on the spacer div. */
+  padding: 1rem var(--pad-x) 1.5rem;
+  margin: 0 calc(var(--pad-x) * -1);
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: var(--pad-x);
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  cursor: grab;
+}
+
+#ve-stay-page .h-track.dragging { cursor: grabbing; touch-action: none; user-select: none; }
+
+#ve-stay-page .h-track::-webkit-scrollbar { display: none; }
+
+#ve-stay-page .h-track-spacer { flex: 0 0 clamp(1.5rem, 3vw, 2.5rem); }
+
+#ve-stay-page .h-card {
+  flex: 0 0 clamp(220px, 55vw, 270px);
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  overflow: hidden;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  transition: transform 500ms var(--ease-slow), border-color 300ms;
+}
+
+#ve-stay-page .h-card:hover { transform: translateY(-6px); border-color: var(--line-strong); }
+
+#ve-stay-page .bg-silver .h-card { background: var(--white); }
+
+#ve-stay-page .h-card-media { width: 100%; aspect-ratio: 4/3; overflow: hidden; }
+#ve-stay-page .h-card-media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 700ms var(--ease-slow); }
+#ve-stay-page .h-card:hover .h-card-media img { transform: scale(1.08); }
+
+#ve-stay-page .h-card-content { padding: clamp(1.1rem, 2.3vw, 1.5rem); }
+
+#ve-stay-page .h-card-title { font-family: var(--font-display); font-weight: 500; font-size: clamp(1rem, 2.4vw, 1.15rem); letter-spacing: -0.01em; color: var(--ink); margin-bottom: 0.6rem; }
+
+#ve-stay-page .h-card-desc { font-family: var(--font-body); font-size: clamp(0.8rem, 1.8vw, 0.9rem); line-height: 1.6; color: var(--ink-soft); }
+
+#ve-stay-page .stays-section { padding-top: var(--pad-y); padding-bottom: var(--pad-y); }
+
+#ve-stay-page .stay-block {
+  padding-top: clamp(3rem, 7vw, 5rem);
+  padding-bottom: clamp(3rem, 7vw, 5rem);
+  border-top: 1px solid var(--line);
+}
+
+#ve-stay-page .stay-block:first-of-type { border-top: none; padding-top: 0; }
+
+#ve-stay-page .stay-block-header {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  align-items: start;
+  margin-bottom: clamp(2rem, 5vw, 3.5rem);
+}
+
+@media (max-width: 480px) {
+#ve-stay-page .stay-block-header { grid-template-columns: 1fr; }
+}
+
+#ve-stay-page .stay-block-num {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(0.68rem, 1.5vw, 0.78rem);
+  letter-spacing: 0.14em;
+  color: var(--ink-faint);
+  padding-top: 0.5rem;
+  white-space: nowrap;
+}
+
+#ve-stay-page .stay-block-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.7rem, 4.6vw, 3.2rem);
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  margin-bottom: 0.6rem;
+  color: var(--ink);
+}
+
+#ve-stay-page .stay-block-title em { font-family: var(--font-accent); font-style: italic; font-weight: 400; }
+
+#ve-stay-page .stay-block-tagline {
+  font-family: var(--font-body);
+  font-size: clamp(0.82rem, 1.9vw, 0.95rem);
+  color: var(--ink-soft);
+}
+
+#ve-stay-page .stay-block-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: start;
+}
+
+@media (max-width: 760px) {
+#ve-stay-page .stay-block-body { grid-template-columns: 1fr; }
+}
+
+#ve-stay-page .stay-plate {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: var(--silver);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  overflow: hidden;
+  order: -1;
+  position: sticky;
+  top: clamp(1.5rem, 4vw, 3rem);
+}
+
+@media (min-width: 761px) {
+#ve-stay-page .stay-plate { order: 0; }
+}
+@media (max-width: 760px) {
+#ve-stay-page .stay-plate { position: static; }
+}
+
+#ve-stay-page .stay-plate img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 700ms var(--ease-slow); }
+#ve-stay-page .stay-plate:hover img { transform: scale(1.06); }
+
+#ve-stay-page .stay-quote {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1rem, 2.4vw, 1.3rem);
+  line-height: 1.55;
+  color: var(--ink);
+  border-left: 2px solid var(--line-strong);
+  padding-left: clamp(1rem, 2.5vw, 1.5rem);
+  margin-bottom: clamp(1.5rem, 3.5vw, 2.25rem);
+}
+
+#ve-stay-page .stay-specs {
+  display: grid;
+  grid-template-columns: minmax(90px, 120px) 1fr;
+  gap: 0.5rem 0.75rem;
+  font-family: var(--font-body);
+  font-size: clamp(0.82rem, 1.8vw, 0.9rem);
+  line-height: 1.9;
+  margin-bottom: clamp(1.5rem, 3.5vw, 2.25rem);
+  padding-bottom: clamp(1.5rem, 3.5vw, 2.25rem);
+  border-bottom: 1px dashed var(--line);
+}
+
+@media (max-width: 380px) {
+#ve-stay-page .stay-specs { grid-template-columns: 1fr; }
+}
+
+#ve-stay-page .stay-specs .key { color: var(--ink-faint); }
+
+#ve-stay-page .stay-specs .val { color: var(--ink); }
+
+#ve-stay-page .stay-lists {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1rem, 3vw, 2rem);
+  margin-bottom: clamp(1.5rem, 3.5vw, 2.25rem);
+}
+
+@media (max-width: 420px) {
+#ve-stay-page .stay-lists { grid-template-columns: 1fr; }
+}
+
+#ve-stay-page .slist-head {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(0.66rem, 1.4vw, 0.75rem);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 0.75rem;
+}
+
+#ve-stay-page .slist { list-style: none; font-family: var(--font-body); font-size: clamp(0.8rem, 1.8vw, 0.9rem); line-height: 1.8; color: var(--ink-soft); }
+
+#ve-stay-page .slist li { display: flex; gap: 0.5rem; }
+
+#ve-stay-page .slist li::before { content: '·'; color: var(--ink-faint); flex-shrink: 0; }
+
+#ve-stay-page .stay-note {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: clamp(0.8rem, 1.8vw, 0.88rem);
+  line-height: 1.7;
+  color: var(--ink-soft);
+  padding: clamp(0.85rem, 2vw, 1.2rem) clamp(1rem, 2vw, 1.4rem);
+  background: var(--silver);
+  border-radius: 12px;
+  margin-bottom: clamp(1.5rem, 3.5vw, 2.25rem);
+}
+
+#ve-stay-page .bg-silver .stay-note,
+#ve-stay-page .stays-section .stay-note { background: var(--silver); }
+
+#ve-stay-page .stay-cta-row {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2rem);
+  flex-wrap: wrap;
+  padding-top: clamp(1.25rem, 3vw, 2rem);
+  border-top: 1px solid var(--line);
+}
+
+#ve-stay-page .stay-price { flex: 1; min-width: 160px; }
+
+#ve-stay-page .stay-price .amount { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.1rem, 3vw, 1.6rem); color: var(--ink); letter-spacing: -0.01em; }
+
+#ve-stay-page .stay-price .incl { font-family: var(--font-body); font-size: clamp(0.72rem, 1.6vw, 0.8rem); color: var(--ink-faint); margin-top: 0.25rem; }
+
+#ve-stay-page .final-cta { padding-top: var(--pad-y); padding-bottom: var(--pad-y); }
+
+#ve-stay-page .final-row {
+  margin-top: clamp(1.5rem, 4vw, 3rem);
+  padding: clamp(1.5rem, 4vw, 3rem) 0;
+  border-top: 1px solid rgba(255,255,255,0.16);
+  border-bottom: 1px solid rgba(255,255,255,0.16);
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr auto;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  align-items: end;
+}
+
+@media (max-width: 700px) {
+#ve-stay-page .final-row { grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+
+#ve-stay-page .final-row .final-cta-btn { grid-column: 1 / -1; text-align: center; }
+}
+
+@media (max-width: 420px) {
+#ve-stay-page .final-row { grid-template-columns: 1fr; }
+}
+
+#ve-stay-page .final-field { display: flex; flex-direction: column; gap: 0.5rem; }
+
+#ve-stay-page .final-field .label {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(0.68rem, 1.5vw, 0.75rem);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+}
+
+#ve-stay-page .final-field input {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1rem, 3vw, 1.35rem);
+  letter-spacing: -0.01em;
+  color: var(--white);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,0.3);
+  padding: 0.5rem 0;
+  outline: none;
+  width: 100%;
+  transition: border-color 320ms var(--ease-slow);
+}
+
+#ve-stay-page .final-field input::placeholder { color: rgba(255,255,255,0.4); }
+
+#ve-stay-page .final-field input:focus { border-color: var(--white); }
+
+#ve-stay-page .final-note {
+  margin-top: clamp(1.25rem, 3vw, 2rem);
+  font-family: var(--font-body);
+  font-size: clamp(0.78rem, 1.7vw, 0.88rem);
+  color: rgba(255,255,255,0.55);
+  max-width: 60ch;
+  line-height: 1.7;
+}
+
+#ve-stay-page footer {
+  background: var(--white);
+  padding: clamp(3rem, 7vw, 5rem) var(--pad-x) clamp(1.5rem, 4vw, 3rem);
+  text-align: center;
+}
+
+#ve-stay-page footer .sig {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(0.9rem, 2vw, 1.05rem);
+  letter-spacing: -0.01em;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: clamp(1.5rem, 4vw, 3rem);
+}
+
+#ve-stay-page footer .sig .acc { color: var(--ink-faint); font-family: var(--font-body); }
+
+#ve-stay-page footer .links {
+  display: flex;
+  justify-content: center;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  flex-wrap: wrap;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(0.72rem, 1.6vw, 0.8rem);
+  color: var(--ink-soft);
+  margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+#ve-stay-page footer .links a:hover { color: var(--ink); }
+
+#ve-stay-page footer .insta { font-family: var(--font-body); font-size: clamp(0.72rem, 1.6vw, 0.8rem); color: var(--ink-faint); }
+
+#ve-stay-page .reveal { opacity: 0; transform: translateY(28px); transition: opacity 900ms var(--ease-slow), transform 900ms var(--ease-slow); }
+
+#ve-stay-page .reveal.in { opacity: 1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+#ve-stay-page, #ve-stay-page *,
+#ve-stay-page *::before,
+#ve-stay-page *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+
+#ve-stay-page .reveal { opacity: 1; transform: none; }
+}
+
+@media (max-width: 380px) {
+#ve-stay-page { --pad-x: 0.75rem; --pad-y: 2.5rem; }
+
+.ve-hold-pill { right: 0.75rem; bottom: 0.75rem; }
+
+#ve-stay-page .h-track { gap: 0.75rem; }
+
+#ve-stay-page .h-card { flex: 0 0 82vw; }
+
+#ve-stay-page .final-row { gap: 1rem; }
+
+#ve-stay-page footer .links { gap: 0.75rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Cursor companion & hold-pill are relocated to document.body at runtime
+     (see script below) so position:fixed can't get trapped inside a
+     transformed ancestor wrapper, e.g. an Elementor motion-effect section ── -->
+<div class="ve-cursor-dot" id="cursorDot" aria-hidden="true"></div>
+<button class="ve-hold-pill" id="holdPill">hold a date</button>
+
+<div id="ve-stay-page">
+
+<!-- ── 01. Banner ────────────────────────────────────────────── -->
+<section class="hero" id="top">
+  <div class="hero-badge reveal">
+    <span class="dot">VE</span>
+    Five Acres, Three Ways To Stay
+  </div>
+
+  <h1 class="display-xl reveal">Choose Your <em>Stay</em><br>At Vana Ekantha</h1>
+
+  <p class="hero-sub reveal">None of them face each other. Each sits where the land already had a clearing — from a private cottage for two, to the entire estate for everyone you love.</p>
+
+  <div class="hero-rating reveal">
+    <span class="stars" aria-hidden="true">★★★★★</span>
+    <span class="rating-text">Loved by returning guests</span>
+  </div>
+
+  <div class="hero-ctas reveal">
+    <a href="#stays" class="btn btn-primary">View The Stays →</a>
+    <a href="/hold-a-date" class="btn btn-ghost">Hold a Date</a>
+  </div>
+</section>
+
+<!-- ── 02. Accommodation Cards ───────────────────────────────── -->
+<section class="stays-section" id="stays">
+  <div class="section-head reveal">
+    <h2 class="section-title">three ways to <em>stay.</em></h2>
+    <p>From a quiet cottage for two, to the whole estate for a celebration — each stay was placed where the land already had room for it.</p>
+  </div>
+
+  <!-- Mango House -->
+  <div class="stay-block">
+    <div class="stay-block-header reveal">
+      <div class="stay-block-num">stay / no. 01</div>
+      <div>
+        <h3 class="stay-block-title">Mango <em>House</em></h3>
+        <p class="stay-block-tagline">quiet · orchard-facing · a private retreat for two</p>
+      </div>
+    </div>
+
+    <div class="stay-block-body">
+      <div>
+        <blockquote class="stay-quote reveal">"I sit beneath the old mango grove. In season, breakfast might just be what fell that morning. The goats know me well — they pass through twice a day."</blockquote>
+
+        <div class="stay-specs reveal">
+          <span class="key">capacity</span><span class="val">2–3 adults</span>
+          <span class="key">bed</span><span class="val">queen bed + daybed</span>
+          <span class="key">character</span><span class="val">lively, orchard-facing mornings</span>
+        </div>
+
+        <div class="stay-lists reveal">
+          <div>
+            <p class="slist-head">what's inside</p>
+            <ul class="slist">
+              <li>queen bed + narrow daybed</li>
+              <li>large window to the orchard</li>
+              <li>wooden rack for hanging things</li>
+            </ul>
+          </div>
+          <div>
+            <p class="slist-head">what's outside</p>
+            <ul class="slist">
+              <li>mango & guava trees (fruit aug–nov)</li>
+              <li>small dairy yard, 60 paces away</li>
+              <li>the goats — named, will introduce themselves</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="stay-note reveal">The liveliest of the three, in the kindest sense — birds, goats, the occasional rooster. Family-friendly, and never quite silent.</div>
+
+        <div class="stay-cta-row reveal">
+          <div class="stay-price">
+            <div class="amount">from ₹18,400 / night</div>
+            <div class="incl">includes breakfast, chai & farm dinner</div>
+          </div>
+          <a href="/hold-a-date" class="btn btn-primary btn-small">Hold Mango House →</a>
+        </div>
+      </div>
+
+      <div class="stay-plate reveal">
+        <img src="https://images.unsplash.com/photo-1710563138874-4bac91c14e51?q=80&w=1000&auto=format&fit=crop" alt="Mango House, a thatched cottage tucked beneath the grove" loading="lazy" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Stone House -->
+  <div class="stay-block">
+    <div class="stay-block-header reveal">
+      <div class="stay-block-num">stay / no. 02</div>
+      <div>
+        <h3 class="stay-block-title">Stone <em>House</em></h3>
+        <p class="stay-block-tagline">the original house — thick walls, unhurried light</p>
+      </div>
+    </div>
+
+    <div class="stay-block-body">
+      <div>
+        <blockquote class="stay-quote reveal">"I am the original house on this land. My stone walls hold the cold in summer and the warmth in winter. There is a desk by the north window — one chair, on purpose."</blockquote>
+
+        <div class="stay-specs reveal">
+          <span class="key">capacity</span><span class="val">2–4 adults</span>
+          <span class="key">bed</span><span class="val">two bedrooms</span>
+          <span class="key">character</span><span class="val">quiet, north-facing, unhurried</span>
+        </div>
+
+        <div class="stay-lists reveal">
+          <div>
+            <p class="slist-head">what's inside</p>
+            <ul class="slist">
+              <li>two bedrooms, one with a writing desk</li>
+              <li>fireplace (november through february)</li>
+              <li>three books, rotated monthly</li>
+            </ul>
+          </div>
+          <div>
+            <p class="slist-head">what's outside</p>
+            <ul class="slist">
+              <li>the old tamarind tree (shade from 11am)</li>
+              <li>a small bench at its root</li>
+              <li>a low stone wall to sit on</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="stay-note reveal">The writer's house. If you come here to write, we will not ask what you're writing.</div>
+
+        <div class="stay-cta-row reveal">
+          <div class="stay-price">
+            <div class="amount">from ₹19,600 / night</div>
+            <div class="incl">includes breakfast, chai & farm dinner</div>
+          </div>
+          <a href="/hold-a-date" class="btn btn-primary btn-small">Hold Stone House →</a>
+        </div>
+      </div>
+
+      <div class="stay-plate reveal">
+        <img src="https://bisque-lobster-585068.hostingersite.com/wp-content/uploads/2026/07/relax-area-resort-scaled.jpg" alt="Stone House, the original house with thick walls and unhurried light" loading="lazy" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Full House -->
+  <div class="stay-block">
+    <div class="stay-block-header reveal">
+      <div class="stay-block-num">stay / no. 03</div>
+      <div>
+        <h3 class="stay-block-title">Full <em>House</em></h3>
+        <p class="stay-block-tagline">the entire estate — for families, reunions & celebrations</p>
+      </div>
+    </div>
+
+    <div class="stay-block-body">
+      <div>
+        <blockquote class="stay-quote reveal">"Take all of me. Every cottage, every acre, the pond and the orchard and the kitchen garden besides. For families, reunions, and celebrations that need room to breathe."</blockquote>
+
+        <div class="stay-specs reveal">
+          <span class="key">capacity</span><span class="val">up to 16 adults</span>
+          <span class="key">bed</span><span class="val">Mango House + Stone House, all rooms</span>
+          <span class="key">character</span><span class="val">private, exclusive-use</span>
+        </div>
+
+        <div class="stay-lists reveal">
+          <div>
+            <p class="slist-head">what's included</p>
+            <ul class="slist">
+              <li>full run of Mango House & Stone House</li>
+              <li>main house & kitchen garden access</li>
+              <li>private events team, on request</li>
+            </ul>
+          </div>
+          <div>
+            <p class="slist-head">what's outside</p>
+            <ul class="slist">
+              <li>the pond, the orchard, the open lawns</li>
+              <li>the pergola walkway, the outdoor cinema</li>
+              <li>space for birthdays, retreats, celebrations</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="stay-note reveal">Minimum three nights for full-house bookings. Ask us about events & celebrations add-ons.</div>
+
+        <div class="stay-cta-row reveal">
+          <div class="stay-price">
+            <div class="amount">from ₹78,000 / night</div>
+            <div class="incl">all meals included</div>
+          </div>
+          <a href="/hold-a-date" class="btn btn-primary btn-small">Hold The Full House →</a>
+        </div>
+      </div>
+
+      <div class="stay-plate reveal">
+        <img src="https://bisque-lobster-585068.hostingersite.com/wp-content/uploads/2026/07/rural-view-catalonia-spain-scaled.jpg" alt="Full House, the entire estate for families and celebrations" loading="lazy" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 03. Included Amenities ────────────────────────────────── -->
+<section class="bg-silver" id="amenities">
+  <div class="section-head reveal">
+    <h2 class="section-title">included <em>amenities.</em></h2>
+    <p>Small, deliberate ways to spend a day here — included with every stay, none of them mandatory.</p>
+  </div>
+
+  <div class="track-wrap">
+    <div class="h-track reveal" id="amenitiesTrack">
+
+      <div class="h-track-spacer" aria-hidden="true"></div>
+
+      <div class="h-card">
+        <div class="h-card-media"><img src="https://bisque-lobster-585068.hostingersite.com/wp-content/uploads/2026/07/swimming-pool-blue-water-tropical-garden-with-sea-view-background-scaled.jpg" alt="The spring-fed pool at Vana Ekantha" loading="lazy" /></div>
+        <div class="h-card-content"><div class="h-card-title">Pool</div><p class="h-card-desc">A quiet, spring-fed pool — best at first light or last.</p></div>
+      </div>
+
+      <div class="h-card">
+        <div class="h-card-media"><img src="https://bisque-lobster-585068.hostingersite.com/wp-content/uploads/2026/07/outdoor-movie-is-hit-with-movie-scaled.jpg" alt="Outdoor cinema screening at Vana Ekantha" loading="lazy" /></div>
+        <div class="h-card-content"><div class="h-card-title">Outdoor Projector</div><p class="h-card-desc">Films under open sky once the cicadas start — bring a blanket, borrow ours.</p></div>
+      </div>
+
+      <div class="h-card">
+        <div class="h-card-media"><img src="https://bisque-lobster-585068.hostingersite.com/wp-content/uploads/2026/07/family-all-together-camping-garden-father-child-grill-food-divergence-scaled.jpg" alt="Barbecue evening at Vana Ekantha" loading="lazy" /></div>
+        <div class="h-card-content"><div class="h-card-title">Barbecue Grill</div><p class="h-card-desc">Slow fire, farm produce, started when the dusk smells right.</p></div>
+      </div>
+
+      <div class="h-card">
+        <div class="h-card-media"><img src="https://bisque-lobster-585068.hostingersite.com/wp-content/uploads/2026/07/pool-table-with-pool-table-bar-with-two-stools-large-picture-wall-scaled.jpg" alt="Indoor games room at Vana Ekantha" loading="lazy" /></div>
+        <div class="h-card-content"><div class="h-card-title">Indoor Games</div><p class="h-card-desc">Board games and quiet company for the hours between rituals.</p></div>
+      </div>
+
+      <div class="h-card">
+        <div class="h-card-media"><img src="https://bisque-lobster-585068.hostingersite.com/wp-content/uploads/2026/07/golf-course-zlati-gric-slovenia-with-vineyards-trees-sunny-day-scaled.jpg" alt="Open lawns for outdoor games at Vana Ekantha" loading="lazy" /></div>
+        <div class="h-card-content"><div class="h-card-title">Outdoor Games</div><p class="h-card-desc">Badminton, ring toss, and open lawns for whatever else you bring.</p></div>
+      </div>
+
+      <div class="h-track-spacer" aria-hidden="true"></div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── 04. Why Stay at Vana Ekantha ──────────────────────────── -->
+<section id="why-stay">
+  <div class="section-head reveal">
+    <h2 class="section-title">why stay at <em>Vana Ekantha.</em></h2>
+    <p>Four reasons guests keep returning — none of them printed on a brochure.</p>
+  </div>
+
+  <div class="acc-row reveal">
+    <div class="acc-panel" tabindex="0">
+      <div class="acc-media" aria-hidden="true"><img src="https://images.unsplash.com/photo-1581217185422-a0f8c198710f?q=80&w=900&auto=format&fit=crop" alt="" /></div>
+      <div class="acc-scrim" aria-hidden="true"></div>
+      <div class="acc-panel-top">
+        <div class="acc-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="16"/><path d="M18,24 L22,28 L30,18"/></svg>
+        </div>
+        <span class="acc-num" aria-hidden="true">01</span>
+      </div>
+      <span class="acc-label">Nothing Extra</span>
+      <div class="acc-content">
+        <div class="acc-title">Everything Essential, Included</div>
+        <div class="acc-body">Breakfast, evening chai, access to every farm ritual, a journal and a pencil — no add-on menus to read through.</div>
+      </div>
+    </div>
+    <div class="acc-panel" tabindex="0">
+      <div class="acc-media" aria-hidden="true"><img src="https://images.unsplash.com/photo-1693038897766-7648cf044bad?q=80&w=900&auto=format&fit=crop" alt="" /></div>
+      <div class="acc-scrim" aria-hidden="true"></div>
+      <div class="acc-panel-top">
+        <div class="acc-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48"><path d="M24,8 L24,40" /><path d="M15,15 Q15,10 24,10 Q33,10 33,17 Q33,23 24,24 Q15,25 15,31 Q15,38 24,38 Q33,38 33,33"/></svg>
+        </div>
+        <span class="acc-num" aria-hidden="true">02</span>
+      </div>
+      <span class="acc-label">No Surge Pricing</span>
+      <div class="acc-content">
+        <div class="acc-title">Honest, Fixed Pricing</div>
+        <div class="acc-body">The rate you see is the rate you pay — regardless of when you book, or how popular the weekend is.</div>
+      </div>
+    </div>
+    <div class="acc-panel" tabindex="0">
+      <div class="acc-media" aria-hidden="true"><img src="https://images.unsplash.com/photo-1711048090278-30fef40e104d?q=80&w=900&auto=format&fit=crop" alt="" /></div>
+      <div class="acc-scrim" aria-hidden="true"></div>
+      <div class="acc-panel-top">
+        <div class="acc-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48"><rect x="10" y="12" width="28" height="24" rx="2"/><path d="M16,20 L32,20 M16,26 L28,26"/></svg>
+        </div>
+        <span class="acc-num" aria-hidden="true">03</span>
+      </div>
+      <span class="acc-label">Fair Terms</span>
+      <div class="acc-content">
+        <div class="acc-title">Flexible Cancellation</div>
+        <div class="acc-body">Full refund 14+ days out, 50% within 7–14 days, and credit held (never lost) inside that window.</div>
+      </div>
+    </div>
+    <div class="acc-panel" tabindex="0">
+      <div class="acc-media" aria-hidden="true"><img src="https://images.unsplash.com/photo-1564433517015-799b3f75e087?q=80&w=900&auto=format&fit=crop" alt="" /></div>
+      <div class="acc-scrim" aria-hidden="true"></div>
+      <div class="acc-panel-top">
+        <div class="acc-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="16"/><path d="M24,16 L24,24 L30,28"/></svg>
+        </div>
+        <span class="acc-num" aria-hidden="true">04</span>
+      </div>
+      <span class="acc-label">Two Nights, Minimum</span>
+      <div class="acc-content">
+        <div class="acc-title">A Slower Minimum Stay</div>
+        <div class="acc-body">One night is a preview, not a stay. Two is when the rhythm begins — which is why that's where we start.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 05. Booking CTA Banner ────────────────────────────────── -->
+<section class="bg-black final-cta" id="reserve">
+  <span class="eyebrow reveal">holding a date</span>
+  <h2 class="section-title reveal" style="color:var(--white); margin-top:1rem;">tell us <em>when</em>,<br>and we'll hold a stay.</h2>
+
+  <form class="final-row reveal" onsubmit="event.preventDefault();">
+    <div class="final-field">
+      <span class="label">when</span>
+      <input type="text" placeholder="14 may → 17 may" />
+    </div>
+    <div class="final-field">
+      <span class="label">who</span>
+      <input type="text" placeholder="2 adults" />
+    </div>
+    <div class="final-field">
+      <span class="label">which stay</span>
+      <input type="text" placeholder="mango, stone, or full house" />
+    </div>
+    <button type="submit" class="btn btn-on-dark final-cta-btn">hold a date →</button>
+  </form>
+
+  <p class="final-note reveal">
+    No countdown timers. No "only 1 left!" No urgency theatre.<br>
+    If a stay is free, it's yours. If it isn't, we'll keep your name and call you back.
+  </p>
+</section>
+
+<!-- ── Footer ───────────────────────────────────────────────── -->
+<footer>
+  <div class="sig">
+    vana ekantha <span class="acc">//</span> forest solitude<br>
+    <span class="acc">a farmstay for intentional disconnection</span><br>
+    <span class="acc">est. 2024 // the deccan, india</span>
+  </div>
+  <nav class="links">
+    <a href="/">home</a>
+    <a href="/journal">the journal</a>
+    <a href="#">gift a stay</a>
+    <a href="#">press</a>
+    <a href="#">terms</a>
+  </nav>
+  <div class="insta">find us, quietly → @vanaekantha</div>
+</footer>
+
+</div><!-- /#ve-stay-page -->
+
+<script>
+/* ──────────────────────────────────────────────────────────────
+   vana ekantha — stay page interactions
+   ────────────────────────────────────────────────────────────── */
+
+// ── Cursor companion & hold-pill: relocate to the real page <body> ──
+// When this markup is pasted into a WordPress/Elementor HTML block, it can
+// end up nested inside a section that has a CSS transform applied (common
+// with Elementor motion-effects/sticky sections). A transformed ancestor
+// creates a new containing block for position:fixed descendants, which traps
+// them inside that section instead of the real viewport — the cursor then
+// only shows up correctly in sections without a transform. Re-appending both
+// elements directly onto document.body guarantees they always sit at the
+// true root, outside any such wrapper.
+const cursor = document.getElementById('cursorDot');
+const holdPill = document.getElementById('holdPill');
+if (cursor && cursor.parentElement !== document.body) document.body.appendChild(cursor);
+if (holdPill && holdPill.parentElement !== document.body) document.body.appendChild(holdPill);
+
+let mouseX = 0, mouseY = 0, currX = 0, currY = 0;
+
+window.addEventListener('mousemove', (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+});
+
+function animateCursor() {
+  currX += (mouseX - currX) * 0.18;
+  currY += (mouseY - currY) * 0.18;
+  if (cursor) cursor.style.transform = `translate(${currX}px, ${currY}px) translate(-50%, -50%)`;
+  requestAnimationFrame(animateCursor);
+}
+animateCursor();
+
+document.querySelectorAll('a, button, .acc-panel, .h-card, .stay-plate').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor && cursor.classList.add('swollen'));
+  el.addEventListener('mouseleave', () => cursor && cursor.classList.remove('swollen'));
+});
+
+// ── Cursor swaps to white over dark (.bg-black) sections & dark buttons ─────
+document.querySelectorAll('.bg-black, .btn-primary, .ve-hold-pill').forEach(el => {
+  el.addEventListener('mouseenter', () => document.body.classList.add('on-dark'));
+  el.addEventListener('mouseleave', () => document.body.classList.remove('on-dark'));
+});
+
+// ── Cursor stays/goes black over white (.btn-on-dark, .btn-ghost) buttons ─────
+document.querySelectorAll('.btn-on-dark, .btn-ghost').forEach(el => {
+  el.addEventListener('mouseenter', () => document.body.classList.add('on-light'));
+  el.addEventListener('mouseleave', () => document.body.classList.remove('on-light'));
+});
+
+// ── 'r' to reserve ──────────────────────────────────────────
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'r' && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) {
+    document.getElementById('reserve').scrollIntoView({ behavior: 'smooth' });
+  }
+});
+
+// ── Hold pill — show after hero ──────────────────────────────
+const hero = document.querySelector('.hero');
+
+const heroObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.intersectionRatio < 0.3) holdPill.classList.add('visible');
+    else holdPill.classList.remove('visible');
+  });
+}, { threshold: [0.3] });
+
+heroObserver.observe(hero);
+holdPill.addEventListener('click', () => {
+  document.getElementById('reserve').scrollIntoView({ behavior: 'smooth' });
+});
+
+// ── Scroll reveal ──────────────────────────────────────────
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('in');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ── Why-stay accordion — tap/keyboard toggle for touch & keyboard users
+//    (desktop mice get the expand purely from CSS :hover) ──────────────
+(function () {
+  const panels = document.querySelectorAll('.acc-panel');
+  if (!panels.length) return;
+
+  function setActive(panel) {
+    const isActive = panel.classList.contains('active');
+    panels.forEach(p => p.classList.remove('active'));
+    if (!isActive) panel.classList.add('active');
+  }
+
+  panels.forEach(panel => {
+    panel.addEventListener('click', () => setActive(panel));
+    panel.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        setActive(panel);
+      }
+    });
+  });
+})();
+
+// ── Amenities track — drag to scroll, snaps deterministically to the nearest card ──
+(function () {
+  const track = document.getElementById('amenitiesTrack');
+  if (!track) return;
+
+  const cards = Array.from(track.querySelectorAll('.h-card'));
+  let dragging      = false;
+  let startX        = 0;
+  let startScroll   = 0;
+  let lastX         = 0;
+  let lastTime      = 0;
+  let velocity      = 0;
+  let restoreSnapId = null;
+
+  track.addEventListener('pointerdown', (e) => {
+    if (restoreSnapId) { clearTimeout(restoreSnapId); restoreSnapId = null; }
+    dragging    = true;
+    startX      = e.clientX;
+    lastX       = e.clientX;
+    startScroll = track.scrollLeft;
+    velocity    = 0;
+    lastTime    = performance.now();
+    track.style.scrollSnapType = 'none';
+    track.classList.add('dragging');
+    track.setPointerCapture(e.pointerId);
+  }, { passive: true });
+
+  track.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const now = performance.now();
+    const dt  = now - lastTime || 1;
+    velocity  = (lastX - e.clientX) / dt;
+    lastX     = e.clientX;
+    lastTime  = now;
+    track.scrollLeft = startScroll + (startX - e.clientX);
+  }, { passive: true });
+
+  function snapToNearest() {
+    // project slightly ahead based on release speed, so a quick flick can carry to the next card
+    const target = track.scrollLeft + velocity * 120;
+    let nearest = cards[0];
+    let nearestDist = Infinity;
+    cards.forEach((card) => {
+      const dist = Math.abs(card.offsetLeft - target);
+      if (dist < nearestDist) { nearestDist = dist; nearest = card; }
+    });
+    track.scrollTo({ left: nearest.offsetLeft, behavior: 'smooth' });
+    restoreSnapId = setTimeout(() => { track.style.scrollSnapType = ''; }, 450);
+  }
+
+  function endDrag() {
+    if (!dragging) return;
+    dragging = false;
+    track.classList.remove('dragging');
+    snapToNearest();
+  }
+
+  track.addEventListener('pointerup',     endDrag);
+  track.addEventListener('pointercancel', endDrag);
+  track.addEventListener('dragstart', (e) => e.preventDefault());
+})();
+</script>
+</body>
+</html>

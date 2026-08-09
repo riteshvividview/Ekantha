@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>events & celebrations // vana ekantha</title>
+<meta name="description" content="Birthdays, anniversaries, corporate events, alumni meets, and pre-wedding functions — hosted across the Vana Ekantha estate." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap" rel="stylesheet" />
+
+<style>
+/* ──────────────────────────────────────────────────────────────
+   vana ekantha — events & celebrations
+   same tokens as Home/Stay/FarmDining, a third distinct layout language
+   ────────────────────────────────────────────────────────────── */
+
+:root {
+  --white: #ffffff;
+  --silver: #f3f4f6;
+  --ink: #121214;
+  --ink-soft: rgba(18, 18, 20, 0.62);
+  --ink-faint: rgba(18, 18, 20, 0.42);
+  --line: rgba(18, 18, 20, 0.12);
+  --line-strong: rgba(18, 18, 20, 0.22);
+  --black: #0a0a0b;
+
+  --font-display: 'Google Sans Flex', Arial, sans-serif;
+  --font-accent: 'Instrument Serif', Georgia, serif;
+  --font-body: 'DM Sans', Arial, sans-serif;
+
+  --ease-slow: cubic-bezier(0.6, 0.05, 0.3, 1);
+  --ease-soft: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  --pad-x: clamp(1rem, 5vw, 7rem);
+  --pad-y: clamp(3rem, 8vw, 9rem);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: clamp(15px, 2vw, 18px);
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--white);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (min-width: 1024px) { body { cursor: none; } }
+
+::selection { background: var(--ink); color: var(--white); }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; border: none; background: none; color: inherit; cursor: pointer; }
+img, svg { display: block; max-width: 100%; }
+
+@media (min-width: 1024px) { button, a, .hover-zone { cursor: none; } }
+
+/* ── Typography primitives ─────────────────────────────────── */
+
+.display-xl {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.2rem, 7vw, 5rem);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+.display-xl em { font-family: var(--font-accent); font-style: italic; font-weight: 400; color: #575759; }
+
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.5rem, 3.6vw, 2.7rem);
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.section-title em { font-family: var(--font-accent); font-style: italic; font-weight: 400; }
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: clamp(0.68rem, 1.4vw, 0.78rem);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.eyebrow::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--ink); display: inline-block; }
+.bg-black .eyebrow { color: rgba(255,255,255,0.7); }
+.bg-black .eyebrow::before { background: var(--white); }
+
+/* ── Cursor companion ─────────────────────────────────────── */
+
+.cursor-dot {
+  position: fixed;
+  top: 0; left: 0;
+  width: 7px; height: 7px;
+  background: var(--ink);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 320ms var(--ease-slow), height 320ms var(--ease-slow),
+              background-color 320ms var(--ease-slow), border 320ms var(--ease-slow);
+}
+.cursor-dot.swollen { width: 32px; height: 32px; background: transparent; border: 1px solid var(--ink); }
+body.on-dark .cursor-dot { background: var(--white); }
+body.on-dark .cursor-dot.swollen { background: transparent; border-color: var(--white); }
+body.on-light .cursor-dot { background: var(--ink); }
+body.on-light .cursor-dot.swollen { background: transparent; border-color: var(--ink); }
+@media (hover: none), (max-width: 1023px) {
+  .cursor-dot { display: none; }
+  body { cursor: auto; }
+}
+
+/* ── Floating enquire pill ──────────────────────────────────── */
+
+.hold-pill {
+  position: fixed;
+  bottom: 1.25rem; right: 1.25rem;
+  z-index: 150;
+  background: var(--ink);
+  color: var(--white);
+  padding: clamp(0.7rem, 2vw, 0.95rem) clamp(1.2rem, 3vw, 1.7rem);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(0.75rem, 1.8vw, 0.85rem);
+  letter-spacing: 0.01em;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  transition: opacity 500ms var(--ease-slow), transform 500ms var(--ease-slow), background 280ms;
+  max-width: calc(100vw - 2.5rem);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.14);
+}
+.hold-pill.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.hold-pill:hover { background: #2a2a2d; }
+.hold-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--white); display: block; flex-shrink: 0; }
+
+/* ── Buttons ───────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: clamp(0.85rem, 2vw, 1.05rem) clamp(1.5rem, 3vw, 2rem);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(0.85rem, 1.8vw, 0.95rem);
+  letter-spacing: 0.005em;
+  white-space: nowrap;
+  transition: background 260ms, color 260ms, border-color 260ms, transform 320ms var(--ease-slow);
+}
+.btn-primary { background: var(--ink); color: var(--white); }
+.btn-primary:hover { background: #2a2a2d; transform: translateY(-2px); }
+.btn-ghost { background: var(--white); color: var(--ink); border: 1px solid var(--line-strong); }
+.btn-ghost:hover { border-color: var(--ink); transform: translateY(-2px); }
+
+/* ── Generic section frame ─────────────────────────────────── */
+
+section { padding: var(--pad-y) var(--pad-x); position: relative; }
+.bg-silver { background: var(--silver); }
+.bg-white { background: var(--white); }
+.bg-black { background: var(--black); color: var(--white); }
+
+.section-head { margin-bottom: clamp(2.25rem, 5.5vw, 4.5rem); max-width: 640px; }
+.section-head p { font-family: var(--font-body); font-size: clamp(0.92rem, 2.1vw, 1.05rem); line-height: 1.7; color: var(--ink-soft); margin-top: 0.75rem; }
+
+/* ════════════════════════════════════════════════════════════
+   01. BANNER — full-bleed dark hero with scrolling marquee
+   ════════════════════════════════════════════════════════════ */
+
+.ev-hero {
+  background: var(--black);
+  color: var(--white);
+  padding: clamp(4rem, 10vh, 6rem) var(--pad-x) 0;
+  overflow: hidden;
+}
+
+.ev-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 999px;
+  padding: 0.5rem 1.1rem 0.5rem 0.5rem;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(0.72rem, 1.6vw, 0.82rem);
+  color: rgba(255,255,255,0.7);
+  margin-bottom: clamp(1.5rem, 4vw, 2rem);
+}
+.ev-hero-badge .dot { width: 22px; height: 22px; border-radius: 50%; background: var(--white); color: var(--black); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; }
+
+.ev-hero-inner { max-width: 900px; }
+.ev-hero h1 { color: var(--white); max-width: 12ch; margin-bottom: clamp(1.25rem, 3vw, 2rem); }
+.ev-hero-sub { font-family: var(--font-body); font-size: clamp(0.95rem, 2.1vw, 1.15rem); line-height: 1.75; color: rgba(255,255,255,0.6); max-width: 52ch; margin-bottom: clamp(2rem, 5vw, 3rem); }
+.ev-hero-ctas { display: flex; gap: 0.9rem; flex-wrap: wrap; margin-bottom: clamp(2.5rem, 6vw, 4rem); }
+
+.ev-hero .btn-outline { background: transparent; color: var(--white); border: 1px solid rgba(255,255,255,0.28); }
+.ev-hero .btn-outline:hover { border-color: rgba(255,255,255,0.6); transform: translateY(-2px); }
+.ev-hero .btn-white { background: var(--white); color: var(--black); }
+.ev-hero .btn-white:hover { background: var(--silver); transform: translateY(-2px); }
+
+/* Scrolling marquee strip */
+.marquee {
+  border-top: 1px solid rgba(255,255,255,0.14);
+  overflow: hidden;
+  padding: clamp(1.25rem, 3vw, 2rem) 0;
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  gap: clamp(2rem, 5vw, 4rem);
+  animation: marquee-scroll 26s linear infinite;
+}
+.marquee-track span {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.2rem, 4vw, 2.4rem);
+  letter-spacing: -0.01em;
+  color: rgba(255,255,255,0.85);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: clamp(2rem, 5vw, 4rem);
+}
+.marquee-track span::after { content: '•'; color: rgba(255,255,255,0.3); margin-left: clamp(2rem, 5vw, 4rem); }
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+}
+
+/* ════════════════════════════════════════════════════════════
+   02. EVENTS WE HOST — horizontal expanding panels
+   ════════════════════════════════════════════════════════════ */
+
+.panels {
+  display: flex;
+  gap: 0.5rem;
+  height: clamp(360px, 46vw, 460px);
+}
+.panel {
+  position: relative;
+  flex: 1;
+  background: var(--ink);
+  border-radius: 18px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: flex 550ms var(--ease-slow);
+  display: flex;
+  align-items: flex-end;
+  padding: clamp(1.25rem, 2.5vw, 1.75rem);
+}
+.panel:hover, .panel.active { flex: 3.2; }
+.panel-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  transition: transform 700ms var(--ease-slow);
+}
+.panel:hover .panel-media, .panel.active .panel-media { transform: scale(1.05); }
+.panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(10,10,11,0.05) 0%, rgba(10,10,11,0.55) 65%, rgba(10,10,11,0.85) 100%);
+  transition: background 450ms var(--ease-slow);
+}
+.panel:hover::before, .panel.active::before {
+  background: linear-gradient(180deg, rgba(10,10,11,0.1) 0%, rgba(10,10,11,0.7) 50%, rgba(10,10,11,0.92) 100%);
+}
+.panel-num {
+  position: absolute;
+  top: clamp(1rem, 2.5vw, 1.5rem);
+  left: clamp(1.25rem, 2.5vw, 1.75rem);
+  z-index: 2;
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  color: rgba(255,255,255,0.55);
+  transition: color 400ms;
+}
+.panel:hover .panel-num, .panel.active .panel-num { color: rgba(255,255,255,0.85); }
+.panel-content { position: relative; z-index: 2; }
+.panel-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1rem, 2.2vw, 1.4rem);
+  color: var(--white);
+  letter-spacing: -0.01em;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  /* collapsing: flip back to vertical immediately (no delay) so the box
+     shrinks with the compact vertical label already in place, instead of
+     horizontal text getting squeezed/wrapped as the panel narrows */
+  transition: writing-mode 0ms, color 200ms, margin-bottom 200ms;
+  white-space: nowrap;
+}
+.panel:hover .panel-title, .panel.active .panel-title {
+  writing-mode: horizontal-tb;
+  transform: none;
+  color: var(--white);
+  margin-bottom: 0.6rem;
+  /* expanding: hold off flipping to horizontal text until the panel has
+     mostly finished growing, so it never lays out inside a too-narrow box */
+  transition: writing-mode 0ms 320ms, color 300ms 320ms, margin-bottom 300ms 320ms;
+}
+.panel-desc {
+  font-family: var(--font-body);
+  font-size: clamp(0.8rem, 1.7vw, 0.9rem);
+  line-height: 1.6;
+  color: rgba(255,255,255,0.7);
+  max-width: 34ch;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  /* collapsing: fade/collapse out fast, no delay, before the panel shrinks */
+  transition: opacity 180ms, max-height 180ms;
+}
+.panel:hover .panel-desc, .panel.active .panel-desc {
+  opacity: 1;
+  max-height: 200px;
+  /* expanding: only reveal once the panel is nearly full width */
+  transition: opacity 320ms 320ms, max-height 320ms 320ms;
+}
+
+/* Mobile fallback: stack panels vertically, always expanded */
+@media (max-width: 780px) {
+  .panels { flex-direction: column; height: auto; }
+  .panel { flex: none !important; padding: 1.5rem; min-height: 220px; }
+  .panel-title { writing-mode: horizontal-tb !important; transform: none !important; margin-bottom: 0.5rem; }
+  .panel-desc { opacity: 1 !important; max-height: none !important; }
+  .panel::before { background: linear-gradient(180deg, rgba(10,10,11,0.15) 0%, rgba(10,10,11,0.55) 60%, rgba(10,10,11,0.85) 100%) !important; }
+}
+
+/* ════════════════════════════════════════════════════════════
+   03. VENUE FEATURES — zebra ledger rows
+   ════════════════════════════════════════════════════════════ */
+
+.ledger { max-width: 980px; }
+.ledger-row {
+  display: grid;
+  grid-template-columns: 44px 1fr 2fr;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  align-items: center;
+  padding: clamp(1.1rem, 2.5vw, 1.5rem) clamp(1rem, 2vw, 1.5rem);
+  border-bottom: 1px solid var(--line);
+}
+.ledger-row:nth-child(odd) { background: var(--silver); border-radius: 4px; }
+@media (max-width: 640px) {
+  .ledger-row { grid-template-columns: 36px 1fr; }
+  .ledger-desc { grid-column: 1 / -1; margin-top: 0.5rem; }
+}
+
+.ledger-icon svg { width: 28px; height: 28px; stroke: var(--ink); fill: none; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+.ledger-title { font-family: var(--font-display); font-weight: 500; font-size: clamp(0.92rem, 2vw, 1.05rem); color: var(--ink); }
+.ledger-desc { font-family: var(--font-body); font-size: clamp(0.82rem, 1.8vw, 0.92rem); color: var(--ink-soft); line-height: 1.55; }
+
+/* ════════════════════════════════════════════════════════════
+   04. EVENT GALLERY — scattered photo-stack collage
+   ════════════════════════════════════════════════════════════ */
+
+.collage {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 3vw, 2rem);
+  justify-content: center;
+  padding: clamp(1rem, 3vw, 2rem) 0;
+}
+.collage-plate {
+  width: clamp(150px, 24vw, 210px);
+  aspect-ratio: 4/5;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 12px 28px rgba(18,18,20,0.1);
+  overflow: hidden;
+  transition: transform 400ms var(--ease-slow), box-shadow 400ms;
+}
+.collage-plate img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.collage-plate:hover { transform: rotate(0deg) scale(1.06) !important; box-shadow: 0 20px 40px rgba(18,18,20,0.18); z-index: 5; }
+.collage-plate:nth-child(1) { transform: rotate(-4deg); }
+.collage-plate:nth-child(2) { transform: rotate(3deg); margin-top: clamp(1rem, 3vw, 2rem); }
+.collage-plate:nth-child(3) { transform: rotate(-2deg); }
+.collage-plate:nth-child(4) { transform: rotate(5deg); margin-top: clamp(0.5rem, 2vw, 1rem); }
+.collage-plate:nth-child(5) { transform: rotate(-5deg); }
+.collage-plate:nth-child(6) { transform: rotate(2deg); margin-top: clamp(1rem, 3vw, 2rem); }
+.collage-caption { font-family: var(--font-body); font-size: 0.7rem; color: var(--ink-faint); text-align: center; margin-top: 0.6rem; }
+.collage-item { display: flex; flex-direction: column; align-items: center; }
+
+/* ════════════════════════════════════════════════════════════
+   05. CUSTOMISATION OPTIONS — grouped chip clusters
+   ════════════════════════════════════════════════════════════ */
+
+.custom-groups { display: flex; flex-direction: column; gap: clamp(2rem, 4vw, 3rem); }
+.custom-group-label {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1rem, 2.2vw, 1.25rem);
+  color: var(--ink);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+.custom-group-label span { font-family: var(--font-body); font-weight: 500; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); }
+.chip-row { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  font-family: var(--font-body);
+  font-size: clamp(0.78rem, 1.7vw, 0.88rem);
+  color: var(--ink);
+  transition: background 220ms, color 220ms, border-color 220ms;
+}
+.chip:hover { background: var(--ink); color: var(--white); border-color: var(--ink); }
+.chip .chip-plus { font-family: var(--font-body); font-weight: 600; opacity: 0.5; }
+
+/* ════════════════════════════════════════════════════════════
+   06. ENQUIRY FORM — light, full multi-field editorial form
+   ════════════════════════════════════════════════════════════ */
+
+.enquiry-inner { max-width: 760px; margin: 0 auto; }
+.enquiry-form { margin-top: clamp(2rem, 5vw, 3rem); display: flex; flex-direction: column; }
+
+.eq-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 200px) 1fr;
+  gap: clamp(1rem, 3vw, 3rem);
+  padding: clamp(1.25rem, 3vw, 1.75rem) 0;
+  border-bottom: 1px solid var(--line);
+  align-items: start;
+}
+.eq-row:first-child { border-top: 1px solid var(--line); }
+@media (max-width: 560px) { .eq-row { grid-template-columns: 1fr; gap: 0.5rem; } }
+
+.eq-label { font-family: var(--font-body); font-weight: 600; font-size: clamp(0.8rem, 1.8vw, 0.9rem); color: var(--ink); padding-top: 0.4rem; }
+.eq-label span { display: block; font-weight: 400; font-size: 0.78rem; color: var(--ink-faint); margin-top: 0.25rem; }
+
+.eq-input input, .eq-input textarea, .eq-input select {
+  width: 100%;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1rem, 2.6vw, 1.3rem);
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--line-strong);
+  padding: 0.4rem 0 0.6rem;
+  outline: none;
+  transition: border-color 300ms var(--ease-slow);
+  resize: none;
+}
+.eq-input input::placeholder, .eq-input textarea::placeholder { color: var(--ink-faint); }
+.eq-input input:focus, .eq-input textarea:focus, .eq-input select:focus { border-color: var(--ink); }
+.eq-input textarea { min-height: 70px; font-family: var(--font-body); font-size: clamp(0.9rem, 2vw, 1.05rem); line-height: 1.6; }
+
+.enquiry-submit-row { padding-top: clamp(2rem, 5vw, 3rem); display: flex; align-items: center; gap: clamp(1.25rem, 3vw, 2rem); flex-wrap: wrap; }
+.enquiry-submit-note { font-family: var(--font-body); font-size: clamp(0.78rem, 1.7vw, 0.85rem); color: var(--ink-soft); }
+
+/* ── Footer ────────────────────────────────────────────────── */
+
+footer { background: var(--white); padding: clamp(3rem, 7vw, 5rem) var(--pad-x) clamp(1.5rem, 4vw, 3rem); text-align: center; }
+footer .sig { font-family: var(--font-display); font-weight: 500; font-size: clamp(0.9rem, 2vw, 1.05rem); letter-spacing: -0.01em; line-height: 1.8; color: var(--ink); margin-bottom: clamp(1.5rem, 4vw, 3rem); }
+footer .sig .acc { color: var(--ink-faint); font-family: var(--font-body); }
+footer .links { display: flex; justify-content: center; gap: clamp(1rem, 3vw, 2.5rem); flex-wrap: wrap; font-family: var(--font-body); font-weight: 500; font-size: clamp(0.72rem, 1.6vw, 0.8rem); color: var(--ink-soft); margin-bottom: clamp(1.5rem, 4vw, 2.5rem); }
+footer .links a:hover { color: var(--ink); }
+footer .insta { font-family: var(--font-body); font-size: clamp(0.72rem, 1.6vw, 0.8rem); color: var(--ink-faint); }
+
+/* ── Scroll reveal ──────────────────────────────────────────── */
+
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 900ms var(--ease-slow), transform 900ms var(--ease-slow); }
+.reveal.in { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .reveal { opacity: 1; transform: none; }
+}
+
+/* ── Extra-small polish ───────────────────────────────────── */
+
+@media (max-width: 380px) {
+  :root { --pad-x: 0.75rem; --pad-y: 2.5rem; }
+  .hold-pill { right: 0.75rem; bottom: 0.75rem; }
+  footer .links { gap: 0.75rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Cursor companion ─────────────────────────────────────── -->
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+
+<!-- ── Floating "enquire" pill ───────────────────────────────── -->
+<button class="hold-pill" id="holdPill">enquire now</button>
+
+<!-- ── 01. Banner — dark hero + scrolling marquee ────────────── -->
+<section class="ev-hero" id="top">
+  <div class="ev-hero-inner">
+    <div class="ev-hero-badge reveal">
+      <span class="dot">VE</span>
+      Events & Celebrations
+    </div>
+
+    <h1 class="display-xl reveal">Host It <em>Here.</em></h1>
+
+    <p class="ev-hero-sub reveal">The estate opens itself to gatherings that deserve more than a banquet hall — open lawns, a private events team, and eleven acres of the Deccan as the backdrop.</p>
+
+    <div class="ev-hero-ctas reveal">
+      <a href="#enquiry" class="btn btn-white">Enquire Now →</a>
+      <a href="#features" class="btn btn-outline">See Venue Features</a>
+    </div>
+  </div>
+
+  <div class="marquee reveal" aria-hidden="true">
+    <div class="marquee-track">
+      <span>Birthdays<span></span></span>
+      <span>Anniversaries<span></span></span>
+      <span>Corporate Events<span></span></span>
+      <span>Alumni Meets<span></span></span>
+      <span>Pre-Wedding Functions<span></span></span>
+      <span>Birthdays<span></span></span>
+      <span>Anniversaries<span></span></span>
+      <span>Corporate Events<span></span></span>
+      <span>Alumni Meets<span></span></span>
+      <span>Pre-Wedding Functions<span></span></span>
+    </div>
+  </div>
+</section>
+
+<!-- ── 02. Events We Host — expanding panels ─────────────────── -->
+<section id="events-we-host">
+  <div class="section-head reveal">
+    <span class="eyebrow">events we host</span>
+    <h2 class="section-title">five kinds of <em>gathering.</em></h2>
+    <p>Hover a panel — or on smaller screens, just keep scrolling.</p>
+  </div>
+
+  <div class="panels reveal">
+    <div class="panel" tabindex="0">
+      <img class="panel-media" src="https://bisque-lobster-585068.hostingersite.com/wp-content/uploads/2026/07/beautiful-jungle-party-decorations-1-scaled.jpg" alt="" loading="lazy" />
+      <div class="panel-num">01</div>
+      <div class="panel-content">
+        <div class="panel-title">Birthdays</div>
+        <div class="panel-desc">Candles under the gulmohar, cake at dusk — milestone or otherwise, sized to however big you want it.</div>
+      </div>
+    </div>
+    <div class="panel" tabindex="0">
+      <img class="panel-media" src="https://bisque-lobster-585068.hostingersite.com/wp-content/uploads/2026/07/aerial-view-beautiful-outdoor-wedding-ceremony-scaled.jpg" alt="" loading="lazy" />
+      <div class="panel-num">02</div>
+      <div class="panel-content">
+        <div class="panel-title">Anniversaries</div>
+        <div class="panel-desc">A quiet renewal of vows, or a full celebration with everyone who watched it happen the first time.</div>
+      </div>
+    </div>
+    <div class="panel" tabindex="0">
+      <img class="panel-media" src="https://bisque-lobster-585068.hostingersite.com/wp-content/uploads/2026/07/beautiful-wedding-table-assortment-outside-scaled.jpg" alt="" loading="lazy" />
+      <div class="panel-num">03</div>
+      <div class="panel-content">
+        <div class="panel-title">Corporate Events</div>
+        <div class="panel-desc">Offsites, team days, and year-end parties that trade the conference room for open lawns.</div>
+      </div>
+    </div>
+    <div class="panel" tabindex="0">
+      <img class="panel-media" src="https://bisque-lobster-585068.hostingersite.com/wp-content/uploads/2026/07/rose-flower-scaled.jpg" alt="" loading="lazy" />
+      <div class="panel-num">04</div>
+      <div class="panel-content">
+        <div class="panel-title">Alumni Meets</div>
+        <div class="panel-desc">Reunions for classes, teams, and colleges — long tables, and longer conversations.</div>
+      </div>
+    </div>
+    <div class="panel" tabindex="0">
+      <img class="panel-media" src="https://bisque-lobster-585068.hostingersite.com/wp-content/uploads/2026/07/full-shot-smiley-women-posing-together-scaled.jpg" alt="" loading="lazy" />
+      <div class="panel-num">05</div>
+      <div class="panel-content">
+        <div class="panel-title">Pre-Wedding Functions</div>
+        <div class="panel-desc">Mehendi, sangeet, haldi — the land holds every kind of ceremony well.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 03. Venue Features — zebra ledger ──────────────────────── -->
+<section class="bg-silver" id="features">
+  <div class="section-head reveal">
+    <span class="eyebrow">venue features</span>
+    <h2 class="section-title">what the estate <em>provides.</em></h2>
+  </div>
+
+  <div class="ledger">
+    <div class="ledger-row reveal">
+      <div class="ledger-icon"><svg viewBox="0 0 48 48"><ellipse cx="24" cy="38" rx="18" ry="5"/><path d="M8,38 Q8,26 24,26 Q40,26 40,38"/></svg></div>
+      <div class="ledger-title">Open Lawns</div>
+      <div class="ledger-desc">Wide, unhurried grass for anything from a badminton net to a two-hundred-person reception.</div>
+    </div>
+    <div class="ledger-row reveal">
+      <div class="ledger-icon"><svg viewBox="0 0 48 48"><path d="M8,38 L8,20 L24,10 L40,20 L40,38 Z"/><line x1="8" y1="38" x2="40" y2="38"/></svg></div>
+      <div class="ledger-title">Covered Pavilion</div>
+      <div class="ledger-desc">A large open-sided pavilion, weatherproof for both peak sun and monsoon evenings.</div>
+    </div>
+    <div class="ledger-row reveal">
+      <div class="ledger-icon"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="4" fill="currentColor" stroke="none"/><path d="M24,12 L24,4 M24,44 L24,36 M12,24 L4,24 M44,24 L36,24 M15,15 L9,9 M33,33 L39,39 M15,33 L9,39 M33,15 L39,9"/></svg></div>
+      <div class="ledger-title">Sound &amp; Lighting Setup</div>
+      <div class="ledger-desc">In-house sound system and warm string lighting across the lawns and pavilion, ready without a rental truck.</div>
+    </div>
+    <div class="ledger-row reveal">
+      <div class="ledger-icon"><svg viewBox="0 0 48 48"><rect x="8" y="18" width="32" height="16" rx="2"/><circle cx="16" cy="38" r="3"/><circle cx="32" cy="38" r="3"/></svg></div>
+      <div class="ledger-title">Ample Parking</div>
+      <div class="ledger-desc">On-site parking for large groups, with attendants for events over fifty guests.</div>
+    </div>
+    <div class="ledger-row reveal">
+      <div class="ledger-icon"><svg viewBox="0 0 48 48"><ellipse cx="24" cy="34" rx="16" ry="5"/><path d="M10,34 Q9,22 24,22 Q39,22 38,34"/></svg></div>
+      <div class="ledger-title">In-House Catering</div>
+      <div class="ledger-desc">Farm-sourced menus built around your event, from a simple tea service to a full multi-course dinner.</div>
+    </div>
+    <div class="ledger-row reveal">
+      <div class="ledger-icon"><svg viewBox="0 0 48 48"><path d="M25,115" /><rect x="10" y="20" width="28" height="18" rx="2" transform="translate(0,-2)"/><path d="M15,20 L15,13 Q15,7 24,7 Q33,7 33,13 L33,20"/></svg></div>
+      <div class="ledger-title">Overnight Stay Options</div>
+      <div class="ledger-desc">Mango House, Stone House, or the Full House — for guests who'd rather not drive home after.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 04. Event Gallery — scattered collage ──────────────────── -->
+<section id="gallery">
+  <div class="section-head reveal">
+    <span class="eyebrow">event gallery</span>
+    <h2 class="section-title">a few <em>evenings.</em></h2>
+  </div>
+
+  <div class="collage">
+    <div class="collage-item reveal">
+      <div class="collage-plate"><img src="https://bisque-lobster-585068.hostingersite.com/wp-content/uploads/2026/07/evening-image-5-scaled.jpg" alt="a birthday, under the gulmohar" loading="lazy" /></div>
+      <p class="collage-caption">a birthday, under the gulmohar</p>
+    </div>
+    <div class="collage-item reveal">
+      <div class="collage-plate"><img src="https://bisque-lobster-585068.hostingersite.com/wp-content/uploads/2026/07/evening-image-6-scaled.jpg" alt="the pavilion, lit for the evening" loading="lazy" /></div>
+      <p class="collage-caption">the pavilion, lit for the evening</p>
+    </div>
+    <div class="collage-item reveal">
+      <div class="collage-plate"><img src="https://bisque-lobster-585068.hostingersite.com/wp-content/uploads/2026/07/evening-image-1-scaled.jpg" alt="a reunion, one long table" loading="lazy" /></div>
+      <p class="collage-caption">a reunion, one long table</p>
+    </div>
+    <div class="collage-item reveal">
+      <div class="collage-plate"><img src="https://bisque-lobster-585068.hostingersite.com/wp-content/uploads/2026/07/evening-image-2-scaled.jpg" alt="the dance floor, at dusk" loading="lazy" /></div>
+      <p class="collage-caption">the dance floor, at dusk</p>
+    </div>
+    <div class="collage-item reveal">
+      <div class="collage-plate"><img src="https://bisque-lobster-585068.hostingersite.com/wp-content/uploads/2026/07/evening-image-3-scaled.jpg" alt="the bonfire circle" loading="lazy" /></div>
+      <p class="collage-caption">the bonfire circle</p>
+    </div>
+    <div class="collage-item reveal">
+      <div class="collage-plate"><img src="https://bisque-lobster-585068.hostingersite.com/wp-content/uploads/2026/07/evening-image-4-scaled.jpg" alt="the estate, from above" loading="lazy" /></div>
+      <p class="collage-caption">the estate, from above</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 05. Customisation Options — chip clusters ─────────────── -->
+<section class="bg-silver" id="customise">
+  <div class="section-head reveal">
+    <span class="eyebrow">customisation options</span>
+    <h2 class="section-title">shape the evening <em>your way.</em></h2>
+    <p>Pick and mix — none of these come as a fixed package.</p>
+  </div>
+
+  <div class="custom-groups">
+    <div class="reveal">
+      <div class="custom-group-label">Decor <span>01</span></div>
+      <div class="chip-row">
+        <span class="chip"><span class="chip-plus">+</span>Floral arches</span>
+        <span class="chip"><span class="chip-plus">+</span>Fairy lights</span>
+        <span class="chip"><span class="chip-plus">+</span>Themed table settings</span>
+        <span class="chip"><span class="chip-plus">+</span>Photo backdrops</span>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="custom-group-label">Catering <span>02</span></div>
+      <div class="chip-row">
+        <span class="chip"><span class="chip-plus">+</span>Live counters</span>
+        <span class="chip"><span class="chip-plus">+</span>Regional menus</span>
+        <span class="chip"><span class="chip-plus">+</span>Dietary-specific spreads</span>
+        <span class="chip"><span class="chip-plus">+</span>Dessert stations</span>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="custom-group-label">Entertainment <span>03</span></div>
+      <div class="chip-row">
+        <span class="chip"><span class="chip-plus">+</span>DJ &amp; sound</span>
+        <span class="chip"><span class="chip-plus">+</span>Live acoustic sets</span>
+        <span class="chip"><span class="chip-plus">+</span>Bonfire &amp; games</span>
+        <span class="chip"><span class="chip-plus">+</span>Outdoor cinema screening</span>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="custom-group-label">Logistics <span>04</span></div>
+      <div class="chip-row">
+        <span class="chip"><span class="chip-plus">+</span>Guest transport</span>
+        <span class="chip"><span class="chip-plus">+</span>Overnight stay blocks</span>
+        <span class="chip"><span class="chip-plus">+</span>Extended hours</span>
+        <span class="chip"><span class="chip-plus">+</span>On-ground event coordinator</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 06. Enquiry Form — light editorial form ────────────────── -->
+<section id="enquiry">
+  <div class="enquiry-inner">
+    <div class="section-head reveal" style="margin-bottom: 0;">
+      <span class="eyebrow">enquiry form</span>
+      <h2 class="section-title">tell us what you're <em>planning.</em></h2>
+      <p>No quote engine, no auto-reply. A real person on the events team will write back within a day.</p>
+    </div>
+
+    <form class="enquiry-form reveal" onsubmit="event.preventDefault();">
+      <div class="eq-row">
+        <label class="eq-label" for="eq-name">Your Name</label>
+        <div class="eq-input"><input id="eq-name" type="text" placeholder="first and last name" autocomplete="name" /></div>
+      </div>
+      <div class="eq-row">
+        <label class="eq-label" for="eq-type">Event Type<span>birthday, corporate, alumni, pre-wedding…</span></label>
+        <div class="eq-input"><input id="eq-type" type="text" placeholder="e.g. corporate offsite" /></div>
+      </div>
+      <div class="eq-row">
+        <label class="eq-label" for="eq-guests">Guest Count</label>
+        <div class="eq-input"><input id="eq-guests" type="text" placeholder="approximate number" /></div>
+      </div>
+      <div class="eq-row">
+        <label class="eq-label" for="eq-date">Preferred Date</label>
+        <div class="eq-input"><input id="eq-date" type="text" placeholder="e.g. 14 june, or a flexible weekend" /></div>
+      </div>
+      <div class="eq-row">
+        <label class="eq-label" for="eq-contact">How To Reach You</label>
+        <div class="eq-input"><input id="eq-contact" type="text" placeholder="email or phone" autocomplete="email" /></div>
+      </div>
+      <div class="eq-row">
+        <label class="eq-label" for="eq-message">Tell Us More<span>optional</span></label>
+        <div class="eq-input"><textarea id="eq-message" placeholder="anything about the occasion that would help us plan"></textarea></div>
+      </div>
+
+      <div class="enquiry-submit-row">
+        <button type="submit" class="btn btn-primary">Send Enquiry →</button>
+        <p class="enquiry-submit-note">We'll write back within 24 hours.</p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ── Footer ───────────────────────────────────────────────── -->
+<footer>
+  <div class="sig">
+    vana ekantha <span class="acc">//</span> forest solitude<br>
+    <span class="acc">a farmstay for intentional disconnection</span><br>
+    <span class="acc">est. 2024 // the deccan, india</span>
+  </div>
+  <nav class="links">
+    <a href="/">home</a>
+    <a href="/stay">stay</a>
+    <a href="/farm-dining">farm dining</a>
+    <a href="/journal">the journal</a>
+    <a href="#">terms</a>
+  </nav>
+  <div class="insta">find us, quietly → @vanaekantha</div>
+</footer>
+
+<script>
+/* ──────────────────────────────────────────────────────────────
+   vana ekantha — events & celebrations interactions
+   ────────────────────────────────────────────────────────────── */
+
+const cursor = document.getElementById('cursorDot');
+let mouseX = 0, mouseY = 0, currX = 0, currY = 0;
+
+window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+
+function animateCursor() {
+  currX += (mouseX - currX) * 0.18;
+  currY += (mouseY - currY) * 0.18;
+  if (cursor) cursor.style.transform = `translate(${currX}px, ${currY}px) translate(-50%, -50%)`;
+  requestAnimationFrame(animateCursor);
+}
+animateCursor();
+
+document.querySelectorAll('a, button, .panel, .chip, .collage-plate').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor && cursor.classList.add('swollen'));
+  el.addEventListener('mouseleave', () => cursor && cursor.classList.remove('swollen'));
+});
+
+document.querySelectorAll('.bg-black, .btn-primary, .hold-pill, .ev-hero').forEach(el => {
+  el.addEventListener('mouseenter', () => document.body.classList.add('on-dark'));
+  el.addEventListener('mouseleave', () => document.body.classList.remove('on-dark'));
+});
+
+document.querySelectorAll('.btn-ghost, .ev-hero .btn-white').forEach(el => {
+  el.addEventListener('mouseenter', () => document.body.classList.add('on-light'));
+  el.addEventListener('mouseleave', () => document.body.classList.remove('on-light'));
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'r' && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) {
+    document.getElementById('enquiry').scrollIntoView({ behavior: 'smooth' });
+  }
+});
+
+const holdPill = document.getElementById('holdPill');
+const hero = document.querySelector('.ev-hero');
+
+const heroObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.intersectionRatio < 0.3) holdPill.classList.add('visible');
+    else holdPill.classList.remove('visible');
+  });
+}, { threshold: [0.3] });
+heroObserver.observe(hero);
+
+holdPill.addEventListener('click', () => {
+  document.getElementById('enquiry').scrollIntoView({ behavior: 'smooth' });
+});
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('in');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ── Expanding panels — click/tap to pin open on touch devices ──
+document.querySelectorAll('.panel').forEach(panel => {
+  panel.addEventListener('click', () => {
+    document.querySelectorAll('.panel').forEach(p => { if (p !== panel) p.classList.remove('active'); });
+    panel.classList.toggle('active');
+  });
+});
+</script>
+</body>
+</html>

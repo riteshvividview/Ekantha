@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>stone house // vana ekantha</title>
+<meta name="description" content="Stone House — the original stone-walled house, 2–4 adults, two bedrooms + fireplace, from ₹19,600/night." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap" rel="stylesheet" />
+
+<style> 
+/* ──────────────────────────────────────────────────────────────
+   vana ekantha — stone house
+   minimal, editorial-clean — fully responsive ≥ 300px
+   ────────────────────────────────────────────────────────────── */
+
+:root {
+  --white: #ffffff;
+  --silver: #f3f4f6;
+  --ink: #121214;
+  --ink-soft: rgba(18, 18, 20, 0.62);
+  --ink-faint: rgba(18, 18, 20, 0.42);
+  --line: rgba(18, 18, 20, 0.12);
+  --line-strong: rgba(18, 18, 20, 0.22);
+  --black: #0a0a0b;
+
+  --font-display: 'Google Sans Flex', Arial, sans-serif;
+  --font-accent: 'Instrument Serif', Georgia, serif;
+  --font-body: 'DM Sans', Arial, sans-serif;
+
+  --ease-slow: cubic-bezier(0.6, 0.05, 0.3, 1);
+  --ease-soft: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  --pad-x: clamp(1rem, 5vw, 7rem);
+  --pad-y: clamp(3rem, 8vw, 9rem);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: clamp(15px, 2vw, 18px);
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--white);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (min-width: 1024px) { body { cursor: none; } }
+
+::selection { background: var(--ink); color: var(--white); }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; border: none; background: none; color: inherit; cursor: pointer; }
+img, svg { display: block; max-width: 100%; }
+
+@media (min-width: 1024px) { button, a, .hover-zone { cursor: none; } }
+
+/* ── Typography primitives ─────────────────────────────────── */
+
+.display-xl {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.1rem, 6.4vw, 4.6rem);
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+.display-xl em { font-family: var(--font-accent); font-style: italic; font-weight: 400; color: var(--ink); }
+
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.5rem, 3.6vw, 2.7rem);
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.section-title em { font-family: var(--font-accent); font-style: italic; font-weight: 400; }
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: clamp(0.68rem, 1.4vw, 0.78rem);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.eyebrow::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--ink); display: inline-block; }
+.bg-black .eyebrow { color: rgba(255,255,255,0.7); }
+.bg-black .eyebrow::before { background: var(--white); }
+
+/* ── Cursor companion ─────────────────────────────────────── */
+
+.cursor-dot {
+  position: fixed;
+  top: 0; left: 0;
+  width: 7px; height: 7px;
+  background: var(--ink);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 320ms var(--ease-slow), height 320ms var(--ease-slow),
+              background-color 320ms var(--ease-slow), border 320ms var(--ease-slow);
+}
+.cursor-dot.swollen { width: 32px; height: 32px; background: transparent; border: 1px solid var(--ink); }
+body.on-dark .cursor-dot { background: var(--white); }
+body.on-dark .cursor-dot.swollen { background: transparent; border-color: var(--white); }
+body.on-light .cursor-dot { background: var(--ink); }
+body.on-light .cursor-dot.swollen { background: transparent; border-color: var(--ink); }
+@media (hover: none), (max-width: 1023px) {
+  .cursor-dot { display: none; }
+  body { cursor: auto; }
+}
+
+/* ── Hold-a-date pill ───────────────────────────────────────── */
+
+.hold-pill {
+  position: fixed;
+  bottom: 1.25rem; right: 1.25rem;
+  z-index: 150;
+  background: var(--ink);
+  color: var(--white);
+  padding: clamp(0.7rem, 2vw, 0.95rem) clamp(1.2rem, 3vw, 1.7rem);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(0.75rem, 1.8vw, 0.85rem);
+  letter-spacing: 0.01em;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  transition: opacity 500ms var(--ease-slow), transform 500ms var(--ease-slow), background 280ms;
+  max-width: calc(100vw - 2.5rem);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.14);
+}
+.hold-pill.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.hold-pill:hover { background: #2a2a2d; }
+.hold-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--white); display: block; flex-shrink: 0; }
+
+/* ── Buttons ───────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: clamp(0.85rem, 2vw, 1.05rem) clamp(1.5rem, 3vw, 2rem);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(0.85rem, 1.8vw, 0.95rem);
+  letter-spacing: 0.005em;
+  white-space: nowrap;
+  transition: background 260ms, color 260ms, border-color 260ms, transform 320ms var(--ease-slow);
+}
+.btn-primary { background: var(--ink); color: var(--white); }
+.btn-primary:hover { background: #2a2a2d; transform: translateY(-2px); }
+.btn-ghost { background: var(--white); color: var(--ink); border: 1px solid var(--line-strong); }
+.btn-ghost:hover { border-color: var(--ink); transform: translateY(-2px); }
+.btn-on-dark { background: var(--white); color: var(--black); }
+.btn-on-dark:hover { background: var(--silver); transform: translateY(-2px); }
+
+/* ── Generic section frame ─────────────────────────────────── */
+
+section { padding: var(--pad-y) var(--pad-x); position: relative; }
+.bg-silver { background: var(--silver); }
+.bg-white { background: var(--white); }
+.bg-black { background: var(--black); color: var(--white); }
+
+.section-head {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  align-items: end;
+  margin-bottom: clamp(2.25rem, 5.5vw, 4.5rem);
+}
+@media (max-width: 700px) { .section-head { grid-template-columns: 1fr; } }
+.section-head p { font-family: var(--font-body); font-size: clamp(0.92rem, 2.1vw, 1.05rem); line-height: 1.7; color: var(--ink-soft); max-width: 46ch; }
+.bg-black .section-head p { color: rgba(255,255,255,0.62); }
+
+/* ── Hero ──────────────────────────────────────────────────── */
+
+.hero {
+  min-height: 88vh;
+  min-height: 88svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: clamp(4rem, 10vh, 6rem) var(--pad-x) clamp(3rem, 8vh, 5rem);
+  background: var(--silver);
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.5rem 1.1rem 0.5rem 0.5rem;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(0.72rem, 1.6vw, 0.82rem);
+  color: var(--ink-soft);
+  margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+}
+.hero-badge .dot {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem;
+}
+
+.hero h1 { max-width: 16ch; margin-bottom: clamp(1.25rem, 3vw, 2rem); }
+
+.hero-sub {
+  font-family: var(--font-body);
+  font-size: clamp(0.95rem, 2.2vw, 1.15rem);
+  line-height: 1.7;
+  color: var(--ink-soft);
+  max-width: 52ch;
+  margin: 0 auto clamp(2rem, 5vw, 3rem);
+}
+
+.hero-facts {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.9rem, 2.5vw, 1.75rem);
+  margin-bottom: clamp(1.75rem, 4vw, 2.75rem);
+  flex-wrap: wrap;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(0.8rem, 1.8vw, 0.92rem);
+  color: var(--ink-soft);
+}
+.hero-facts span { display: inline-flex; align-items: center; gap: 0.4rem; }
+.hero-facts .amount { color: var(--ink); font-weight: 700; }
+
+.hero-ctas { display: flex; align-items: center; justify-content: center; gap: 0.9rem; flex-wrap: wrap; }
+
+/* ── Description ───────────────────────────────────────────── */
+
+.intro { padding-top: var(--pad-y); padding-bottom: var(--pad-y); }
+.intro-inner {
+  max-width: 980px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr);
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: start;
+}
+@media (max-width: 700px) { .intro-inner { grid-template-columns: 1fr; } }
+.intro-left { position: sticky; top: clamp(2rem, 5vw, 4rem); }
+@media (max-width: 700px) { .intro-left { position: static; margin-bottom: 0.5rem; } }
+.intro-pull {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.3rem, 3.2vw, 2.1rem);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-top: 1.25rem;
+}
+.intro-pull em { font-family: var(--font-accent); font-style: italic; font-weight: 400; }
+.intro-body { display: flex; flex-direction: column; gap: clamp(1.25rem, 3vw, 2rem); }
+.intro-body p { font-family: var(--font-body); font-size: clamp(0.92rem, 2.1vw, 1.05rem); line-height: 1.75; color: var(--ink-soft); }
+.intro-quote {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1rem, 2.3vw, 1.25rem);
+  line-height: 1.55;
+  color: var(--ink);
+  border-left: 2px solid var(--line-strong);
+  padding-left: clamp(1rem, 2.5vw, 1.5rem);
+}
+
+/* ── Highlights: big hero photo + stacked rows, no borders ───── */
+
+.sh-hl-layout { display: grid; grid-template-columns: 1.15fr 1fr; gap: clamp(1.5rem, 3.5vw, 3rem); align-items: stretch; }
+@media (max-width: 860px) { .sh-hl-layout { grid-template-columns: 1fr; } }
+
+.sh-hl-hero { position: relative; overflow: hidden; border-radius: 22px; min-height: 340px; isolation: isolate; }
+@media (min-width: 861px) { .sh-hl-hero { min-height: 480px; } }
+.sh-hl-hero img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 900ms var(--ease-slow); }
+.sh-hl-hero:hover img { transform: scale(1.06); }
+.sh-hl-hero-scrim { position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(10,10,11,0) 45%, rgba(10,10,11,0.78) 100%); }
+.sh-hl-hero-content { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; padding: clamp(1.5rem, 3vw, 2.25rem); color: var(--white); }
+.sh-hl-hero-badge {
+  display: inline-flex;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(0.66rem, 1.3vw, 0.74rem);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  background: rgba(255,255,255,0.16);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.sh-hl-hero-title { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.3rem, 2.8vw, 1.7rem); margin-bottom: 0.4rem; }
+.sh-hl-hero-body { font-family: var(--font-body); font-size: clamp(0.85rem, 1.8vw, 0.95rem); line-height: 1.6; color: rgba(255,255,255,0.85); max-width: 38ch; }
+
+.sh-hl-list { display: flex; flex-direction: column; gap: clamp(1.5rem, 3vw, 2rem); }
+.sh-hl-row { display: flex; align-items: center; gap: clamp(1.1rem, 2.5vw, 1.5rem); }
+
+.sh-hl-row-media { width: clamp(110px, 16vw, 150px); aspect-ratio: 1/1; flex-shrink: 0; border-radius: 16px; overflow: hidden; }
+.sh-hl-row-media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 700ms var(--ease-slow); }
+.sh-hl-row:hover .sh-hl-row-media img { transform: scale(1.1); }
+
+.sh-hl-row-badge { font-family: var(--font-body); font-weight: 600; font-size: clamp(0.66rem, 1.3vw, 0.72rem); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 0.35rem; display: block; }
+.sh-hl-row-title { font-family: var(--font-display); font-weight: 500; font-size: clamp(1rem, 2.2vw, 1.15rem); letter-spacing: -0.01em; margin-bottom: 0.35rem; color: var(--ink); }
+.sh-hl-row-body { font-family: var(--font-body); font-size: clamp(0.8rem, 1.7vw, 0.88rem); line-height: 1.55; color: var(--ink-soft); }
+
+/* ── Amenities: edge-to-edge photo mosaic, text reveals on hover ─ */
+
+.sh-am-mosaic { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; }
+@media (max-width: 700px) { .sh-am-mosaic { grid-template-columns: repeat(2, 1fr); } }
+
+.sh-am-cell { position: relative; aspect-ratio: 1/1; overflow: hidden; isolation: isolate; cursor: pointer; }
+.sh-am-cell img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 900ms var(--ease-slow); }
+.sh-am-cell:hover img { transform: scale(1.08); }
+.sh-am-cell-scrim {
+  position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(180deg, rgba(10,10,11,0) 55%, rgba(10,10,11,0.68) 100%);
+  transition: background 500ms var(--ease-slow);
+}
+.sh-am-cell:hover .sh-am-cell-scrim { background: linear-gradient(180deg, rgba(10,10,11,0.05) 0%, rgba(10,10,11,0.85) 100%); }
+.sh-am-cell-content { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; padding: clamp(1.1rem, 2.5vw, 1.6rem); color: var(--white); }
+.sh-am-cell-title { font-family: var(--font-display); font-weight: 500; font-size: clamp(1rem, 2.1vw, 1.15rem); margin-bottom: 0.5rem; }
+.sh-am-cell-body {
+  font-family: var(--font-body);
+  font-size: clamp(0.78rem, 1.6vw, 0.86rem);
+  line-height: 1.55;
+  color: rgba(255,255,255,0.85);
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: opacity 400ms var(--ease-slow) 0ms, max-height 10ms linear 500ms;
+}
+.sh-am-cell:hover .sh-am-cell-body { max-height: 140px; opacity: 1; transition: opacity 450ms var(--ease-slow) 200ms, max-height 10ms linear 200ms; }
+
+/* ── Gallery: staggered stone-coursing grid ──────────────────── */
+
+.sh-brick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(0.75rem, 2vw, 1.25rem); }
+@media (max-width: 700px) { .sh-brick-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 440px) { .sh-brick-grid { grid-template-columns: 1fr; } }
+
+.sh-brick-item { display: flex; flex-direction: column; gap: 0.6rem; }
+.sh-brick-item:nth-child(2), .sh-brick-item:nth-child(5) { margin-top: clamp(1.5rem, 4vw, 2.5rem); }
+@media (max-width: 700px) {
+  .sh-brick-item:nth-child(2), .sh-brick-item:nth-child(5) { margin-top: 0; }
+  .sh-brick-item:nth-child(2n) { margin-top: clamp(1.5rem, 4vw, 2.5rem); }
+}
+@media (max-width: 440px) { .sh-brick-item { margin-top: 0 !important; } }
+
+.sh-brick-plate { aspect-ratio: 4/3; overflow: hidden; border: 1px solid var(--line); }
+.sh-brick-plate img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 700ms var(--ease-slow); }
+.sh-brick-plate:hover img { transform: scale(1.08); }
+.sh-brick-caption { font-family: var(--font-body); font-size: clamp(0.75rem, 1.7vw, 0.85rem); color: var(--ink-soft); text-align: center; }
+
+/* ── Ideal For: alternating image/text rows, generously spaced ───── */
+
+.sh-index-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2.5rem, 5vw, 4.5rem) clamp(2.5rem, 5vw, 4rem);
+}
+@media (max-width: 760px) { .sh-index-grid { grid-template-columns: 1fr; gap: clamp(2rem, 6vw, 3rem); } }
+
+.sh-index-card {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.25rem, 2.5vw, 1.75rem);
+}
+.sh-index-card:nth-child(even) { flex-direction: row-reverse; }
+@media (max-width: 560px) {
+  .sh-index-card, .sh-index-card:nth-child(even) { flex-direction: column; align-items: stretch; }
+}
+
+.sh-index-photo { width: 42%; flex-shrink: 0; aspect-ratio: 1/1; border-radius: 0; overflow: hidden; }
+@media (max-width: 560px) { .sh-index-photo { width: 100%; aspect-ratio: 4/3; } }
+.sh-index-photo img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 700ms var(--ease-slow); }
+.sh-index-card:hover .sh-index-photo img { transform: scale(1.06); }
+
+.sh-index-content { flex: 1; min-width: 0; }
+.sh-index-title { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.05rem, 2.3vw, 1.25rem); letter-spacing: -0.01em; margin-bottom: 0.6rem; color: var(--ink); }
+.sh-index-body { font-family: var(--font-body); font-size: clamp(0.85rem, 1.8vw, 0.94rem); line-height: 1.65; color: var(--ink-soft); }
+
+/* ── Final CTA banner ─────────────────────────────────────── */
+
+.final-cta { padding-top: var(--pad-y); padding-bottom: var(--pad-y); }
+
+.final-row {
+  margin-top: clamp(1.5rem, 4vw, 3rem);
+  padding: clamp(1.5rem, 4vw, 3rem) 0;
+  border-top: 1px solid rgba(255,255,255,0.16);
+  border-bottom: 1px solid rgba(255,255,255,0.16);
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr auto;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  align-items: end;
+}
+@media (max-width: 700px) {
+  .final-row { grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  .final-row .final-cta-btn { grid-column: 1 / -1; text-align: center; }
+}
+@media (max-width: 420px) { .final-row { grid-template-columns: 1fr; } }
+
+.final-field { display: flex; flex-direction: column; gap: 0.5rem; }
+.final-field .label {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(0.68rem, 1.5vw, 0.75rem);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+}
+.final-field input {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1rem, 3vw, 1.35rem);
+  letter-spacing: -0.01em;
+  color: var(--white);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,0.3);
+  padding: 0.5rem 0;
+  outline: none;
+  width: 100%;
+  transition: border-color 320ms var(--ease-slow);
+}
+.final-field input::placeholder { color: rgba(255,255,255,0.4); }
+.final-field input:focus { border-color: var(--white); }
+
+.final-note {
+  margin-top: clamp(1.25rem, 3vw, 2rem);
+  font-family: var(--font-body);
+  font-size: clamp(0.78rem, 1.7vw, 0.88rem);
+  color: rgba(255,255,255,0.55);
+  max-width: 60ch;
+  line-height: 1.7;
+}
+
+/* ── Footer ────────────────────────────────────────────────── */
+
+footer { background: var(--white); padding: clamp(3rem, 7vw, 5rem) var(--pad-x) clamp(1.5rem, 4vw, 3rem); text-align: center; }
+footer .sig { font-family: var(--font-display); font-weight: 500; font-size: clamp(0.9rem, 2vw, 1.05rem); letter-spacing: -0.01em; line-height: 1.8; color: var(--ink); margin-bottom: clamp(1.5rem, 4vw, 3rem); }
+footer .sig .acc { color: var(--ink-faint); font-family: var(--font-body); }
+footer .links { display: flex; justify-content: center; gap: clamp(1rem, 3vw, 2.5rem); flex-wrap: wrap; font-family: var(--font-body); font-weight: 500; font-size: clamp(0.72rem, 1.6vw, 0.8rem); color: var(--ink-soft); margin-bottom: clamp(1.5rem, 4vw, 2.5rem); }
+footer .links a:hover { color: var(--ink); }
+footer .insta { font-family: var(--font-body); font-size: clamp(0.72rem, 1.6vw, 0.8rem); color: var(--ink-faint); }
+
+/* ── Scroll reveal ──────────────────────────────────────────── */
+
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 900ms var(--ease-slow), transform 900ms var(--ease-slow); }
+.reveal.in { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .reveal { opacity: 1; transform: none; }
+}
+
+/* ── Extra-small polish ───────────────────────────────────── */
+
+@media (max-width: 380px) {
+  :root { --pad-x: 0.75rem; --pad-y: 2.5rem; }
+  .hold-pill { right: 0.75rem; bottom: 0.75rem; }
+  .final-row { gap: 1rem; }
+  footer .links { gap: 0.75rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Cursor companion ─────────────────────────────────────── -->
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+
+<!-- ── Floating "hold a date" pill ──────────────────────────── -->
+<button class="hold-pill" id="holdPill">hold a date</button>
+
+<!-- ── 01. Banner ────────────────────────────────────────────── -->
+<section class="hero" id="top">
+  <div class="hero-badge reveal">
+    <span class="dot">02</span>
+    Stay / Stone House
+  </div>
+
+  <h1 class="display-xl reveal">Stone <em>House</em></h1>
+
+  <p class="hero-sub reveal">The original house on this land — thick stone walls, a fireplace for winter, and a north window that keeps the same steady light all day.</p>
+
+  <div class="hero-facts reveal">
+    <span><span class="amount">₹19,600</span> / night</span>
+    <span>·</span>
+    <span>2–4 adults</span>
+    <span>·</span>
+    <span>2 night minimum</span>
+  </div>
+
+  <div class="hero-ctas reveal">
+    <a href="/hold-a-date" class="btn btn-primary">Hold Stone House →</a>
+    <a href="/stay" class="btn btn-ghost">Compare Other Stays</a>
+  </div>
+</section>
+
+<!-- ── 02. Description ───────────────────────────────────────── -->
+<section class="intro" id="description">
+  <div class="intro-inner">
+    <div class="intro-left reveal">
+      <span class="eyebrow">the description</span>
+      <p class="intro-pull">My walls remember<br>every <em>winter.</em></p>
+    </div>
+
+    <div class="intro-body">
+      <p class="reveal">Stone House was the first structure built on this land — before the cottages, before the pond path, before the orchard was planted in rows. Its walls are thick, cut stone, and they do what old walls do well: hold the cold in through summer, hold the warmth in through winter.</p>
+
+      <blockquote class="intro-quote reveal">"I am the original house on this land. My stone walls hold the cold in summer and the warmth in winter. There is a desk by the north window — one chair, on purpose."</blockquote>
+
+      <p class="reveal">The second bedroom faces north, which means the light stays even and unchanging for most of the day — the reason we've always called it the writer's room. A wide wooden desk sits under that window, scarred with years of use, with one chair. If you come here to write, we will not ask what you're writing.</p>
+
+      <p class="reveal">A fireplace is lit from November through February. Outside, an old tamarind tree throws shade from around 11am, and a low stone wall — the same stone as the house — gives you somewhere to sit and do nothing in particular. This is the quietest of the three stays, built for people who came here to slow down on purpose.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 03. Accommodation Highlights ──────────────────────────── -->
+<section class="bg-silver" id="highlights">
+  <div class="section-head reveal">
+    <h2 class="section-title">accommodation <em>highlights.</em></h2>
+    <p>What the house actually holds — no surprises, no fine print.</p>
+  </div>
+
+  <div class="sh-hl-layout reveal">
+    <div class="sh-hl-hero">
+      <img src="https://images.unsplash.com/photo-1543393470-b2c833b98dce?q=80&w=1400&auto=format&fit=crop" alt="A working stone fireplace at Stone House" loading="lazy" />
+      <div class="sh-hl-hero-scrim" aria-hidden="true"></div>
+      <div class="sh-hl-hero-content">
+        <span class="sh-hl-hero-badge">Nov – Feb</span>
+        <div class="sh-hl-hero-title">A Working Fireplace</div>
+        <div class="sh-hl-hero-body">Lit through the winter months in the main sitting room — wood is provided, no request required.</div>
+      </div>
+    </div>
+
+    <div class="sh-hl-list">
+      <div class="sh-hl-row">
+        <div class="sh-hl-row-media"><img src="https://images.unsplash.com/photo-1585620089933-768743dfc8f1?q=80&w=500&auto=format&fit=crop" alt="One of the two bedrooms at Stone House" loading="lazy" /></div>
+        <div>
+          <span class="sh-hl-row-badge">2–4 Adults</span>
+          <div class="sh-hl-row-title">Two Bedrooms</div>
+          <div class="sh-hl-row-body">One faces south, one faces north — enough separation for two couples, or a small family sharing the house.</div>
+        </div>
+      </div>
+      <div class="sh-hl-row">
+        <div class="sh-hl-row-media"><img src="https://images.unsplash.com/photo-1535546204504-586398ee6677?q=80&w=500&auto=format&fit=crop" alt="The writer's desk with a typewriter and lamp" loading="lazy" /></div>
+        <div>
+          <span class="sh-hl-row-badge">North-Facing</span>
+          <div class="sh-hl-row-title">The Writer's Desk</div>
+          <div class="sh-hl-row-body">A wide wooden desk beneath the north window, where the light stays steady from morning to evening.</div>
+        </div>
+      </div>
+      <div class="sh-hl-row">
+        <div class="sh-hl-row-media"><img src="https://images.unsplash.com/photo-1647842446246-d2be55aa97a8?q=80&w=500&auto=format&fit=crop" alt="An old tree beside the low stone wall" loading="lazy" /></div>
+        <div>
+          <span class="sh-hl-row-badge">Old & Shaded</span>
+          <div class="sh-hl-row-title">The Tamarind & The Stone Wall</div>
+          <div class="sh-hl-row-body">An old tamarind tree shades the house from around 11am, with a low stone wall built for sitting.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 04. Amenities & Inclusions ────────────────────────────── -->
+<section id="amenities">
+  <div class="section-head reveal">
+    <h2 class="section-title">amenities &amp; <em>inclusions.</em></h2>
+    <p>Everything below comes with the house. Nothing here needs to be requested twice.</p>
+  </div>
+
+  <div class="sh-am-mosaic">
+    <div class="sh-am-cell reveal">
+      <img src="https://images.unsplash.com/photo-1524084848619-1161d3c8501a?q=80&w=900&auto=format&fit=crop" alt="Breakfast coffee served on a wooden tray" loading="lazy" />
+      <div class="sh-am-cell-scrim" aria-hidden="true"></div>
+      <div class="sh-am-cell-content">
+        <div class="sh-am-cell-title">Breakfast &amp; Evening Chai</div>
+        <div class="sh-am-cell-body">Delivered to your door or served at the main house — every morning, and again at the bonfire.</div>
+      </div>
+    </div>
+    <div class="sh-am-cell reveal">
+      <img src="https://images.unsplash.com/photo-1604004235675-21276186c600?q=80&w=900&auto=format&fit=crop" alt="An evening ritual tray with tea and a candle" loading="lazy" />
+      <div class="sh-am-cell-scrim" aria-hidden="true"></div>
+      <div class="sh-am-cell-content">
+        <div class="sh-am-cell-title">Farm Ritual Access</div>
+        <div class="sh-am-cell-body">Every ritual, every day — first-light honey on toast, the held hours, bonfire chai, the night reading. Join any, skip all.</div>
+      </div>
+    </div>
+    <div class="sh-am-cell reveal">
+      <img src="https://images.unsplash.com/photo-1768913651135-273f8bc59d37?q=80&w=900&auto=format&fit=crop" alt="Books lined up on a stone shelf" loading="lazy" />
+      <div class="sh-am-cell-scrim" aria-hidden="true"></div>
+      <div class="sh-am-cell-content">
+        <div class="sh-am-cell-title">Three Books, Rotated Monthly</div>
+        <div class="sh-am-cell-body">A small shelf inside the house, refreshed monthly — plus full access to the farm library in the main house.</div>
+      </div>
+    </div>
+    <div class="sh-am-cell reveal">
+      <img src="https://images.unsplash.com/photo-1728034261564-18930dcb2c8e?q=80&w=900&auto=format&fit=crop" alt="Folded cotton and linen towels" loading="lazy" />
+      <div class="sh-am-cell-scrim" aria-hidden="true"></div>
+      <div class="sh-am-cell-content">
+        <div class="sh-am-cell-title">Cotton + Linen, No TV</div>
+        <div class="sh-am-cell-body">Cotton and linen bedding in both rooms, and — deliberately — no television, no wifi in the bedrooms.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 05. Gallery ───────────────────────────────────────────── -->
+<section class="bg-silver" id="gallery">
+  <div class="section-head reveal">
+    <h2 class="section-title">a glimpse <em>inside.</em></h2>
+    <p>Stone House, in six small moments.</p>
+  </div>
+
+  <div class="sh-brick-grid">
+    <div class="sh-brick-item reveal">
+      <div class="sh-brick-plate"><img src="https://images.unsplash.com/photo-1630579083524-e3ac854edb46?q=80&w=700&auto=format&fit=crop" alt="The original stone facade and arched wooden door" loading="lazy" /></div>
+      <p class="sh-brick-caption">the stone facade, original to the land</p>
+    </div>
+    <div class="sh-brick-item reveal">
+      <div class="sh-brick-plate"><img src="https://images.unsplash.com/photo-1697462247864-338e7eba8c4c?q=80&w=700&auto=format&fit=crop" alt="One of the two bedrooms" loading="lazy" /></div>
+      <p class="sh-brick-caption">the two bedrooms, south &amp; north</p>
+    </div>
+    <div class="sh-brick-item reveal">
+      <div class="sh-brick-plate"><img src="https://images.unsplash.com/photo-1570626742839-59acd9822944?q=80&w=700&auto=format&fit=crop" alt="A typewriter at the writing desk by the north window" loading="lazy" /></div>
+      <p class="sh-brick-caption">the writing desk, north window</p>
+    </div>
+    <div class="sh-brick-item reveal">
+      <div class="sh-brick-plate"><img src="https://images.unsplash.com/photo-1696814543693-31fcf942ccb7?q=80&w=700&auto=format&fit=crop" alt="A stone fireplace lit in the sitting room" loading="lazy" /></div>
+      <p class="sh-brick-caption">the fireplace, lit through winter</p>
+    </div>
+    <div class="sh-brick-item reveal">
+      <div class="sh-brick-plate"><img src="https://images.unsplash.com/photo-1723571644513-f3c2689a2232?q=80&w=700&auto=format&fit=crop" alt="An old tree shading a stone wall" loading="lazy" /></div>
+      <p class="sh-brick-caption">the old tamarind, shade from 11am</p>
+    </div>
+    <div class="sh-brick-item reveal">
+      <div class="sh-brick-plate"><img src="https://images.unsplash.com/photo-1656483461011-a20df474deae?q=80&w=700&auto=format&fit=crop" alt="A low rustic stone wall with a wooden gate" loading="lazy" /></div>
+      <p class="sh-brick-caption">the low stone wall, built for sitting</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 06. Ideal For ─────────────────────────────────────────── -->
+<section id="ideal-for">
+  <div class="section-head reveal">
+    <h2 class="section-title">ideal <em>for.</em></h2>
+    <p>Stone House suits a particular kind of guest — here's how to tell if that's you.</p>
+  </div>
+
+  <div class="sh-index-grid">
+    <div class="sh-index-card reveal">
+      <div class="sh-index-photo"><img src="https://images.unsplash.com/photo-1764451616600-0e98ea230527?q=80&w=700&auto=format&fit=crop" alt="A solitary figure writing at a desk overlooking the water" loading="lazy" /></div>
+      <div class="sh-index-content">
+        <div class="sh-index-title">Writers &amp; Solo Retreats</div>
+        <div class="sh-index-body">One chair at the desk, on purpose. North light that doesn't change its mind through the day.</div>
+      </div>
+    </div>
+    <div class="sh-index-card reveal">
+      <div class="sh-index-photo"><img src="https://images.unsplash.com/photo-1758274252296-a63b1d7d4bb8?q=80&w=700&auto=format&fit=crop" alt="Two old friends talking at an outdoor table" loading="lazy" /></div>
+      <div class="sh-index-content">
+        <div class="sh-index-title">Two Couples, Or Old Friends</div>
+        <div class="sh-index-body">Two bedrooms mean two households can share the house without sharing a room.</div>
+      </div>
+    </div>
+    <div class="sh-index-card reveal">
+      <div class="sh-index-photo"><img src="https://images.unsplash.com/photo-1521022969448-49639904ed7b?q=80&w=700&auto=format&fit=crop" alt="Two guests warming by the fireplace" loading="lazy" /></div>
+      <div class="sh-index-content">
+        <div class="sh-index-title">Winter Guests Wanting A Fire</div>
+        <div class="sh-index-body">November through February, this is the only stay with a working fireplace of its own.</div>
+      </div>
+    </div>
+    <div class="sh-index-card reveal">
+      <div class="sh-index-photo"><img src="https://images.unsplash.com/photo-1664524169977-acc46ea169a0?q=80&w=700&auto=format&fit=crop" alt="A wicker porch swing, unhurried" loading="lazy" /></div>
+      <div class="sh-index-content">
+        <div class="sh-index-title">Guests Wanting Unhurried Days</div>
+        <div class="sh-index-body">The quietest of the three stays — built for people slowing down on purpose, not by accident.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 07. Booking CTA Banner ────────────────────────────────── -->
+<section class="bg-black final-cta" id="reserve">
+  <span class="eyebrow reveal">holding a date</span>
+  <h2 class="section-title reveal" style="color:var(--white); margin-top:1rem;">tell us <em>when</em>,<br>and we'll hold Stone House.</h2>
+
+  <form class="final-row reveal" onsubmit="event.preventDefault();">
+    <div class="final-field">
+      <span class="label">when</span>
+      <input type="text" placeholder="14 may → 17 may" />
+    </div>
+    <div class="final-field">
+      <span class="label">who</span>
+      <input type="text" placeholder="2 adults" />
+    </div>
+    <div class="final-field">
+      <span class="label">how long</span>
+      <input type="text" placeholder="3 nights" />
+    </div>
+    <button type="submit" class="btn btn-on-dark final-cta-btn">hold stone house →</button>
+  </form>
+
+  <p class="final-note reveal">
+    No countdown timers. No "only 1 left!" No urgency theatre.<br>
+    If Stone House is free on your dates, it's yours. If it isn't, we'll suggest Mango House or call you back.
+  </p>
+</section>
+
+<!-- ── Footer ───────────────────────────────────────────────── -->
+<footer>
+  <div class="sig">
+    vana ekantha <span class="acc">//</span> forest solitude<br>
+    <span class="acc">a farmstay for intentional disconnection</span><br>
+    <span class="acc">est. 2024 // the deccan, india</span>
+  </div>
+  <nav class="links">
+    <a href="/">home</a>
+    <a href="/stay">all stays</a>
+    <a href="/journal">the journal</a>
+    <a href="#">gift a stay</a>
+    <a href="#">terms</a>
+  </nav>
+  <div class="insta">find us, quietly → @vanaekantha</div>
+</footer>
+
+<script>
+/* ──────────────────────────────────────────────────────────────
+   vana ekantha — stone house interactions
+   ────────────────────────────────────────────────────────────── */
+
+const cursor = document.getElementById('cursorDot');
+let mouseX = 0, mouseY = 0, currX = 0, currY = 0;
+
+window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+
+function animateCursor() {
+  currX += (mouseX - currX) * 0.18;
+  currY += (mouseY - currY) * 0.18;
+  if (cursor) cursor.style.transform = `translate(${currX}px, ${currY}px) translate(-50%, -50%)`;
+  requestAnimationFrame(animateCursor);
+}
+animateCursor();
+
+document.querySelectorAll('a, button, .sh-hl-hero, .sh-hl-row, .sh-am-cell, .sh-brick-plate, .sh-index-card').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor && cursor.classList.add('swollen'));
+  el.addEventListener('mouseleave', () => cursor && cursor.classList.remove('swollen'));
+});
+
+document.querySelectorAll('.bg-black, .btn-primary, .hold-pill').forEach(el => {
+  el.addEventListener('mouseenter', () => document.body.classList.add('on-dark'));
+  el.addEventListener('mouseleave', () => document.body.classList.remove('on-dark'));
+});
+
+// ── Cursor stays/goes black over white (.btn-on-dark, .btn-ghost) buttons ─────
+document.querySelectorAll('.btn-on-dark, .btn-ghost').forEach(el => {
+  el.addEventListener('mouseenter', () => document.body.classList.add('on-light'));
+  el.addEventListener('mouseleave', () => document.body.classList.remove('on-light'));
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'r' && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) {
+    document.getElementById('reserve').scrollIntoView({ behavior: 'smooth' });
+  }
+});
+
+const holdPill = document.getElementById('holdPill');
+const hero = document.querySelector('.hero');
+
+const heroObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.intersectionRatio < 0.3) holdPill.classList.add('visible');
+    else holdPill.classList.remove('visible');
+  });
+}, { threshold: [0.3] });
+heroObserver.observe(hero);
+
+holdPill.addEventListener('click', () => {
+  document.getElementById('reserve').scrollIntoView({ behavior: 'smooth' });
+});
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('in');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+</script>
+</body>
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>footer // vana ekantha</title>
+<meta name="description" content="Shared site footer component for the vana ekantha site — self-contained HTML/CSS/JS." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap" rel="stylesheet" />
+
+<style>
+.vef-root, .vef-root * { box-sizing: border-box; margin: 0; padding: 0; }
+
+.vef-root {
+  --white: #ffffff;
+  --silver: #f3f4f6;
+  --ink: #121214;
+  --ink-soft: rgba(18, 18, 20, 0.62);
+  --ink-faint: rgba(18, 18, 20, 0.42);
+  --line: rgba(18, 18, 20, 0.12);
+  --black: #0a0a0b;
+  --font-display: 'Google Sans Flex', Arial, sans-serif;
+  --font-accent: 'Instrument Serif', Georgia, serif;
+  --font-body: 'DM Sans', Arial, sans-serif;
+  --ease-slow: cubic-bezier(0.6, 0.05, 0.3, 1);
+}
+
+.vef-root {
+  font-family: var(--font-body);
+  background: var(--silver);
+}
+
+.vef-root a { color: inherit; text-decoration: none; }
+
+.vef-root button { font: inherit; border: none; background: none; color: inherit; cursor: pointer; }
+
+/* Full-bleed breakout: when this markup is pasted into a WordPress/Elementor
+   "boxed" section, its parent container has a max-width, which would
+   otherwise constrain the footer too and leave silver page-background
+   margins on either side. width:100vw + this negative-margin trick makes
+   the footer span the true viewport width regardless of that parent. */
+.vef-root {
+  background: var(--white);
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+}
+
+.vef-root .vef-cta {
+  background: var(--black);
+  color: var(--white);
+  padding: clamp(3rem, 8vw, 5.5rem) clamp(1.25rem, 5vw, 4rem);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(1.5rem, 4vw, 3rem);
+}
+
+.vef-root .vef-cta-text h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.7rem, 4.4vw, 3rem);
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  max-width: 14ch;
+}
+
+.vef-root .vef-cta-text h2 em { font-family: var(--font-accent); font-style: italic; font-weight: 400; }
+
+.vef-root .vef-cta-text p {
+  margin-top: 0.75rem;
+  font-family: var(--font-body);
+  font-size: clamp(0.9rem, 2vw, 1.05rem);
+  color: rgba(255,255,255,0.6);
+  max-width: 42ch;
+}
+
+.vef-root .vef-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--white);
+  color: var(--black);
+  padding: clamp(0.9rem, 2.2vw, 1.15rem) clamp(1.75rem, 3.5vw, 2.4rem);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(0.88rem, 1.9vw, 1rem);
+  white-space: nowrap;
+  transition: background 220ms, transform 280ms var(--ease-slow);
+  flex-shrink: 0;
+}
+
+.vef-root .vef-cta-btn:hover { background: var(--silver); transform: translateY(-2px); }
+
+.vef-root .vef-cta-btn svg { width: 16px; height: 16px; }
+
+.vef-root .vef-main {
+  padding: clamp(3rem, 7vw, 5rem) clamp(1.25rem, 5vw, 4rem) clamp(2rem, 5vw, 3rem);
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: clamp(2rem, 5vw, 3rem);
+}
+
+@media (max-width: 900px) {
+.vef-root .vef-main { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 560px) {
+.vef-root .vef-main { grid-template-columns: 1fr; gap: 2.25rem; }
+}
+
+.vef-root .vef-brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.15rem;
+  color: var(--ink);
+  margin-bottom: 1.25rem;
+}
+
+.vef-root .vef-brand-logo img { width: 26px; height: 26px; }
+
+.vef-root .vef-brand-logo em { font-family: var(--font-accent); font-style: italic; font-weight: 400; }
+
+.vef-root .vef-brand-tagline {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-size: clamp(1.05rem, 2.4vw, 1.3rem);
+  color: var(--ink);
+  line-height: 1.4;
+  max-width: 26ch;
+  margin-bottom: 1.25rem;
+}
+
+.vef-root .vef-brand-note {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--ink-faint);
+  line-height: 1.7;
+  max-width: 32ch;
+}
+
+.vef-root .vef-col-label {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 1.1rem;
+}
+
+.vef-root .vef-links { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+
+.vef-root .vef-links a {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  transition: color 200ms;
+}
+
+.vef-root .vef-links a:hover { color: var(--ink); }
+
+.vef-root .vef-contact-item { margin-bottom: 1rem; }
+
+.vef-root .vef-contact-item:last-child { margin-bottom: 0; }
+
+.vef-root .vef-contact-label { font-family: var(--font-body); font-size: 0.72rem; color: var(--ink-faint); margin-bottom: 0.2rem; }
+
+.vef-root .vef-contact-value { font-family: var(--font-body); font-weight: 500; font-size: 0.95rem; color: var(--ink); }
+
+.vef-root .vef-contact-value a:hover { color: var(--ink-soft); }
+
+.vef-root .vef-social { display: flex; flex-direction: column; gap: 0.7rem; }
+
+.vef-root .vef-social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  transition: color 200ms, transform 200ms;
+}
+
+.vef-root .vef-social-link:hover { color: var(--ink); transform: translateX(3px); }
+
+.vef-root .vef-social-link .vef-social-icon {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.vef-root .vef-social-link .vef-social-icon svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+
+.vef-root .vef-bottom {
+  border-top: 1px solid var(--line);
+  padding: clamp(1.25rem, 3vw, 1.75rem) clamp(1.25rem, 5vw, 4rem);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.vef-root .vef-bottom-copy {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--ink-faint);
+}
+
+.vef-root .vef-bottom-legal { display: flex; gap: 1.5rem; }
+
+.vef-root .vef-bottom-legal a {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--ink-faint);
+  transition: color 200ms;
+}
+
+.vef-root .vef-bottom-legal a:hover { color: var(--ink); }
+</style>
+</head>
+<body>
+
+<footer class="vef-root" id="veFooter">
+
+  <div class="vef-cta">
+    <div class="vef-cta-text">
+      <h2>Book Your <em>Escape.</em></h2>
+      <p>Eleven acres of the Deccan, two hours from Hyderabad — held for you the moment you tell us when.</p>
+    </div>
+    <a href="/hold-a-date" class="vef-cta-btn">
+      Hold a Date
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+  </div>
+
+  <div class="vef-main">
+
+    <div>
+      <a href="/" class="vef-brand-logo">
+        <img src="https://bisque-lobster-585068.hostingersite.com/wp-content/uploads/2026/07/icon.svg" alt="vana ekantha" />
+        <span>Vana <em>Ekantha</em></span>
+      </a>
+      <p class="vef-brand-tagline">A farmstay for intentional disconnection.</p>
+      <p class="vef-brand-note">The Deccan, Telangana — roughly 2.5 hours from Hyderabad. Est. 2024.</p>
+    </div>
+
+    <div>
+      <div class="vef-col-label">Quick Links</div>
+      <ul class="vef-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/stay">Stay</a></li>
+        <li><a href="/farm-dining">Farm Dining</a></li>
+        <li><a href="/events">Events</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/faqs">FAQs</a></li>
+        <li><a href="/contact">Contact</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="vef-col-label">Contact</div>
+      <div class="vef-contact-item">
+        <div class="vef-contact-label">Phone</div>
+        <div class="vef-contact-value"><a href="tel:+919848012345">+91 98480 12345</a></div>
+      </div>
+      <div class="vef-contact-item">
+        <div class="vef-contact-label">Email</div>
+        <div class="vef-contact-value"><a href="mailto:hello@vanaekantha.com">hello@vanaekantha.com</a></div>
+      </div>
+      <div class="vef-contact-item">
+        <div class="vef-contact-label">Location</div>
+        <div class="vef-contact-value">The Deccan, Telangana</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="vef-col-label">Find Us, Quietly</div>
+      <div class="vef-social">
+        <a href="#" class="vef-social-link">
+          <span class="vef-social-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></span>
+          Instagram
+        </a>
+        <a href="#" class="vef-social-link">
+          <span class="vef-social-icon"><svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></span>
+          Facebook
+        </a>
+        <a href="#" class="vef-social-link">
+          <span class="vef-social-icon"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
+          WhatsApp
+        </a>
+        <a href="#" class="vef-social-link">
+          <span class="vef-social-icon"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22,6 L12,13 L2,6"/></svg></span>
+          Newsletter
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="vef-bottom">
+    <div class="vef-bottom-copy">© 2024–2026 Vana Ekantha. All rights reserved.</div>
+    <div class="vef-bottom-legal">
+      <a href="#">Terms</a>
+      <a href="#">Privacy</a>
+      <a href="#">Careers In Stillness</a>
+    </div>
+  </div>
+
+</footer>
+
+<script>
+/* ── Force true full width regardless of the WordPress/Elementor host ──
+   Kept as a second line of defense alongside the width:100vw breakout
+   above and the class rename to .vef-* — in case a genuine ancestor
+   max-width/overflow constraint (not just a class-name collision) is also
+   involved. Walks up from the footer to the real <body> at runtime and
+   strips any width-limiting or overflow-clipping inline style, scoped
+   only to this ancestor chain (never touches sibling content).
+
+   Elementor lazy-loads/rebuilds widget wrappers (note the "e-lazyloaded"
+   class it adds), so the ancestor chain at the moment this script first
+   runs may not be final yet. This re-applies on load, after a couple of
+   short delays, and once more via MutationObserver so it keeps winning
+   even if Elementor mutates the wrappers afterward. */
+(function () {
+  function unbox() {
+    var el = document.getElementById('veFooter');
+    if (!el) return;
+    var node = el.parentElement;
+    while (node && node !== document.body) {
+      node.style.setProperty('max-width', 'none', 'important');
+      node.style.setProperty('width', '100%', 'important');
+      node.style.setProperty('overflow', 'visible', 'important');
+      node.style.setProperty('margin-left', '0', 'important');
+      node.style.setProperty('margin-right', '0', 'important');
+      node.style.setProperty('padding-left', '0', 'important');
+      node.style.setProperty('padding-right', '0', 'important');
+      node = node.parentElement;
+    }
+  }
+
+  unbox();
+  window.addEventListener('load', unbox);
+  setTimeout(unbox, 400);
+  setTimeout(unbox, 1200);
+
+  if (window.MutationObserver) {
+    var footerEl = document.getElementById('veFooter');
+    if (footerEl) {
+      var target = footerEl.parentElement ? footerEl.parentElement.parentElement : null;
+      if (target) {
+        new MutationObserver(unbox).observe(target, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
+      }
+    }
+  }
+})();
+</script>
+
+</body>
+</html>

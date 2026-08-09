@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>navbar // vana ekantha</title>
+<meta name="description" content="Shared top navbar component for the vana ekantha site — self-contained HTML/CSS/JS." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<style>
+
+.vnb-root, .vnb-root * { box-sizing: border-box; margin: 0; padding: 0; }
+.vnb-root a { color: inherit; text-decoration: none; }
+.vnb-root button { font: inherit; }
+
+#ve-navbar {
+  --vnb-ink: #121214;
+  --vnb-white: #ffffff;
+  --vnb-silver: #f3f4f6;
+  --vnb-line: rgba(18, 18, 20, 0.12);
+}
+
+.vnb-bar {
+  position: sticky;
+  top: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  background: var(--vnb-white);
+  border-bottom: 1px solid var(--vnb-line);
+  padding: 1.4rem clamp(1rem, 4vw, 2.5rem);
+  font-family: 'Google Sans Flex', Arial, sans-serif;
+}
+
+.vnb-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: clamp(1.15rem, 2.4vw, 1.4rem);
+  font-weight: 500;
+  color: var(--vnb-ink);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.vnb-logo img {
+  width: 36px;
+  height: 36px;
+  display: block;
+}
+.vnb-logo em {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.vnb-links {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.1rem, 2vw, 1.75rem);
+  list-style: none;
+}
+.vnb-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 1.12rem;
+  letter-spacing: 0.01em;
+  color: var(--vnb-ink);
+  opacity: 0.72;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity 200ms;
+}
+.vnb-links > a:hover,
+.vnb-item > a:hover { opacity: 1; }
+
+/* .vnb-root .vnb-cta (two classes) is used instead of plain .vnb-cta so this
+   reliably outranks .vnb-root a's color:inherit reset above — a single-class
+   rule loses that specificity fight regardless of source order. */
+.vnb-root .vnb-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--vnb-ink);
+  color: var(--vnb-white) !important;
+  padding: 1.05rem 2rem;
+  border-radius: 999px;
+  font-size: 1.02rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 200ms, transform 250ms;
+  flex-shrink: 0;
+}
+.vnb-root .vnb-cta:hover { background: #2a2a2d; transform: translateY(-1px); }
+.vnb-cta-icon {
+  width: 19px; height: 19px;
+  flex-shrink: 0;
+}
+.vnb-cta-icon svg { width: 100%; height: 100%; display: block; }
+
+/* ── "Stay" dropdown (desktop) ───────────────────────────────── */
+
+.vnb-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding-bottom: 20px;
+  margin-bottom: -20px;
+}
+
+.vnb-caret {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.4rem;
+  border: none;
+  background: none;
+  color: var(--vnb-ink);
+  font-size: 1.85rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 200ms, transform 250ms ease;
+}
+
+.vnb-caret i{
+  font-size: 1.4rem;
+  background: white;
+}
+
+.vnb-item:hover .vnb-caret,
+.vnb-item.vnb-open .vnb-caret { color: var(--vnb-ink); transform: rotate(45deg); }
+
+.vnb-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 50%;
+  transform: translate(-50%, 6px);
+  min-width: 220px;
+  background: var(--vnb-white);
+  border: 1px solid var(--vnb-line);
+  border-radius: 14px;
+  box-shadow: 0 16px 40px rgba(18,18,20,0.14);
+  padding: 0.5rem;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 200ms, transform 200ms, visibility 200ms;
+  z-index: 10;
+}
+.vnb-item.vnb-open .vnb-dropdown {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+}
+
+.vnb-dropdown a {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: 8px;
+  font-family: 'Google Sans Flex', Arial, sans-serif;
+  font-size: 0.98rem;
+  color: var(--vnb-ink);
+  opacity: 0.85;
+  white-space: nowrap;
+  transition: background 180ms, opacity 180ms;
+}
+.vnb-dropdown a:hover { background: var(--vnb-silver); opacity: 1; }
+.vnb-dropdown a.vnb-view-all {
+  margin-top: 0.35rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--vnb-line);
+  font-weight: 500;
+  opacity: 1;
+}
+.vnb-drop-icon {
+  width: 17px; height: 17px;
+  flex-shrink: 0;
+  display: inline-flex;
+}
+.vnb-drop-icon svg { width: 100%; height: 100%; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+.vnb-burger {
+  display: none;
+  width: 34px; height: 34px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.vnb-burger span {
+  width: 20px; height: 1.5px;
+  background: var(--vnb-ink);
+  border-radius: 2px;
+  transition: transform 250ms, opacity 250ms;
+}
+.vnb-burger.vnb-open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.vnb-burger.vnb-open span:nth-child(2) { opacity: 0; }
+.vnb-burger.vnb-open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+/* ── Mobile menu ──────────────────────────────────────────────── */
+
+.vnb-mobile {
+  display: none;
+  flex-direction: column;
+  gap: 0;
+  background: var(--vnb-white);
+  border-bottom: 1px solid var(--vnb-line);
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 380ms ease;
+}
+.vnb-mobile.vnb-open { max-height: 720px; }
+
+.vnb-mobile-item { border-top: 1px solid var(--vnb-line); }
+.vnb-mobile-item-row { display: flex; align-items: stretch; }
+.vnb-mobile-item-row a {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.9rem clamp(1rem, 4vw, 2.5rem);
+  font-family: 'Google Sans Flex', Arial, sans-serif;
+  font-size: 1.05rem;
+  color: var(--vnb-ink);
+  text-decoration: none;
+}
+.vnb-mobile-caret {
+  width: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  color: var(--vnb-ink);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.vnb-mobile-caret i { transition: transform 280ms; }
+.vnb-mobile-caret.vnb-open i { transform: rotate(180deg); }
+
+.vnb-mobile-submenu {
+  max-height: 0;
+  overflow: hidden;
+  background: var(--vnb-silver);
+  transition: max-height 320ms ease;
+}
+.vnb-mobile-submenu.vnb-open { max-height: 240px; }
+.vnb-mobile-submenu a {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem clamp(1.5rem, 5vw, 3.25rem);
+  font-family: 'Google Sans Flex', Arial, sans-serif;
+  font-size: 0.95rem;
+  color: var(--vnb-ink);
+  opacity: 0.8;
+  text-decoration: none;
+}
+
+.vnb-mobile > a {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.9rem clamp(1rem, 4vw, 2.5rem);
+  font-family: 'Google Sans Flex', Arial, sans-serif;
+  font-size: 1.05rem;
+  color: var(--vnb-ink);
+  text-decoration: none;
+  border-top: 1px solid var(--vnb-line);
+}
+.vnb-mobile .vnb-cta {
+  margin: 1rem clamp(1rem, 4vw, 2.5rem) 1.25rem;
+  justify-content: center;
+  border-top: none;
+  color: var(--vnb-white);
+}
+
+@media (max-width: 980px) {
+  .vnb-links { display: none; }
+  .vnb-burger { display: flex; }
+  .vnb-bar > .vnb-cta { display: none; }
+  .vnb-mobile { display: flex; }
+}
+</style>
+</head>
+<body>
+
+<div id="ve-navbar" class="vnb-root">
+
+<header class="vnb-bar">
+  <a href="/" class="vnb-logo">
+    <img src="https://bisque-lobster-585068.hostingersite.com/wp-content/uploads/2026/07/icon.svg" alt="vana ekantha" />
+    <span>Vana <em>Ekantha</em></span>
+  </a>
+
+  <nav class="vnb-links" aria-label="Primary">
+    <a href="/">Home</a>
+
+    <div class="vnb-item" id="stayNavItem">
+      <a href="/stay">Stay</a>
+      <button class="vnb-caret" id="stayCaret" aria-label="Toggle Stay submenu" aria-expanded="false">
+        <i class="fa-solid fa-circle-arrow-down"></i>
+      </button>
+      <div class="vnb-dropdown" role="menu">
+        <a href="/mango-house" role="menuitem">
+          <span class="vnb-drop-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21V12"/><path d="M12 12C12 12 6 11 6 5c6 0 6 5 6 7z"/><path d="M12 15c0-4 5-6 8-6 0 4-2.5 6-8 6z"/></svg></span>
+          Mango House
+        </a>
+        <a href="/stone-house" role="menuitem">
+          <span class="vnb-drop-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 21V10l9-6 9 6v11"/><path d="M9 21v-6h6v6"/></svg></span>
+          Stone House
+        </a>
+        <a href="/full-house" role="menuitem">
+          <span class="vnb-drop-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="10" width="7" height="11"/><rect x="14" y="6" width="7" height="15"/><path d="M3 10l3.5-4L10 10"/></svg></span>
+          Full House
+        </a>
+        <a href="/stay" class="vnb-view-all" role="menuitem">
+          <span class="vnb-drop-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+          View All Stays
+        </a>
+      </div>
+    </div>
+
+    <a href="/farm-dining">Farm Dining</a>
+    <a href="/events">Events</a>
+    <a href="/about">About</a>
+    <a href="/faqs">FAQs</a>
+    <a href="/contact">Contact</a>
+  </nav>
+
+  <a href="/hold-a-date" class="vnb-cta">
+    Hold a Date
+    <span class="vnb-cta-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+    </span>
+  </a>
+
+  <button class="vnb-burger" id="siteNavBurger" aria-label="Open menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<nav class="vnb-mobile" id="siteNavMobile" aria-label="Primary mobile">
+  <a href="/">Home</a>
+
+  <div class="vnb-mobile-item">
+    <div class="vnb-mobile-item-row">
+      <a href="/stay">Stay</a>
+      <button class="vnb-mobile-caret" id="mobileStayCaret" aria-label="Toggle Stay submenu" aria-expanded="false">
+        <i class="fa-solid fa-circle-arrow-down"></i>
+      </button>
+    </div>
+    <div class="vnb-mobile-submenu" id="mobileStaySubmenu">
+      <a href="/mango-house">
+        <span class="vnb-drop-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21V12"/><path d="M12 12C12 12 6 11 6 5c6 0 6 5 6 7z"/><path d="M12 15c0-4 5-6 8-6 0 4-2.5 6-8 6z"/></svg></span>
+        Mango House
+      </a>
+      <a href="/stone-house">
+        <span class="vnb-drop-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 21V10l9-6 9 6v11"/><path d="M9 21v-6h6v6"/></svg></span>
+        Stone House
+      </a>
+      <a href="/full-house">
+        <span class="vnb-drop-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="10" width="7" height="11"/><rect x="14" y="6" width="7" height="15"/><path d="M3 10l3.5-4L10 10"/></svg></span>
+        Full House
+      </a>
+    </div>
+  </div>
+
+  <a href="/farm-dining">Farm Dining</a>
+  <a href="/events">Events</a>
+  <a href="/about">About</a>
+  <a href="/faqs">FAQs</a>
+  <a href="/contact">Contact</a>
+
+  <a href="/hold-a-date" class="vnb-cta">
+    Hold a date
+    <span class="vnb-cta-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+    </span>
+  </a>
+</nav>
+
+</div><!-- /#ve-navbar -->
+
+<script>
+(function () {
+  var burger = document.getElementById('siteNavBurger');
+  var mobile = document.getElementById('siteNavMobile');
+  if (burger && mobile) {
+    burger.addEventListener('click', function () {
+      var open = mobile.classList.toggle('vnb-open');
+      burger.classList.toggle('vnb-open', open);
+      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+
+    mobile.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', function () {
+        mobile.classList.remove('vnb-open');
+        burger.classList.remove('vnb-open');
+        burger.setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
+
+  // ── Desktop "Stay" dropdown — hover (with a close delay so the pointer
+  //    has time to travel into the panel) plus click/tap for touch & keyboard ──
+  var stayItem = document.getElementById('stayNavItem');
+  var stayCaret = document.getElementById('stayCaret');
+  if (stayItem && stayCaret) {
+    var closeTimer = null;
+
+    function openStay() {
+      clearTimeout(closeTimer);
+      stayItem.classList.add('vnb-open');
+      stayCaret.setAttribute('aria-expanded', 'true');
+    }
+    function closeStayNow() {
+      stayItem.classList.remove('vnb-open');
+      stayCaret.setAttribute('aria-expanded', 'false');
+    }
+    function scheduleClose() {
+      clearTimeout(closeTimer);
+      closeTimer = setTimeout(closeStayNow, 300);
+    }
+
+    stayItem.addEventListener('mouseenter', openStay);
+    stayItem.addEventListener('mouseleave', scheduleClose);
+
+    stayCaret.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (stayItem.classList.contains('vnb-open')) closeStayNow();
+      else openStay();
+    });
+    document.addEventListener('click', function (e) {
+      if (!stayItem.contains(e.target)) closeStayNow();
+    });
+  }
+
+  // ── Mobile "Stay" submenu toggle ─────────────────────────────
+  var mobileCaret = document.getElementById('mobileStayCaret');
+  var mobileSubmenu = document.getElementById('mobileStaySubmenu');
+  if (mobileCaret && mobileSubmenu) {
+    mobileCaret.addEventListener('click', function () {
+      var isOpen = mobileSubmenu.classList.toggle('vnb-open');
+      mobileCaret.classList.toggle('vnb-open', isOpen);
+      mobileCaret.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
