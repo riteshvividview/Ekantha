@@ -69,6 +69,25 @@ export const Stays: CollectionConfig = {
       ],
     },
 
+    {
+      type: 'group',
+      name: 'homeTeaser',
+      label: 'Homepage teaser (Choose Your Escape carousel)',
+      admin: {
+        description:
+          'The homepage carousel uses its own short quote and facts line, distinct from the full page above — e.g. Mango House\'s full-page quote is about breakfast/goats, but the homepage teaser quote is about mornings/fruit sounds.',
+      },
+      fields: [
+        { name: 'quote', type: 'textarea', required: true },
+        {
+          name: 'factsLine',
+          type: 'text',
+          required: true,
+          admin: { description: 'e.g. "queen bed · private verandah · no tv" (capacity is prepended automatically)' },
+        },
+      ],
+    },
+
     repeatingImageBlock('highlights'),
     repeatingImageBlock('amenities'),
 

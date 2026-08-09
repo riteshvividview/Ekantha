@@ -2,6 +2,20 @@ import type { Metadata } from 'next'
 import '../globals.css'
 import { SmoothScrollProvider } from '@/components/layout/SmoothScrollProvider'
 import { TheatreStudioLoader } from '@/components/layout/TheatreStudioLoader'
+import { CursorDot } from '@/components/chrome/CursorDot'
+import { HoldPill } from '@/components/chrome/HoldPill'
+import { IdleNudge } from '@/components/chrome/IdleNudge'
+import { Navbar } from '@/components/chrome/Navbar'
+import { Footer } from '@/components/chrome/Footer'
+import { getPayloadClient } from '@/lib/payload'
+import { safeFetch } from '@/lib/safeFetch'
+
+// Every page under (site) reads from Payload on each request — that's
+// the "edit in the CMS → database updates → page updates" behavior the
+// whole point of this rebuild. Without forcing dynamic rendering, Next
+// would be free to prerender this layout once at build time and cache
+// that snapshot, so CMS edits wouldn't show up until the next deploy.
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Vana Ekantha — a farmstay for intentional disconnection',
@@ -20,7 +34,16 @@ export const metadata: Metadata = {
 // through a different loading mechanism. "Google Sans Flex" in particular
 // isn't in next/font/google's bundled metadata (it's a newer variable
 // font), so this also sidesteps having to special-case it.
-export default function SiteRootLayout({ children }: { children: React.ReactNode }) {
+export default async function SiteRootLayout({ children }: { children: React.ReactNode }) {
+  // getPayloadClient() itself is what throws when DATABASE_URI isn't a
+  // real, reachable database yet — it has to be called *inside* each
+  // safeFetch callback (not once, outside, and reused) so that failure is
+  // caught too, not just failures from the findGlobal call after it.
+  const [nav, footer] = await Promise.all([
+    safeFetch(async () => (await getPayloadClient()).findGlobal({ slug: 'navigation', depth: 1 })),
+    safeFetch(async () => (await getPayloadClient()).findGlobal({ slug: 'footer', depth: 1 })),
+  ])
+
   return (
     <html lang="en" data-scroll-behavior="smooth">
       <head>
@@ -42,7 +65,14 @@ export default function SiteRootLayout({ children }: { children: React.ReactNode
       </head>
       <body>
         <TheatreStudioLoader />
-        <SmoothScrollProvider>{children}</SmoothScrollProvider>
+        <CursorDot />
+        <HoldPill />
+        <IdleNudge />
+        <SmoothScrollProvider>
+          {nav.data && <Navbar data={nav.data} />}
+          {children}
+          {footer.data && <Footer data={footer.data} />}
+        </SmoothScrollProvider>
       </body>
     </html>
   )

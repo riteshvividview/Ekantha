@@ -258,6 +258,16 @@ export interface Stay {
         }[]
       | null;
   };
+  /**
+   * The homepage carousel uses its own short quote and facts line, distinct from the full page above — e.g. Mango House's full-page quote is about breakfast/goats, but the homepage teaser quote is about mornings/fruit sounds.
+   */
+  homeTeaser: {
+    quote: string;
+    /**
+     * e.g. "queen bed · private verandah · no tv" (capacity is prepended automatically)
+     */
+    factsLine: string;
+  };
   highlights?:
     | {
         title: string;
@@ -472,6 +482,12 @@ export interface StaysSelect<T extends boolean = true> {
               id?: T;
             };
       };
+  homeTeaser?:
+    | T
+    | {
+        quote?: T;
+        factsLine?: T;
+      };
   highlights?:
     | T
     | {
@@ -652,7 +668,7 @@ export interface Footer {
   createdAt?: string | null;
 }
 /**
- * The / homepage. DRAFT SCHEMA — Home.html is the largest source file and this was written from partial context rather than a full section-by-section read. Treat these fields as a reasonable starting point; expect to adjust when the Home page is actually built.
+ * The / homepage. Schema finalized against a full read of Home.html — 11 sections in order: hero, ticker, intro, why-us, estate experience track, stays carousel, farm dine, events preview, testimonials, gallery preview, location, final CTA.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "home".
@@ -660,25 +676,63 @@ export interface Footer {
 export interface Home {
   id: number;
   hero: {
-    badge?: string | null;
+    /**
+     * e.g. "A Forest Farmstay Near Hyderabad"
+     */
+    badgeLabel: string;
+    badgeMonogram?: string | null;
     headline: string;
-    sub?: string | null;
-    backgroundImage?: (number | null) | Media;
+    sub: string;
+    backgroundImage: number | Media;
+    ratingText?: string | null;
     primaryCtaLabel?: string | null;
     primaryCtaHref?: string | null;
     secondaryCtaLabel?: string | null;
     secondaryCtaHref?: string | null;
   };
-  staysTeaser?: {
-    heading?: string | null;
-    sub?: string | null;
+  /**
+   * The live date/time in the third slot is computed client-side, not stored here.
+   */
+  ticker: {
     /**
-     * Which Stays documents to feature here, and in what order.
+     * e.g. "26°C, jasmine on the wind"
      */
-    featuredStays?: (number | Stay)[] | null;
+    weatherText: string;
+    /**
+     * e.g. "the first amrood of the season"
+     */
+    ripeningText: string;
   };
-  experience?: {
-    heading?: string | null;
+  intro: {
+    eyebrow?: string | null;
+    pullQuote: string;
+    paragraphBeforeContrasts: string;
+    /**
+     * e.g. "privacy without isolation"
+     */
+    contrasts?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+    paragraphAfterContrasts: string;
+    closingNote: string;
+  };
+  whyUs: {
+    heading: string;
+    sub?: string | null;
+    items?:
+      | {
+          badgeLabel: string;
+          title: string;
+          body: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  experience: {
+    heading: string;
     sub?: string | null;
     items?:
       | {
@@ -689,18 +743,84 @@ export interface Home {
         }[]
       | null;
   };
-  gallery?:
-    | {
-        image: number | Media;
-        caption?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  finalCta?: {
-    heading?: string | null;
-    body?: string | null;
-    buttonLabel?: string | null;
-    buttonHref?: string | null;
+  staysTeaser: {
+    heading: string;
+    sub?: string | null;
+    /**
+     * Which Stays documents to show, and in what order. Name/image/price/capacity/homeTeaser quote+facts all come from the Stays document itself.
+     */
+    featuredStays: (number | Stay)[];
+  };
+  dine: {
+    eyebrow?: string | null;
+    heading: string;
+    body: string;
+    ctaLabel?: string | null;
+    ctaHref?: string | null;
+    image: number | Media;
+  };
+  eventsPreview: {
+    heading: string;
+    sub?: string | null;
+    items?:
+      | {
+          image: number | Media;
+          badgeLabel: string;
+          title: string;
+          description: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  testimonials: {
+    heading: string;
+    sub?: string | null;
+    items?:
+      | {
+          quote: string;
+          name: string;
+          rating?: number | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  galleryPreview: {
+    heading: string;
+    sub?: string | null;
+    images?:
+      | {
+          image: number | Media;
+          id?: string | null;
+        }[]
+      | null;
+    ctaLabel?: string | null;
+    ctaHref?: string | null;
+  };
+  location: {
+    eyebrow?: string | null;
+    heading: string;
+    facts?:
+      | {
+          label: string;
+          value: string;
+          id?: string | null;
+        }[]
+      | null;
+    ctaLabel?: string | null;
+    ctaHref?: string | null;
+    mapImage: number | Media;
+  };
+  finalCta: {
+    eyebrow?: string | null;
+    heading: string;
+    whenLabel?: string | null;
+    whenPlaceholder?: string | null;
+    whoLabel?: string | null;
+    whoPlaceholder?: string | null;
+    howLongLabel?: string | null;
+    howLongPlaceholder?: string | null;
+    submitLabel?: string | null;
+    note?: string | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1108,21 +1228,51 @@ export interface HomeSelect<T extends boolean = true> {
   hero?:
     | T
     | {
-        badge?: T;
+        badgeLabel?: T;
+        badgeMonogram?: T;
         headline?: T;
         sub?: T;
         backgroundImage?: T;
+        ratingText?: T;
         primaryCtaLabel?: T;
         primaryCtaHref?: T;
         secondaryCtaLabel?: T;
         secondaryCtaHref?: T;
       };
-  staysTeaser?:
+  ticker?:
+    | T
+    | {
+        weatherText?: T;
+        ripeningText?: T;
+      };
+  intro?:
+    | T
+    | {
+        eyebrow?: T;
+        pullQuote?: T;
+        paragraphBeforeContrasts?: T;
+        contrasts?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        paragraphAfterContrasts?: T;
+        closingNote?: T;
+      };
+  whyUs?:
     | T
     | {
         heading?: T;
         sub?: T;
-        featuredStays?: T;
+        items?:
+          | T
+          | {
+              badgeLabel?: T;
+              title?: T;
+              body?: T;
+              id?: T;
+            };
       };
   experience?:
     | T
@@ -1138,20 +1288,95 @@ export interface HomeSelect<T extends boolean = true> {
               id?: T;
             };
       };
-  gallery?:
+  staysTeaser?:
     | T
     | {
+        heading?: T;
+        sub?: T;
+        featuredStays?: T;
+      };
+  dine?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        body?: T;
+        ctaLabel?: T;
+        ctaHref?: T;
         image?: T;
-        caption?: T;
-        id?: T;
+      };
+  eventsPreview?:
+    | T
+    | {
+        heading?: T;
+        sub?: T;
+        items?:
+          | T
+          | {
+              image?: T;
+              badgeLabel?: T;
+              title?: T;
+              description?: T;
+              id?: T;
+            };
+      };
+  testimonials?:
+    | T
+    | {
+        heading?: T;
+        sub?: T;
+        items?:
+          | T
+          | {
+              quote?: T;
+              name?: T;
+              rating?: T;
+              id?: T;
+            };
+      };
+  galleryPreview?:
+    | T
+    | {
+        heading?: T;
+        sub?: T;
+        images?:
+          | T
+          | {
+              image?: T;
+              id?: T;
+            };
+        ctaLabel?: T;
+        ctaHref?: T;
+      };
+  location?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        facts?:
+          | T
+          | {
+              label?: T;
+              value?: T;
+              id?: T;
+            };
+        ctaLabel?: T;
+        ctaHref?: T;
+        mapImage?: T;
       };
   finalCta?:
     | T
     | {
+        eyebrow?: T;
         heading?: T;
-        body?: T;
-        buttonLabel?: T;
-        buttonHref?: T;
+        whenLabel?: T;
+        whenPlaceholder?: T;
+        whoLabel?: T;
+        whoPlaceholder?: T;
+        howLongLabel?: T;
+        howLongPlaceholder?: T;
+        submitLabel?: T;
+        note?: T;
       };
   updatedAt?: T;
   createdAt?: T;
