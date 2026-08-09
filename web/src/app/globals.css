@@ -1,0 +1,249 @@
+/* ──────────────────────────────────────────────────────────────
+   vana ekantha — global design tokens
+   Ported verbatim from the shared :root block + typography
+   primitives that appear identically across every source HTML
+   page (Home/About/Contact/Events/FAQs/FarmDining/FullHouse/
+   MangoHouse/Stay/StoneHouse) — exact hex values, exact class
+   names, so visual parity is a given rather than eyeballed.
+   ────────────────────────────────────────────────────────────── */
+
+:root {
+  --white: #ffffff;
+  --silver: #f3f4f6;
+  --ink: #121214;
+  --ink-soft: rgba(18, 18, 20, 0.62);
+  --ink-faint: rgba(18, 18, 20, 0.42);
+  --line: rgba(18, 18, 20, 0.12);
+  --line-strong: rgba(18, 18, 20, 0.22);
+  --black: #0a0a0b;
+
+  --font-display: 'Google Sans Flex', Arial, sans-serif;
+  --font-accent: 'Instrument Serif', Georgia, serif;
+  --font-body: 'DM Sans', Arial, sans-serif;
+
+  --ease-slow: cubic-bezier(0.6, 0.05, 0.3, 1);
+  --ease-soft: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  --pad-x: clamp(1rem, 5vw, 7rem);
+  --pad-y: clamp(3rem, 8vw, 9rem);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: clamp(15px, 2vw, 18px);
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--white);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (min-width: 1024px) {
+  body {
+    cursor: none;
+  }
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--white);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+@media (min-width: 1024px) {
+  button,
+  a,
+  .hover-zone {
+    cursor: none;
+  }
+}
+
+/* ── Typography primitives ─────────────────────────────────── */
+
+.display-xl {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.1rem, 6.4vw, 4.6rem);
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+.display-xl em {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--ink);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.5rem, 3.6vw, 2.7rem);
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.section-title em {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: clamp(0.68rem, 1.4vw, 0.78rem);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.eyebrow::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ink);
+  display: inline-block;
+}
+.bg-black .eyebrow {
+  color: rgba(255, 255, 255, 0.7);
+}
+.bg-black .eyebrow::before {
+  background: var(--white);
+}
+
+/* ── Buttons (shared across every page) ───────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: clamp(0.85rem, 2vw, 1.05rem) clamp(1.5rem, 3vw, 2rem);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(0.85rem, 1.8vw, 0.95rem);
+  letter-spacing: 0.005em;
+  white-space: nowrap;
+  transition:
+    background 260ms,
+    color 260ms,
+    border-color 260ms,
+    transform 320ms var(--ease-slow);
+}
+.btn-primary {
+  background: var(--ink);
+  color: var(--white);
+}
+.btn-primary:hover {
+  background: #2a2a2d;
+  transform: translateY(-2px);
+}
+.btn-ghost {
+  background: var(--white);
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+}
+.btn-ghost:hover {
+  border-color: var(--ink);
+  transform: translateY(-2px);
+}
+.btn-on-dark {
+  background: var(--white);
+  color: var(--black);
+}
+.btn-on-dark:hover {
+  background: var(--silver);
+  transform: translateY(-2px);
+}
+
+/* ── Generic section frame ─────────────────────────────────── */
+
+section {
+  padding: var(--pad-y) var(--pad-x);
+  position: relative;
+}
+.bg-silver {
+  background: var(--silver);
+}
+.bg-white {
+  background: var(--white);
+}
+.bg-black {
+  background: var(--black);
+  color: var(--white);
+}
+
+.section-head {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  align-items: end;
+  margin-bottom: clamp(2.25rem, 5.5vw, 4.5rem);
+}
+@media (max-width: 700px) {
+  .section-head {
+    grid-template-columns: 1fr;
+  }
+}
+.section-head p {
+  font-family: var(--font-body);
+  font-size: clamp(0.92rem, 2.1vw, 1.05rem);
+  line-height: 1.7;
+  color: var(--ink-soft);
+  max-width: 46ch;
+}
+.bg-black .section-head p {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+/* ── Scroll reveal (base state; GSAP takes over the "in" transition) ── */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+}
+.reveal.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
