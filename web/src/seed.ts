@@ -472,6 +472,59 @@ async function main() {
   })
   payload.logger.info('✓ About seeded.')
 
+  payload.logger.info('Seeding Contact global...')
+  await payload.updateGlobal({
+    slug: 'contact',
+    data: {
+      info: {
+        eyebrow: 'get in touch',
+        heading: 'Talk to a person, not a form.',
+        intro:
+          "We don't run a call centre or a chatbot. Every enquiry — by phone, email, or the form below — is answered by someone who actually works on the farm.",
+        rows: [
+          {
+            icon: 'phone',
+            label: 'Phone',
+            value: '+91 98480 12345',
+            href: 'tel:+919848012345',
+            note: "08:00 – 20:00 IST, every day. Outside those hours, leave a message and we'll call back.",
+          },
+          {
+            icon: 'email',
+            label: 'Email',
+            value: 'hello@vanaekantha.com',
+            href: 'mailto:hello@vanaekantha.com',
+            note: "For bookings, events, press, or anything that doesn't fit a form field.",
+          },
+          {
+            icon: 'location',
+            label: 'Property Location',
+            value: 'The Deccan, Telangana',
+            note: "Roughly 2.5 hours by road from Hyderabad. The exact address and coordinates are shared in your booking confirmation — partly for privacy, partly to make sure we've spoken first.",
+          },
+        ],
+        mapCaption:
+          'Google Maps directions are sent with every confirmed booking, pinned to the exact gate — this map is intentionally general until then.',
+      },
+      form: {
+        eyebrow: 'send a message',
+        heading: 'or, write it down here.',
+        intro: "No auto-reply, no ticket number. We'll write back within 24 hours.",
+        nameLabel: 'Your Name',
+        namePlaceholder: 'first and last name',
+        contactLabel: 'Email Or Phone',
+        contactPlaceholder: "however you'd like us to reply",
+        subjectLabel: "What's This About",
+        subjectPlaceholder: 'e.g. a booking question, an event enquiry, press',
+        messageLabel: 'Your Message',
+        messagePlaceholder: "tell us what you need, and we'll take it from there",
+        submitLabel: 'Send Message →',
+        submitNote: "We'll write back within 24 hours.",
+      },
+    },
+  })
+  payload.logger.info('✓ Contact seeded.')
+
   payload.logger.info('Done. Ctrl+C not needed — process will exit.')
   process.exit(0)
 }

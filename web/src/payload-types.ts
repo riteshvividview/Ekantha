@@ -911,27 +911,39 @@ export interface About {
  */
 export interface Contact {
   id: number;
-  heading: string;
-  intro: string;
-  infoRows?:
-    | {
-        label: string;
-        value: string;
-        /**
-         * Leave blank if not a link.
-         */
-        href?: string | null;
-        note?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  mapCaption?: string | null;
-  form?: {
+  info: {
+    eyebrow: string;
+    heading: string;
+    intro: string;
+    rows?:
+      | {
+          icon: 'phone' | 'email' | 'location';
+          label: string;
+          value: string;
+          /**
+           * e.g. tel:+919848012345 or mailto:hello@... — leave blank if not a link.
+           */
+          href?: string | null;
+          note?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    mapCaption?: string | null;
+  };
+  form: {
+    eyebrow: string;
+    heading: string;
+    intro: string;
     nameLabel?: string | null;
+    namePlaceholder?: string | null;
     contactLabel?: string | null;
+    contactPlaceholder?: string | null;
     subjectLabel?: string | null;
+    subjectPlaceholder?: string | null;
     messageLabel?: string | null;
+    messagePlaceholder?: string | null;
     submitLabel?: string | null;
+    submitNote?: string | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1478,26 +1490,40 @@ export interface AboutSelect<T extends boolean = true> {
  * via the `definition` "contact_select".
  */
 export interface ContactSelect<T extends boolean = true> {
-  heading?: T;
-  intro?: T;
-  infoRows?:
+  info?:
     | T
     | {
-        label?: T;
-        value?: T;
-        href?: T;
-        note?: T;
-        id?: T;
+        eyebrow?: T;
+        heading?: T;
+        intro?: T;
+        rows?:
+          | T
+          | {
+              icon?: T;
+              label?: T;
+              value?: T;
+              href?: T;
+              note?: T;
+              id?: T;
+            };
+        mapCaption?: T;
       };
-  mapCaption?: T;
   form?:
     | T
     | {
+        eyebrow?: T;
+        heading?: T;
+        intro?: T;
         nameLabel?: T;
+        namePlaceholder?: T;
         contactLabel?: T;
+        contactPlaceholder?: T;
         subjectLabel?: T;
+        subjectPlaceholder?: T;
         messageLabel?: T;
+        messagePlaceholder?: T;
         submitLabel?: T;
+        submitNote?: T;
       };
   updatedAt?: T;
   createdAt?: T;
