@@ -1,0 +1,552 @@
+/* ── 01. Banner ─────────────────────────────────────────────────── */
+
+.hero {
+  min-height: 92vh;
+  min-height: 92svh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: left;
+  padding: clamp(6rem, 12vh, 8rem) var(--pad-x) clamp(3rem, 8vh, 5rem);
+  background: var(--silver);
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url('https://bisque-lobster-585068.hostingersite.com/wp-content/uploads/2026/07/low-angle-shot-church-with-staple-bright-sky-scaled.jpg');
+  background-size: cover;
+  background-position: center center;
+  filter: grayscale(1) brightness(1.55) contrast(0.92);
+  opacity: 0.8;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, transparent 8%, rgba(0, 0, 0, 0.55) 45%, black 100%);
+  mask-image: linear-gradient(to right, transparent 0%, transparent 8%, rgba(0, 0, 0, 0.55) 45%, black 100%);
+}
+.heroBadge,
+.heroHeadline,
+.heroSub,
+.heroRating,
+.heroCtas {
+  position: relative;
+  z-index: 1;
+}
+.heroBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.5rem 1.1rem 0.5rem 0.5rem;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(0.72rem, 1.6vw, 0.82rem);
+  color: var(--ink-soft);
+  margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+.heroBadge .dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+}
+.heroHeadline {
+  max-width: 20ch;
+  margin-bottom: clamp(1.25rem, 3vw, 2rem);
+}
+.heroSub {
+  font-family: var(--font-body);
+  font-size: clamp(0.95rem, 2.2vw, 1.15rem);
+  line-height: 1.7;
+  color: var(--ink-soft);
+  max-width: 52ch;
+  margin: 0 0 clamp(2rem, 5vw, 3rem);
+}
+.heroRating {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.9rem;
+  margin-bottom: clamp(1.75rem, 4vw, 2.75rem);
+  flex-wrap: wrap;
+}
+.heroRating .stars {
+  display: inline-flex;
+  gap: 0.15rem;
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+}
+.heroRating .ratingText {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(0.8rem, 1.8vw, 0.92rem);
+  color: var(--ink-soft);
+}
+.heroCtas {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+}
+
+/* ── 02. Accommodation Cards ────────────────────────────────────── */
+
+.staysSection {
+  padding-top: var(--pad-y);
+  padding-bottom: var(--pad-y);
+}
+.stayBlock {
+  padding-top: clamp(3rem, 7vw, 5rem);
+  padding-bottom: clamp(3rem, 7vw, 5rem);
+  border-top: 1px solid var(--line);
+}
+.stayBlock:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+.stayBlockHeader {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  align-items: start;
+  margin-bottom: clamp(2rem, 5vw, 3.5rem);
+}
+@media (max-width: 480px) {
+  .stayBlockHeader {
+    grid-template-columns: 1fr;
+  }
+}
+.stayBlockNum {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(0.68rem, 1.5vw, 0.78rem);
+  letter-spacing: 0.14em;
+  color: var(--ink-faint);
+  padding-top: 0.5rem;
+  white-space: nowrap;
+}
+.stayBlockTitle {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.7rem, 4.6vw, 3.2rem);
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  margin-bottom: 0.6rem;
+  color: var(--ink);
+}
+.stayBlockTitle em {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 400;
+}
+.stayBlockTagline {
+  font-family: var(--font-body);
+  font-size: clamp(0.82rem, 1.9vw, 0.95rem);
+  color: var(--ink-soft);
+}
+.stayBlockBody {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: start;
+}
+@media (max-width: 760px) {
+  .stayBlockBody {
+    grid-template-columns: 1fr;
+  }
+}
+.stayPlate {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: var(--silver);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  overflow: hidden;
+  order: -1;
+  position: sticky;
+  top: clamp(1.5rem, 4vw, 3rem);
+}
+@media (min-width: 761px) {
+  .stayPlate {
+    order: 0;
+  }
+}
+@media (max-width: 760px) {
+  .stayPlate {
+    position: static;
+  }
+}
+.stayPlate img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 700ms var(--ease-slow);
+}
+.stayPlate:hover img {
+  transform: scale(1.06);
+}
+.stayQuote {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1rem, 2.4vw, 1.3rem);
+  line-height: 1.55;
+  color: var(--ink);
+  border-left: 2px solid var(--line-strong);
+  padding-left: clamp(1rem, 2.5vw, 1.5rem);
+  margin-bottom: clamp(1.5rem, 3.5vw, 2.25rem);
+}
+.staySpecs {
+  display: grid;
+  grid-template-columns: minmax(90px, 120px) 1fr;
+  gap: 0.5rem 0.75rem;
+  font-family: var(--font-body);
+  font-size: clamp(0.82rem, 1.8vw, 0.9rem);
+  line-height: 1.9;
+  margin-bottom: clamp(1.5rem, 3.5vw, 2.25rem);
+  padding-bottom: clamp(1.5rem, 3.5vw, 2.25rem);
+  border-bottom: 1px dashed var(--line);
+}
+@media (max-width: 380px) {
+  .staySpecs {
+    grid-template-columns: 1fr;
+  }
+}
+.staySpecs .key {
+  color: var(--ink-faint);
+}
+.staySpecs .val {
+  color: var(--ink);
+}
+.stayLists {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1rem, 3vw, 2rem);
+  margin-bottom: clamp(1.5rem, 3.5vw, 2.25rem);
+}
+@media (max-width: 420px) {
+  .stayLists {
+    grid-template-columns: 1fr;
+  }
+}
+.slistHead {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(0.66rem, 1.4vw, 0.75rem);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 0.75rem;
+}
+.slist {
+  list-style: none;
+  font-family: var(--font-body);
+  font-size: clamp(0.8rem, 1.8vw, 0.9rem);
+  line-height: 1.8;
+  color: var(--ink-soft);
+}
+.slist li {
+  display: flex;
+  gap: 0.5rem;
+}
+.slist li::before {
+  content: '·';
+  color: var(--ink-faint);
+  flex-shrink: 0;
+}
+.stayNote {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: clamp(0.8rem, 1.8vw, 0.88rem);
+  line-height: 1.7;
+  color: var(--ink-soft);
+  padding: clamp(0.85rem, 2vw, 1.2rem) clamp(1rem, 2vw, 1.4rem);
+  background: var(--silver);
+  border-radius: 12px;
+  margin-bottom: clamp(1.5rem, 3.5vw, 2.25rem);
+}
+.stayCtaRow {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2rem);
+  flex-wrap: wrap;
+  padding-top: clamp(1.25rem, 3vw, 2rem);
+  border-top: 1px solid var(--line);
+}
+.stayPrice {
+  flex: 1;
+  min-width: 160px;
+}
+.stayPrice .amount {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.1rem, 3vw, 1.6rem);
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.stayPrice .incl {
+  font-family: var(--font-body);
+  font-size: clamp(0.72rem, 1.6vw, 0.8rem);
+  color: var(--ink-faint);
+  margin-top: 0.25rem;
+}
+.btnSmall {
+  padding: clamp(0.65rem, 1.6vw, 0.8rem) clamp(1.2rem, 2.5vw, 1.6rem);
+  font-size: clamp(0.78rem, 1.6vw, 0.85rem);
+}
+
+/* ── 03. Included Amenities (h-card, inside shared DragScrollTrack) ── */
+
+.hCard {
+  flex: 0 0 clamp(220px, 55vw, 270px);
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  overflow: hidden;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  transition:
+    transform 500ms var(--ease-slow),
+    border-color 300ms;
+}
+.hCard:hover {
+  transform: translateY(-6px);
+  border-color: var(--line-strong);
+}
+.hCardMedia {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+.hCardMedia img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 700ms var(--ease-slow);
+}
+.hCard:hover .hCardMedia img {
+  transform: scale(1.08);
+}
+.hCardContent {
+  padding: clamp(1.1rem, 2.3vw, 1.5rem);
+}
+.hCardTitle {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1rem, 2.4vw, 1.15rem);
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-bottom: 0.6rem;
+}
+.hCardDesc {
+  font-family: var(--font-body);
+  font-size: clamp(0.8rem, 1.8vw, 0.9rem);
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+/* ── 04. Why Stay — expanding accordion panels ─────────────────── */
+
+.accRow {
+  display: flex;
+  gap: clamp(0.6rem, 1.5vw, 0.9rem);
+  height: clamp(320px, 34vw, 420px);
+}
+@media (max-width: 700px) {
+  .accRow {
+    flex-direction: column;
+    height: auto;
+    gap: 0.75rem;
+  }
+}
+.accPanel {
+  position: relative;
+  flex: 1 1 0%;
+  min-width: 0;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid var(--line);
+  color: var(--white);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(1.4rem, 2.8vw, 1.9rem);
+  cursor: pointer;
+  transition:
+    flex-grow 700ms var(--ease-slow),
+    border-color 700ms var(--ease-slow);
+}
+@media (min-width: 701px) {
+  .accPanel:hover,
+  .accPanel.active {
+    flex-grow: 2.4;
+    border-color: var(--ink);
+  }
+}
+@media (max-width: 700px) {
+  .accPanel {
+    flex: none;
+    justify-content: flex-start;
+  }
+  .accPanel.active {
+    border-color: var(--ink);
+  }
+}
+.accMedia {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.accMedia img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 900ms var(--ease-slow);
+}
+.accPanel:hover .accMedia img,
+.accPanel.active .accMedia img {
+  transform: scale(1.06);
+}
+.accScrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(10, 10, 11, 0.15) 0%, rgba(10, 10, 11, 0.1) 35%, rgba(10, 10, 11, 0.72) 100%);
+  transition: background 700ms var(--ease-slow);
+}
+.accPanel:hover .accScrim,
+.accPanel.active .accScrim {
+  background: linear-gradient(180deg, rgba(10, 10, 11, 0.35) 0%, rgba(10, 10, 11, 0.35) 35%, rgba(10, 10, 11, 0.88) 100%);
+}
+.accPanelTop {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: auto;
+}
+@media (max-width: 700px) {
+  .accPanelTop {
+    margin-bottom: 1rem;
+  }
+}
+.accNum {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.6rem, 3.2vw, 2.1rem);
+  color: rgba(255, 255, 255, 0.5);
+}
+.accIcon {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 700ms var(--ease-slow),
+    border-color 700ms var(--ease-slow);
+}
+.accPanel:hover .accIcon,
+.accPanel.active .accIcon {
+  background: var(--white);
+  border-color: var(--white);
+}
+.accIcon svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--white);
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 700ms var(--ease-slow);
+}
+.accPanel:hover .accIcon svg,
+.accPanel.active .accIcon svg {
+  stroke: var(--ink);
+}
+.accLabel {
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(0.7rem, 1.5vw, 0.8rem);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 1rem;
+}
+.accContent {
+  position: relative;
+  z-index: 2;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(10px);
+  overflow: hidden;
+  transition:
+    max-height 10ms linear,
+    opacity 300ms var(--ease-slow),
+    transform 300ms var(--ease-slow);
+}
+.accPanel:hover .accContent,
+.accPanel.active .accContent {
+  max-height: 240px;
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    max-height 10ms linear 620ms,
+    opacity 450ms var(--ease-slow) 620ms,
+    transform 450ms var(--ease-slow) 620ms;
+}
+@media (max-width: 700px) {
+  .accContent {
+    max-height: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+.accTitle {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.1rem, 2.4vw, 1.35rem);
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  color: var(--white);
+  margin-top: 0.9rem;
+  margin-bottom: 0.6rem;
+  white-space: normal;
+}
+.accBody {
+  font-family: var(--font-body);
+  font-size: clamp(0.85rem, 1.8vw, 0.92rem);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.8);
+}

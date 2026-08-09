@@ -99,6 +99,7 @@ export interface Config {
     events: Event;
     faqs: Faq;
     'farm-dining': FarmDining;
+    'stay-page': StayPage;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
@@ -110,6 +111,7 @@ export interface Config {
     events: EventsSelect<false> | EventsSelect<true>;
     faqs: FaqsSelect<false> | FaqsSelect<true>;
     'farm-dining': FarmDiningSelect<false> | FarmDiningSelect<true>;
+    'stay-page': StayPageSelect<false> | StayPageSelect<true>;
   };
   locale: null;
   widgets: {
@@ -300,6 +302,35 @@ export interface Stay {
       }[]
     | null;
   finalCtaNote?: string | null;
+  /**
+   * Content for this stay's block on the /stay overview page. The quote there reuses description.pullQuote above — everything else (bed/character specs, the two bullet lists, the note) is specific to this shorter summary.
+   */
+  overviewBlock: {
+    /**
+     * e.g. "queen bed + daybed"
+     */
+    bed: string;
+    /**
+     * e.g. "lively, orchard-facing mornings"
+     */
+    character: string;
+    /**
+     * Exactly 2 columns, e.g. "what's inside" / "what's outside".
+     */
+    lists?:
+      | {
+          heading: string;
+          items?:
+            | {
+                text: string;
+                id?: string | null;
+              }[]
+            | null;
+          id?: string | null;
+        }[]
+      | null;
+    note?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -520,6 +551,25 @@ export interface StaysSelect<T extends boolean = true> {
         id?: T;
       };
   finalCtaNote?: T;
+  overviewBlock?:
+    | T
+    | {
+        bed?: T;
+        character?: T;
+        lists?:
+          | T
+          | {
+              heading?: T;
+              items?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+        note?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1202,6 +1252,77 @@ export interface FarmDining {
   createdAt?: string | null;
 }
 /**
+ * The /stay overview page ("three ways to stay"). Each stay block pulls most of its content from the Stays collection — this only holds the page-level sections (hero, amenities, why-stay, reserve). Named "stay-page" (not "stay") to avoid clashing with the Stays collection's own generated TypeScript type.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "stay-page".
+ */
+export interface StayPage {
+  id: number;
+  hero: {
+    badgeLabel: string;
+    badgeMonogram: string;
+    headline: string;
+    sub: string;
+    ratingText: string;
+    primaryCtaLabel?: string | null;
+    primaryCtaHref?: string | null;
+    secondaryCtaLabel?: string | null;
+    secondaryCtaHref?: string | null;
+  };
+  staysSection: {
+    heading: string;
+    sub?: string | null;
+  };
+  amenities: {
+    heading: string;
+    sub?: string | null;
+    items?:
+      | {
+          image: number | Media;
+          title: string;
+          description: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  whyStay: {
+    heading: string;
+    sub?: string | null;
+    items?:
+      | {
+          image: number | Media;
+          icon: 'check' | 'pricing' | 'terms' | 'clock';
+          number: string;
+          /**
+           * The short always-visible label, e.g. "Nothing Extra"
+           */
+          label: string;
+          /**
+           * The longer title shown on hover/expand, e.g. "Everything Essential, Included"
+           */
+          title: string;
+          body: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  reserve: {
+    eyebrow: string;
+    heading: string;
+    whenLabel?: string | null;
+    whenPlaceholder?: string | null;
+    whoLabel?: string | null;
+    whoPlaceholder?: string | null;
+    whichStayLabel?: string | null;
+    whichStayPlaceholder?: string | null;
+    submitLabel?: string | null;
+    note?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings_select".
  */
@@ -1850,6 +1971,79 @@ export interface FarmDiningSelect<T extends boolean = true> {
         partySizePlaceholder?: T;
         dietaryLabel?: T;
         dietaryPlaceholder?: T;
+        submitLabel?: T;
+        note?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "stay-page_select".
+ */
+export interface StayPageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        badgeLabel?: T;
+        badgeMonogram?: T;
+        headline?: T;
+        sub?: T;
+        ratingText?: T;
+        primaryCtaLabel?: T;
+        primaryCtaHref?: T;
+        secondaryCtaLabel?: T;
+        secondaryCtaHref?: T;
+      };
+  staysSection?:
+    | T
+    | {
+        heading?: T;
+        sub?: T;
+      };
+  amenities?:
+    | T
+    | {
+        heading?: T;
+        sub?: T;
+        items?:
+          | T
+          | {
+              image?: T;
+              title?: T;
+              description?: T;
+              id?: T;
+            };
+      };
+  whyStay?:
+    | T
+    | {
+        heading?: T;
+        sub?: T;
+        items?:
+          | T
+          | {
+              image?: T;
+              icon?: T;
+              number?: T;
+              label?: T;
+              title?: T;
+              body?: T;
+              id?: T;
+            };
+      };
+  reserve?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        whenLabel?: T;
+        whenPlaceholder?: T;
+        whoLabel?: T;
+        whoPlaceholder?: T;
+        whichStayLabel?: T;
+        whichStayPlaceholder?: T;
         submitLabel?: T;
         note?: T;
       };

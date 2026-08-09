@@ -103,5 +103,36 @@ export const Stays: CollectionConfig = {
     repeatingImageBlock('idealFor'),
 
     { name: 'finalCtaNote', type: 'textarea' },
+
+    {
+      type: 'group',
+      name: 'overviewBlock',
+      label: 'Stay Overview block (the /stay page — one summary block per stay)',
+      admin: {
+        description:
+          'Content for this stay\'s block on the /stay overview page. The quote there reuses description.pullQuote above — everything else (bed/character specs, the two bullet lists, the note) is specific to this shorter summary.',
+      },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            { name: 'bed', type: 'text', required: true, admin: { width: '50%', description: 'e.g. "queen bed + daybed"' } },
+            { name: 'character', type: 'text', required: true, admin: { width: '50%', description: 'e.g. "lively, orchard-facing mornings"' } },
+          ],
+        },
+        {
+          name: 'lists',
+          type: 'array',
+          minRows: 2,
+          maxRows: 2,
+          admin: { description: 'Exactly 2 columns, e.g. "what\'s inside" / "what\'s outside".' },
+          fields: [
+            { name: 'heading', type: 'text', required: true },
+            { name: 'items', type: 'array', minRows: 1, fields: [{ name: 'text', type: 'text', required: true }] },
+          ],
+        },
+        { name: 'note', type: 'textarea' },
+      ],
+    },
   ],
 }

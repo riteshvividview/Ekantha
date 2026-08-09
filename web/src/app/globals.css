@@ -245,6 +245,36 @@ section {
   color: rgba(255, 255, 255, 0.62);
 }
 
+/* ── Drag-scroll horizontal track (shared — DragScrollTrack.tsx) ──── */
+
+.track-wrap {
+  position: relative;
+  overflow-x: hidden;
+}
+.h-track {
+  display: flex;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  overflow-x: auto;
+  padding: 1rem var(--pad-x) 1.5rem;
+  margin: 0 calc(var(--pad-x) * -1);
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: var(--pad-x);
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  cursor: grab;
+}
+.h-track.dragging {
+  cursor: grabbing;
+  touch-action: none;
+  user-select: none;
+}
+.h-track::-webkit-scrollbar {
+  display: none;
+}
+.h-track-spacer {
+  flex: 0 0 clamp(1.5rem, 3vw, 2.5rem);
+}
+
 /* ── Scroll reveal (base state; GSAP takes over the "in" transition) ── */
 
 .reveal {

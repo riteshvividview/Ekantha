@@ -72,6 +72,20 @@ async function main() {
       teaserQuote:
         "I sit beneath the old mango grove. Mornings arrive here slowly — you'll hear fruit drop before you hear anything else.",
       teaserFacts: 'queen bed · private verandah · no tv',
+      bed: 'queen bed + daybed',
+      character: 'lively, orchard-facing mornings',
+      lists: [
+        {
+          heading: "what's inside",
+          items: ['queen bed + narrow daybed', 'large window to the orchard', 'wooden rack for hanging things'],
+        },
+        {
+          heading: "what's outside",
+          items: ['mango & guava trees (fruit aug–nov)', 'small dairy yard, 60 paces away', 'the goats — named, will introduce themselves'],
+        },
+      ],
+      overviewNote:
+        'The liveliest of the three, in the kindest sense — birds, goats, the occasional rooster. Family-friendly, and never quite silent.',
     },
     {
       slug: 'stone-house' as const,
@@ -91,6 +105,19 @@ async function main() {
       teaserQuote:
         'I am the original house on this land — thick stone walls that hold the cold in summer, the warmth in winter.',
       teaserFacts: 'two bedrooms · fireplace · reading nook',
+      bed: 'two bedrooms',
+      character: 'quiet, north-facing, unhurried',
+      lists: [
+        {
+          heading: "what's inside",
+          items: ['two bedrooms, one with a writing desk', 'fireplace (november through february)', 'three books, rotated monthly'],
+        },
+        {
+          heading: "what's outside",
+          items: ['the old tamarind tree (shade from 11am)', 'a small bench at its root', 'a low stone wall to sit on'],
+        },
+      ],
+      overviewNote: "The writer's house. If you come here to write, we will not ask what you're writing.",
     },
     {
       slug: 'full-house' as const,
@@ -110,6 +137,19 @@ async function main() {
       teaserQuote:
         'Take the whole estate — every cottage, every acre. For families, reunions, and celebrations that need room to breathe.',
       teaserFacts: 'entire property · private events team · full kitchen access',
+      bed: 'Mango House + Stone House, all rooms',
+      character: 'private, exclusive-use',
+      lists: [
+        {
+          heading: "what's included",
+          items: ['full run of Mango House & Stone House', 'main house & kitchen garden access', 'private events team, on request'],
+        },
+        {
+          heading: "what's outside",
+          items: ['the pond, the orchard, the open lawns', 'the pergola walkway, the outdoor cinema', 'space for birthdays, retreats, celebrations'],
+        },
+      ],
+      overviewNote: 'Minimum three nights for full-house bookings. Ask us about events & celebrations add-ons.',
     },
   ]
 
@@ -131,6 +171,12 @@ async function main() {
       minNights: s.minNights,
       description: { intro: s.intro, pullQuote: s.pullQuote },
       homeTeaser: { quote: s.teaserQuote, factsLine: s.teaserFacts },
+      overviewBlock: {
+        bed: s.bed,
+        character: s.character,
+        lists: s.lists.map((l) => ({ heading: l.heading, items: l.items.map((text) => ({ text })) })),
+        note: s.overviewNote,
+      },
     }
 
     if (existing.docs[0]) {
@@ -1083,6 +1129,103 @@ async function main() {
     },
   })
   payload.logger.info('✓ Farm Dining seeded.')
+
+  payload.logger.info('Seeding Stay overview page...')
+  // Note: the hero's background image is a hardcoded CSS background-image in
+  // stay.module.css (matching Stay.html, which hardcodes it the same way
+  // rather than templating it), so it isn't downloaded into Payload Media.
+  const stayAmenityPoolImg = await media('swimming-pool-blue-water-tropical-garden-with-sea-view-background-scaled.jpg', 'The spring-fed pool at Vana Ekantha')
+  const stayAmenityCinemaImg = await media('outdoor-movie-is-hit-with-movie-scaled.jpg', 'Outdoor cinema screening at Vana Ekantha')
+  const stayAmenityBbqImg = await media('family-all-together-camping-garden-father-child-grill-food-divergence-scaled.jpg', 'Barbecue evening at Vana Ekantha')
+  const stayAmenityGamesImg = await media('pool-table-with-pool-table-bar-with-two-stools-large-picture-wall-scaled.jpg', 'Indoor games room at Vana Ekantha')
+  const stayAmenityLawnsImg = await media('golf-course-zlati-gric-slovenia-with-vineyards-trees-sunny-day-scaled.jpg', 'Open lawns for outdoor games at Vana Ekantha')
+  const stayWhy1Img = await mediaFromUrl('https://images.unsplash.com/photo-1581217185422-a0f8c198710f?q=80&w=900&auto=format&fit=crop', 'A tray with breakfast and chai, included with every stay')
+  const stayWhy2Img = await mediaFromUrl('https://images.unsplash.com/photo-1693038897766-7648cf044bad?q=80&w=900&auto=format&fit=crop', 'A single honest rate, no surge pricing')
+  const stayWhy3Img = await mediaFromUrl('https://images.unsplash.com/photo-1711048090278-30fef40e104d?q=80&w=900&auto=format&fit=crop', 'A booking confirmation, flexible cancellation terms')
+  const stayWhy4Img = await mediaFromUrl('https://images.unsplash.com/photo-1564433517015-799b3f75e087?q=80&w=900&auto=format&fit=crop', 'A slow clock, two nights minimum stay')
+
+  await payload.updateGlobal({
+    slug: 'stay-page',
+    data: {
+      hero: {
+        badgeLabel: 'Five Acres, Three Ways To Stay',
+        badgeMonogram: 'VE',
+        headline: 'Choose Your Stay\nAt Vana Ekantha',
+        sub: 'None of them face each other. Each sits where the land already had a clearing — from a private cottage for two, to the entire estate for everyone you love.',
+        ratingText: 'Loved by returning guests',
+        primaryCtaLabel: 'View The Stays →',
+        primaryCtaHref: '#stays',
+        secondaryCtaLabel: 'Hold a Date',
+        secondaryCtaHref: '/hold-a-date',
+      },
+      staysSection: {
+        heading: 'three ways to stay.',
+        sub: 'From a quiet cottage for two, to the whole estate for a celebration — each stay was placed where the land already had room for it.',
+      },
+      amenities: {
+        heading: 'included amenities.',
+        sub: 'Small, deliberate ways to spend a day here — included with every stay, none of them mandatory.',
+        items: [
+          { image: stayAmenityPoolImg, title: 'Pool', description: 'A quiet, spring-fed pool — best at first light or last.' },
+          { image: stayAmenityCinemaImg, title: 'Outdoor Projector', description: 'Films under open sky once the cicadas start — bring a blanket, borrow ours.' },
+          { image: stayAmenityBbqImg, title: 'Barbecue Grill', description: 'Slow fire, farm produce, started when the dusk smells right.' },
+          { image: stayAmenityGamesImg, title: 'Indoor Games', description: 'Board games and quiet company for the hours between rituals.' },
+          { image: stayAmenityLawnsImg, title: 'Outdoor Games', description: 'Badminton, ring toss, and open lawns for whatever else you bring.' },
+        ],
+      },
+      whyStay: {
+        heading: 'why stay at Vana Ekantha.',
+        sub: 'Four reasons guests keep returning — none of them printed on a brochure.',
+        items: [
+          {
+            image: stayWhy1Img,
+            icon: 'check',
+            number: '01',
+            label: 'Nothing Extra',
+            title: 'Everything Essential, Included',
+            body: 'Breakfast, evening chai, access to every farm ritual, a journal and a pencil — no add-on menus to read through.',
+          },
+          {
+            image: stayWhy2Img,
+            icon: 'pricing',
+            number: '02',
+            label: 'No Surge Pricing',
+            title: 'Honest, Fixed Pricing',
+            body: 'The rate you see is the rate you pay — regardless of when you book, or how popular the weekend is.',
+          },
+          {
+            image: stayWhy3Img,
+            icon: 'terms',
+            number: '03',
+            label: 'Fair Terms',
+            title: 'Flexible Cancellation',
+            body: 'Full refund 14+ days out, 50% within 7–14 days, and credit held (never lost) inside that window.',
+          },
+          {
+            image: stayWhy4Img,
+            icon: 'clock',
+            number: '04',
+            label: 'Two Nights, Minimum',
+            title: 'A Slower Minimum Stay',
+            body: 'One night is a preview, not a stay. Two is when the rhythm begins — which is why that\'s where we start.',
+          },
+        ],
+      },
+      reserve: {
+        eyebrow: 'holding a date',
+        heading: "tell us when,\nand we'll hold a stay.",
+        whenLabel: 'when',
+        whenPlaceholder: '14 may → 17 may',
+        whoLabel: 'who',
+        whoPlaceholder: '2 adults',
+        whichStayLabel: 'which stay',
+        whichStayPlaceholder: 'mango, stone, or full house',
+        submitLabel: 'hold a date →',
+        note: 'No countdown timers. No "only 1 left!" No urgency theatre.\nIf a stay is free, it\'s yours. If it isn\'t, we\'ll keep your name and call you back.',
+      },
+    },
+  })
+  payload.logger.info('✓ Stay overview page seeded.')
 
   payload.logger.info('Done. Ctrl+C not needed — process will exit.')
   process.exit(0)

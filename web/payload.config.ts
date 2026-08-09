@@ -18,6 +18,7 @@ import { Contact } from './src/globals/Contact'
 import { Events } from './src/globals/Events'
 import { Faqs } from './src/globals/Faqs'
 import { FarmDining } from './src/globals/FarmDining'
+import { StayOverview } from './src/globals/Stay'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -31,7 +32,7 @@ export default buildConfig({
   },
   editor: lexicalEditor(),
   collections: [Users, Media, Stays],
-  globals: [SiteSettings, Navigation, Footer, Home, About, Contact, Events, Faqs, FarmDining],
+  globals: [SiteSettings, Navigation, Footer, Home, About, Contact, Events, Faqs, FarmDining, StayOverview],
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'src/payload-types.ts'),
