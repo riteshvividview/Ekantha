@@ -525,6 +525,196 @@ async function main() {
   })
   payload.logger.info('✓ Contact seeded.')
 
+  payload.logger.info('Seeding Events global...')
+  const evBirthdayImg = await media('beautiful-jungle-party-decorations-1-scaled.jpg', 'Birthday celebration at Vana Ekantha')
+  const evAnniversaryImg = await media('aerial-view-beautiful-outdoor-wedding-ceremony-scaled.jpg', 'Anniversary celebration at Vana Ekantha')
+  const evCorporateImg = await media('beautiful-wedding-table-assortment-outside-scaled.jpg', 'Corporate event setup at Vana Ekantha')
+  const evAlumniImg = await media('rose-flower-scaled.jpg', 'Alumni meet at Vana Ekantha')
+  const evPreweddingImg = await media('full-shot-smiley-women-posing-together-scaled.jpg', 'Pre-wedding function at Vana Ekantha')
+  const evGallery1 = await media('evening-image-5-scaled.jpg', 'A birthday, under the gulmohar')
+  const evGallery2 = await media('evening-image-6-scaled.jpg', 'The pavilion, lit for the evening')
+  const evGallery3 = await media('evening-image-1-scaled.jpg', 'A reunion, one long table')
+  const evGallery4 = await media('evening-image-2-scaled.jpg', 'The dance floor, at dusk')
+  const evGallery5 = await media('evening-image-3-scaled.jpg', 'The bonfire circle')
+  const evGallery6 = await media('evening-image-4-scaled.jpg', 'The estate, from above')
+
+  await payload.updateGlobal({
+    slug: 'events',
+    data: {
+      hero: {
+        badgeLabel: 'Events & Celebrations',
+        badgeMonogram: 'VE',
+        headline: 'Host It Here.',
+        sub: 'The estate opens itself to gatherings that deserve more than a banquet hall — open lawns, a private events team, and eleven acres of the Deccan as the backdrop.',
+        primaryCtaLabel: 'Enquire Now →',
+        primaryCtaHref: '#enquiry',
+        secondaryCtaLabel: 'See Venue Features',
+        secondaryCtaHref: '#features',
+        marqueeItems: [
+          { text: 'Birthdays' },
+          { text: 'Anniversaries' },
+          { text: 'Corporate Events' },
+          { text: 'Alumni Meets' },
+          { text: 'Pre-Wedding Functions' },
+        ],
+      },
+      eventsWeHost: {
+        eyebrow: 'events we host',
+        heading: 'five kinds of gathering.',
+        sub: 'Hover a panel — or on smaller screens, just keep scrolling.',
+        items: [
+          {
+            image: evBirthdayImg,
+            number: '01',
+            title: 'Birthdays',
+            description: 'Candles under the gulmohar, cake at dusk — milestone or otherwise, sized to however big you want it.',
+          },
+          {
+            image: evAnniversaryImg,
+            number: '02',
+            title: 'Anniversaries',
+            description: 'A quiet renewal of vows, or a full celebration with everyone who watched it happen the first time.',
+          },
+          {
+            image: evCorporateImg,
+            number: '03',
+            title: 'Corporate Events',
+            description: 'Offsites, team days, and year-end parties that trade the conference room for open lawns.',
+          },
+          {
+            image: evAlumniImg,
+            number: '04',
+            title: 'Alumni Meets',
+            description: 'Reunions for classes, teams, and colleges — long tables, and longer conversations.',
+          },
+          {
+            image: evPreweddingImg,
+            number: '05',
+            title: 'Pre-Wedding Functions',
+            description: 'Mehendi, sangeet, haldi — the land holds every kind of ceremony well.',
+          },
+        ],
+      },
+      venueFeatures: {
+        eyebrow: 'venue features',
+        heading: 'what the estate provides.',
+        items: [
+          {
+            icon: 'lawns',
+            title: 'Open Lawns',
+            description: 'Wide, unhurried grass for anything from a badminton net to a two-hundred-person reception.',
+          },
+          {
+            icon: 'pavilion',
+            title: 'Covered Pavilion',
+            description: 'A large open-sided pavilion, weatherproof for both peak sun and monsoon evenings.',
+          },
+          {
+            icon: 'lighting',
+            title: 'Sound & Lighting Setup',
+            description: 'In-house sound system and warm string lighting across the lawns and pavilion, ready without a rental truck.',
+          },
+          {
+            icon: 'parking',
+            title: 'Ample Parking',
+            description: 'On-site parking for large groups, with attendants for events over fifty guests.',
+          },
+          {
+            icon: 'catering',
+            title: 'In-House Catering',
+            description: 'Farm-sourced menus built around your event, from a simple tea service to a full multi-course dinner.',
+          },
+          {
+            icon: 'stay',
+            title: 'Overnight Stay Options',
+            description: "Mango House, Stone House, or the Full House — for guests who'd rather not drive home after.",
+          },
+        ],
+      },
+      gallery: {
+        eyebrow: 'event gallery',
+        heading: 'a few evenings.',
+        items: [
+          { image: evGallery1, caption: 'a birthday, under the gulmohar' },
+          { image: evGallery2, caption: 'the pavilion, lit for the evening' },
+          { image: evGallery3, caption: 'a reunion, one long table' },
+          { image: evGallery4, caption: 'the dance floor, at dusk' },
+          { image: evGallery5, caption: 'the bonfire circle' },
+          { image: evGallery6, caption: 'the estate, from above' },
+        ],
+      },
+      customise: {
+        eyebrow: 'customisation options',
+        heading: 'shape the evening your way.',
+        sub: 'Pick and mix — none of these come as a fixed package.',
+        groups: [
+          {
+            groupNumber: '01',
+            groupLabel: 'Decor',
+            chips: [
+              { label: 'Floral arches' },
+              { label: 'Fairy lights' },
+              { label: 'Themed table settings' },
+              { label: 'Photo backdrops' },
+            ],
+          },
+          {
+            groupNumber: '02',
+            groupLabel: 'Catering',
+            chips: [
+              { label: 'Live counters' },
+              { label: 'Regional menus' },
+              { label: 'Dietary-specific spreads' },
+              { label: 'Dessert stations' },
+            ],
+          },
+          {
+            groupNumber: '03',
+            groupLabel: 'Entertainment',
+            chips: [
+              { label: 'DJ & sound' },
+              { label: 'Live acoustic sets' },
+              { label: 'Bonfire & games' },
+              { label: 'Outdoor cinema screening' },
+            ],
+          },
+          {
+            groupNumber: '04',
+            groupLabel: 'Logistics',
+            chips: [
+              { label: 'Guest transport' },
+              { label: 'Overnight stay blocks' },
+              { label: 'Extended hours' },
+              { label: 'On-ground event coordinator' },
+            ],
+          },
+        ],
+      },
+      enquiry: {
+        eyebrow: 'enquiry form',
+        heading: "tell us what you're planning.",
+        sub: 'No quote engine, no auto-reply. A real person on the events team will write back within a day.',
+        nameLabel: 'Your Name',
+        namePlaceholder: 'first and last name',
+        eventTypeLabel: 'Event Type',
+        eventTypeNote: 'birthday, corporate, alumni, pre-wedding…',
+        eventTypePlaceholder: 'e.g. corporate offsite',
+        guestCountLabel: 'Guest Count',
+        guestCountPlaceholder: 'approximate number',
+        preferredDateLabel: 'Preferred Date',
+        preferredDatePlaceholder: 'e.g. 14 june, or a flexible weekend',
+        reachLabel: 'How To Reach You',
+        reachPlaceholder: 'email or phone',
+        moreLabel: 'Tell Us More',
+        moreNote: 'optional',
+        morePlaceholder: 'anything about the occasion that would help us plan',
+        submitLabel: 'Send Enquiry →',
+        submitNote: "We'll write back within 24 hours.",
+      },
+    },
+  })
+  payload.logger.info('✓ Events seeded.')
+
   payload.logger.info('Done. Ctrl+C not needed — process will exit.')
   process.exit(0)
 }

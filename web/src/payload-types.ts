@@ -957,7 +957,8 @@ export interface Contact {
 export interface Event {
   id: number;
   hero: {
-    badge?: string | null;
+    badgeLabel: string;
+    badgeMonogram: string;
     headline: string;
     sub: string;
     primaryCtaLabel?: string | null;
@@ -974,50 +975,81 @@ export interface Event {
         }[]
       | null;
   };
-  eventTypes?:
-    | {
-        image: number | Media;
-        number: string;
-        title: string;
-        description: string;
-        id?: string | null;
-      }[]
-    | null;
-  venueFeatures?:
-    | {
-        title: string;
-        description: string;
-        id?: string | null;
-      }[]
-    | null;
-  gallery?:
-    | {
-        image: number | Media;
-        caption?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  customisationGroups?:
-    | {
-        groupNumber: string;
-        groupLabel: string;
-        chips?:
-          | {
-              label: string;
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-      }[]
-    | null;
-  enquiryForm?: {
+  eventsWeHost: {
+    eyebrow: string;
+    heading: string;
+    sub?: string | null;
+    items?:
+      | {
+          image: number | Media;
+          number: string;
+          title: string;
+          description: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  venueFeatures: {
+    eyebrow: string;
+    heading: string;
+    items?:
+      | {
+          icon: 'lawns' | 'pavilion' | 'lighting' | 'parking' | 'catering' | 'stay';
+          title: string;
+          description: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  gallery: {
+    eyebrow: string;
+    heading: string;
+    items?:
+      | {
+          image: number | Media;
+          caption?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  customise: {
+    eyebrow: string;
+    heading: string;
+    sub?: string | null;
+    groups?:
+      | {
+          groupNumber: string;
+          groupLabel: string;
+          chips?:
+            | {
+                label: string;
+                id?: string | null;
+              }[]
+            | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  enquiry: {
+    eyebrow: string;
+    heading: string;
+    sub?: string | null;
     nameLabel?: string | null;
+    namePlaceholder?: string | null;
     eventTypeLabel?: string | null;
+    eventTypeNote?: string | null;
+    eventTypePlaceholder?: string | null;
     guestCountLabel?: string | null;
+    guestCountPlaceholder?: string | null;
     preferredDateLabel?: string | null;
+    preferredDatePlaceholder?: string | null;
     reachLabel?: string | null;
+    reachPlaceholder?: string | null;
     moreLabel?: string | null;
+    moreNote?: string | null;
+    morePlaceholder?: string | null;
     submitLabel?: string | null;
+    submitNote?: string | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1537,7 +1569,8 @@ export interface EventsSelect<T extends boolean = true> {
   hero?:
     | T
     | {
-        badge?: T;
+        badgeLabel?: T;
+        badgeMonogram?: T;
         headline?: T;
         sub?: T;
         primaryCtaLabel?: T;
@@ -1551,52 +1584,91 @@ export interface EventsSelect<T extends boolean = true> {
               id?: T;
             };
       };
-  eventTypes?:
+  eventsWeHost?:
     | T
     | {
-        image?: T;
-        number?: T;
-        title?: T;
-        description?: T;
-        id?: T;
+        eyebrow?: T;
+        heading?: T;
+        sub?: T;
+        items?:
+          | T
+          | {
+              image?: T;
+              number?: T;
+              title?: T;
+              description?: T;
+              id?: T;
+            };
       };
   venueFeatures?:
     | T
     | {
-        title?: T;
-        description?: T;
-        id?: T;
+        eyebrow?: T;
+        heading?: T;
+        items?:
+          | T
+          | {
+              icon?: T;
+              title?: T;
+              description?: T;
+              id?: T;
+            };
       };
   gallery?:
     | T
     | {
-        image?: T;
-        caption?: T;
-        id?: T;
-      };
-  customisationGroups?:
-    | T
-    | {
-        groupNumber?: T;
-        groupLabel?: T;
-        chips?:
+        eyebrow?: T;
+        heading?: T;
+        items?:
           | T
           | {
-              label?: T;
+              image?: T;
+              caption?: T;
               id?: T;
             };
-        id?: T;
       };
-  enquiryForm?:
+  customise?:
     | T
     | {
+        eyebrow?: T;
+        heading?: T;
+        sub?: T;
+        groups?:
+          | T
+          | {
+              groupNumber?: T;
+              groupLabel?: T;
+              chips?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+      };
+  enquiry?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        sub?: T;
         nameLabel?: T;
+        namePlaceholder?: T;
         eventTypeLabel?: T;
+        eventTypeNote?: T;
+        eventTypePlaceholder?: T;
         guestCountLabel?: T;
+        guestCountPlaceholder?: T;
         preferredDateLabel?: T;
+        preferredDatePlaceholder?: T;
         reachLabel?: T;
+        reachPlaceholder?: T;
         moreLabel?: T;
+        moreNote?: T;
+        morePlaceholder?: T;
         submitLabel?: T;
+        submitNote?: T;
       };
   updatedAt?: T;
   createdAt?: T;

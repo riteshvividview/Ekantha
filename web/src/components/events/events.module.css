@@ -1,0 +1,533 @@
+/* Events.html defines its own `.section-head` — a simple stacked block,
+   distinct from the two-column grid version the shared globals.css
+   `.section-head` class uses for Home/About/Contact. Scoped locally here
+   so it doesn't collide with (or get overridden by) that shared class. */
+.sectionHead {
+  margin-bottom: clamp(2.25rem, 5.5vw, 4.5rem);
+  max-width: 640px;
+}
+.sectionHead p {
+  font-family: var(--font-body);
+  font-size: clamp(0.92rem, 2.1vw, 1.05rem);
+  line-height: 1.7;
+  color: var(--ink-soft);
+  margin-top: 0.75rem;
+}
+
+/* ── 01. Banner — full-bleed dark hero with scrolling marquee ─── */
+
+.evHero {
+  background: var(--black);
+  color: var(--white);
+  padding: clamp(4rem, 10vh, 6rem) var(--pad-x) 0;
+  overflow: hidden;
+}
+
+.evHeroBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  padding: 0.5rem 1.1rem 0.5rem 0.5rem;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(0.72rem, 1.6vw, 0.82rem);
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: clamp(1.5rem, 4vw, 2rem);
+}
+.evHeroBadge .dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+}
+
+.evHeroInner {
+  max-width: 900px;
+}
+.evHeroHeadline {
+  font-size: clamp(2.2rem, 7vw, 5rem);
+  line-height: 1.04;
+  color: var(--white);
+  max-width: 12ch;
+  margin-bottom: clamp(1.25rem, 3vw, 2rem);
+}
+.evHeroHeadline em {
+  color: #575759;
+}
+.evHeroSub {
+  font-family: var(--font-body);
+  font-size: clamp(0.95rem, 2.1vw, 1.15rem);
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.6);
+  max-width: 52ch;
+  margin-bottom: clamp(2rem, 5vw, 3rem);
+}
+.evHeroCtas {
+  display: flex;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  margin-bottom: clamp(2.5rem, 6vw, 4rem);
+}
+.evHeroCtas .btnOutline {
+  background: transparent;
+  color: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+}
+.evHeroCtas .btnOutline:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: translateY(-2px);
+}
+.evHeroCtas .btnWhite {
+  background: var(--white);
+  color: var(--black);
+}
+.evHeroCtas .btnWhite:hover {
+  background: var(--silver);
+  transform: translateY(-2px);
+}
+
+.marquee {
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  overflow: hidden;
+  padding: clamp(1.25rem, 3vw, 2rem) 0;
+}
+.marqueeTrack {
+  display: flex;
+  width: max-content;
+  gap: clamp(2rem, 5vw, 4rem);
+  animation: marquee-scroll 26s linear infinite;
+}
+.marqueeTrack span {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.2rem, 4vw, 2.4rem);
+  letter-spacing: -0.01em;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: clamp(2rem, 5vw, 4rem);
+}
+.marqueeTrack span::after {
+  content: '•';
+  color: rgba(255, 255, 255, 0.3);
+  margin-left: clamp(2rem, 5vw, 4rem);
+}
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marqueeTrack {
+    animation: none;
+  }
+}
+
+/* ── 02. Events We Host — horizontal expanding panels ─────────── */
+
+.panels {
+  display: flex;
+  gap: 0.5rem;
+  height: clamp(360px, 46vw, 460px);
+}
+.panel {
+  position: relative;
+  flex: 1;
+  background: var(--ink);
+  border-radius: 18px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: flex 550ms var(--ease-slow);
+  display: flex;
+  align-items: flex-end;
+  padding: clamp(1.25rem, 2.5vw, 1.75rem);
+}
+.panel:hover,
+.panel.active {
+  flex: 3.2;
+}
+.panelMedia {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  transition: transform 700ms var(--ease-slow);
+}
+.panel:hover .panelMedia,
+.panel.active .panelMedia {
+  transform: scale(1.05);
+}
+.panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(10, 10, 11, 0.05) 0%, rgba(10, 10, 11, 0.55) 65%, rgba(10, 10, 11, 0.85) 100%);
+  transition: background 450ms var(--ease-slow);
+}
+.panel:hover::before,
+.panel.active::before {
+  background: linear-gradient(180deg, rgba(10, 10, 11, 0.1) 0%, rgba(10, 10, 11, 0.7) 50%, rgba(10, 10, 11, 0.92) 100%);
+}
+.panelNum {
+  position: absolute;
+  top: clamp(1rem, 2.5vw, 1.5rem);
+  left: clamp(1.25rem, 2.5vw, 1.75rem);
+  z-index: 2;
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  color: rgba(255, 255, 255, 0.55);
+  transition: color 400ms;
+}
+.panel:hover .panelNum,
+.panel.active .panelNum {
+  color: rgba(255, 255, 255, 0.85);
+}
+.panelContent {
+  position: relative;
+  z-index: 2;
+}
+.panelTitle {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1rem, 2.2vw, 1.4rem);
+  color: var(--white);
+  letter-spacing: -0.01em;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  transition:
+    writing-mode 0ms,
+    color 200ms,
+    margin-bottom 200ms;
+  white-space: nowrap;
+}
+.panel:hover .panelTitle,
+.panel.active .panelTitle {
+  writing-mode: horizontal-tb;
+  transform: none;
+  color: var(--white);
+  margin-bottom: 0.6rem;
+  transition:
+    writing-mode 0ms 320ms,
+    color 300ms 320ms,
+    margin-bottom 300ms 320ms;
+}
+.panelDesc {
+  font-family: var(--font-body);
+  font-size: clamp(0.8rem, 1.7vw, 0.9rem);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 34ch;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition:
+    opacity 180ms,
+    max-height 180ms;
+}
+.panel:hover .panelDesc,
+.panel.active .panelDesc {
+  opacity: 1;
+  max-height: 200px;
+  transition:
+    opacity 320ms 320ms,
+    max-height 320ms 320ms;
+}
+
+@media (max-width: 780px) {
+  .panels {
+    flex-direction: column;
+    height: auto;
+  }
+  .panel {
+    flex: none !important;
+    padding: 1.5rem;
+    min-height: 220px;
+  }
+  .panelTitle {
+    writing-mode: horizontal-tb !important;
+    transform: none !important;
+    margin-bottom: 0.5rem;
+  }
+  .panelDesc {
+    opacity: 1 !important;
+    max-height: none !important;
+  }
+  .panel::before {
+    background: linear-gradient(180deg, rgba(10, 10, 11, 0.15) 0%, rgba(10, 10, 11, 0.55) 60%, rgba(10, 10, 11, 0.85) 100%) !important;
+  }
+}
+
+/* ── 03. Venue Features — zebra ledger rows ───────────────────── */
+
+.ledger {
+  max-width: 980px;
+}
+.ledgerRow {
+  display: grid;
+  grid-template-columns: 44px 1fr 2fr;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  align-items: center;
+  padding: clamp(1.1rem, 2.5vw, 1.5rem) clamp(1rem, 2vw, 1.5rem);
+  border-bottom: 1px solid var(--line);
+}
+.ledgerRow:nth-child(odd) {
+  background: var(--silver);
+  border-radius: 4px;
+}
+@media (max-width: 640px) {
+  .ledgerRow {
+    grid-template-columns: 36px 1fr;
+  }
+  .ledgerDesc {
+    grid-column: 1 / -1;
+    margin-top: 0.5rem;
+  }
+}
+
+.ledgerIcon svg {
+  width: 28px;
+  height: 28px;
+  stroke: var(--ink);
+  fill: none;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ledgerTitle {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(0.92rem, 2vw, 1.05rem);
+  color: var(--ink);
+}
+.ledgerDesc {
+  font-family: var(--font-body);
+  font-size: clamp(0.82rem, 1.8vw, 0.92rem);
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+
+/* ── 04. Event Gallery — scattered photo-stack collage ────────── */
+
+.collage {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 3vw, 2rem);
+  justify-content: center;
+  padding: clamp(1rem, 3vw, 2rem) 0;
+}
+.collagePlate {
+  width: clamp(150px, 24vw, 210px);
+  aspect-ratio: 4 / 5;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 12px 28px rgba(18, 18, 20, 0.1);
+  overflow: hidden;
+  transition:
+    transform 400ms var(--ease-slow),
+    box-shadow 400ms;
+}
+.collagePlate img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.collagePlate:hover {
+  transform: rotate(0deg) scale(1.06) !important;
+  box-shadow: 0 20px 40px rgba(18, 18, 20, 0.18);
+  z-index: 5;
+}
+.collagePlate:nth-child(1) {
+  transform: rotate(-4deg);
+}
+.collagePlate:nth-child(2) {
+  transform: rotate(3deg);
+  margin-top: clamp(1rem, 3vw, 2rem);
+}
+.collagePlate:nth-child(3) {
+  transform: rotate(-2deg);
+}
+.collagePlate:nth-child(4) {
+  transform: rotate(5deg);
+  margin-top: clamp(0.5rem, 2vw, 1rem);
+}
+.collagePlate:nth-child(5) {
+  transform: rotate(-5deg);
+}
+.collagePlate:nth-child(6) {
+  transform: rotate(2deg);
+  margin-top: clamp(1rem, 3vw, 2rem);
+}
+.collageCaption {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  color: var(--ink-faint);
+  text-align: center;
+  margin-top: 0.6rem;
+}
+.collageItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── 05. Customisation Options — grouped chip clusters ────────── */
+
+.customGroups {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 4vw, 3rem);
+}
+.customGroupLabel {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1rem, 2.2vw, 1.25rem);
+  color: var(--ink);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+.customGroupLabel span {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  font-family: var(--font-body);
+  font-size: clamp(0.78rem, 1.7vw, 0.88rem);
+  color: var(--ink);
+  transition:
+    background 220ms,
+    color 220ms,
+    border-color 220ms;
+}
+.chip:hover {
+  background: var(--ink);
+  color: var(--white);
+  border-color: var(--ink);
+}
+.chipPlus {
+  font-family: var(--font-body);
+  font-weight: 600;
+  opacity: 0.5;
+}
+
+/* ── 06. Enquiry Form — light, full multi-field editorial form ── */
+
+.enquiryInner {
+  max-width: 760px;
+  margin: 0 auto;
+}
+.enquiryForm {
+  margin-top: clamp(2rem, 5vw, 3rem);
+  display: flex;
+  flex-direction: column;
+}
+
+.eqRow {
+  display: grid;
+  grid-template-columns: minmax(140px, 200px) 1fr;
+  gap: clamp(1rem, 3vw, 3rem);
+  padding: clamp(1.25rem, 3vw, 1.75rem) 0;
+  border-bottom: 1px solid var(--line);
+  align-items: start;
+}
+.eqRow:first-child {
+  border-top: 1px solid var(--line);
+}
+@media (max-width: 560px) {
+  .eqRow {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+}
+
+.eqLabel {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(0.8rem, 1.8vw, 0.9rem);
+  color: var(--ink);
+  padding-top: 0.4rem;
+}
+.eqLabel span {
+  display: block;
+  font-weight: 400;
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+  margin-top: 0.25rem;
+}
+
+.eqInput input,
+.eqInput textarea {
+  width: 100%;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1rem, 2.6vw, 1.3rem);
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--line-strong);
+  padding: 0.4rem 0 0.6rem;
+  outline: none;
+  transition: border-color 300ms var(--ease-slow);
+  resize: none;
+}
+.eqInput input::placeholder,
+.eqInput textarea::placeholder {
+  color: var(--ink-faint);
+}
+.eqInput input:focus,
+.eqInput textarea:focus {
+  border-color: var(--ink);
+}
+.eqInput textarea {
+  min-height: 70px;
+  font-family: var(--font-body);
+  font-size: clamp(0.9rem, 2vw, 1.05rem);
+  line-height: 1.6;
+}
+
+.enquirySubmitRow {
+  padding-top: clamp(2rem, 5vw, 3rem);
+  display: flex;
+  align-items: center;
+  gap: clamp(1.25rem, 3vw, 2rem);
+  flex-wrap: wrap;
+}
+.enquirySubmitNote {
+  font-family: var(--font-body);
+  font-size: clamp(0.78rem, 1.7vw, 0.85rem);
+  color: var(--ink-soft);
+}
