@@ -715,6 +715,168 @@ async function main() {
   })
   payload.logger.info('✓ Events seeded.')
 
+  payload.logger.info('Seeding FAQs global...')
+  await payload.updateGlobal({
+    slug: 'faqs',
+    data: {
+      eyebrow: 'frequently asked',
+      heading: 'Answers, before\nyou have to ask.',
+      sub: "Everything guests tend to ask before holding a date, reserving a table, or booking an event — grouped so you don't have to read all of it to find your one question.",
+      searchPlaceholder: 'Search a question — e.g. cancellation, capacity, menu',
+      categories: [
+        {
+          slug: 'checkin',
+          number: '01',
+          title: 'Check-in & Check-out',
+          items: [
+            {
+              question: 'What are the check-in and check-out times?',
+              answer:
+                'Check-in is from 14:00, once the held hours end and the farm receives guests. Check-out is by 11:00, so the cottages can be prepared for the next arrival.',
+            },
+            {
+              question: 'Can I request an early check-in or late check-out?',
+              answer: "Yes, subject to availability. If the stay is free the night before or after, we're usually happy to accommodate — just ask when you hold your date.",
+            },
+            {
+              question: 'What happens if I arrive before check-in time?',
+              answer: "The main house is open. There's chai, shade, and somewhere to leave your luggage while your cottage is readied.",
+            },
+            {
+              question: 'Is there a minimum length of stay?',
+              answer:
+                "Two nights, across all three stays. We've found one night is a preview, not a stay — the rhythm of the farm needs at least a second day to begin.",
+            },
+          ],
+        },
+        {
+          slug: 'booking',
+          number: '02',
+          title: 'Booking Policies',
+          items: [
+            {
+              question: 'How do I hold a date?',
+              answer:
+                "Through the Hold a Date form — tell us your dates, who's coming, and which stay you'd like. A real person writes back within 24 hours to confirm.",
+            },
+            {
+              question: 'Is a deposit required to confirm a booking?',
+              answer: 'A 50% advance is requested to confirm a hold, with the balance due on arrival. No payment links, no surcharges added at checkout.',
+            },
+            {
+              question: 'What is the cancellation policy?',
+              answer: '14 or more days before arrival: full refund. 7–14 days: 50% refund. Under 7 days: held as credit, valid for 18 months, rather than lost entirely.',
+            },
+            {
+              question: 'Do rates change based on demand or season?',
+              answer: "No. We don't run dynamic pricing — the rate you see is the rate you pay, regardless of when you book or how busy the weekend is.",
+            },
+            {
+              question: 'Can I change my dates after booking?',
+              answer: "Usually, yes — contact us as early as possible and we'll move your hold if the new dates are available.",
+            },
+          ],
+        },
+        {
+          slug: 'dining',
+          number: '03',
+          title: 'Farm Dining Bookings',
+          items: [
+            {
+              question: 'Do I need to be a staying guest to book Bamboo Farm Dine?',
+              answer: "No — Bamboo Farm Dine is open to day visitors as well as overnight guests. You don't need to be holding a stay to reserve a seat at the table.",
+            },
+            {
+              question: 'How far in advance should I reserve a table?',
+              answer:
+                "At least 24 hours, since the kitchen shops and cooks for the exact number confirmed. Weekends and celebrations are safer with a few days' notice.",
+            },
+            {
+              question: 'Is there a fixed menu?',
+              answer: "No. The kitchen decides the same morning, based on what's ready to be picked from the garden. Dietary restrictions are handled if flagged in advance.",
+            },
+            {
+              question: 'What happens if it rains during dinner?',
+              answer: 'The dining hut has a full roof, so light rain changes nothing. In heavy weather, the table moves under the covered section beside the main house.',
+            },
+          ],
+        },
+        {
+          slug: 'events',
+          number: '04',
+          title: 'Event Bookings',
+          items: [
+            {
+              question: 'How far in advance should I book an event?',
+              answer:
+                'For birthdays and small gatherings, a couple of weeks is usually enough. For larger events — weddings, corporate offsites — we recommend 6–8 weeks to arrange catering and customisation.',
+            },
+            {
+              question: "What's included in a venue booking?",
+              answer:
+                'Open lawns or the covered pavilion, in-house sound and lighting, and on-site parking. Catering, decor, and entertainment are added on top, based on what you choose.',
+            },
+            {
+              question: 'Can I bring my own decorator or caterer?',
+              answer:
+                "We prefer to run catering in-house, since it's built around the farm's own kitchen, but we're flexible on decor vendors — talk to us about what you have in mind.",
+            },
+            {
+              question: 'Is overnight stay included with an event booking?',
+              answer: 'Not by default — venue bookings are day-use unless you also hold Mango House, Stone House, or the Full House for the night.',
+            },
+          ],
+        },
+        {
+          slug: 'addons',
+          number: '05',
+          title: 'Add-Ons',
+          items: [
+            {
+              question: 'What add-ons are available?',
+              answer:
+                'Farm dinners (₹800 per person), laundry, packed breakfast for early departures, and — for events — decor, catering, entertainment, and logistics add-ons like transport or a coordinator.',
+            },
+            {
+              question: 'How do I request an add-on?',
+              answer:
+                "Mention it in your note when you hold a date, or ask the caretaker once you've arrived — most add-ons don't need advance notice, though farm dinners are easier to arrange with a heads-up.",
+            },
+            {
+              question: 'Are add-ons available to day visitors?',
+              answer: 'Some are — farm dining and event customisations, for instance — while others, like laundry, are only offered to overnight guests.',
+            },
+          ],
+        },
+        {
+          slug: 'capacity',
+          number: '06',
+          title: 'Guest Capacity',
+          items: [
+            {
+              question: 'How many guests can each stay accommodate?',
+              answer:
+                'Mango House holds 2–3 adults, Stone House holds 2–4 adults across two bedrooms, and the Full House — the entire estate — holds up to 16 adults.',
+            },
+            {
+              question: 'Can I bring more guests than the listed capacity?',
+              answer: 'Only with prior approval, and additional guest charges may apply — ask us before you arrive rather than on the day.',
+            },
+            {
+              question: 'Are children welcome?',
+              answer: 'Yes. Mango House and the Full House are especially family-friendly, with open lawns and animals nearby to keep younger guests occupied.',
+            },
+            {
+              question: 'Are pets allowed?',
+              answer: "Not currently. The farm keeps its own animals and a quiet rhythm we'd rather not disrupt — we hope to revisit this as the estate grows.",
+            },
+          ],
+        },
+      ],
+    },
+  })
+  payload.logger.info('✓ FAQs seeded.')
+
   payload.logger.info('Done. Ctrl+C not needed — process will exit.')
   process.exit(0)
 }

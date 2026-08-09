@@ -1062,10 +1062,16 @@ export interface Event {
  */
 export interface Faq {
   id: number;
+  eyebrow: string;
   heading: string;
   sub?: string | null;
+  searchPlaceholder?: string | null;
   categories?:
     | {
+        /**
+         * Anchor id for the rail link, e.g. "checkin" — no # or spaces.
+         */
+        slug: string;
         number: string;
         title: string;
         items?:
@@ -1679,11 +1685,14 @@ export interface EventsSelect<T extends boolean = true> {
  * via the `definition` "faqs_select".
  */
 export interface FaqsSelect<T extends boolean = true> {
+  eyebrow?: T;
   heading?: T;
   sub?: T;
+  searchPlaceholder?: T;
   categories?:
     | T
     | {
+        slug?: T;
         number?: T;
         title?: T;
         items?:

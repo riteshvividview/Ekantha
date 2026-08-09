@@ -1,0 +1,226 @@
+/* FAQs.html defines its own smaller `.section-title` (category headings,
+   not full section titles) — scoped locally as `.categoryTitle` so it
+   doesn't collide with the shared, larger globals.css `.section-title`. */
+.categoryTitle {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.3rem, 2.8vw, 1.8rem);
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+
+/* ── 01. Introduction — headline + working question search ────── */
+
+.faqIntro {
+  background: var(--silver);
+  padding-bottom: clamp(2.5rem, 6vw, 4rem);
+}
+.faqIntroInner {
+  max-width: 720px;
+}
+.faqIntroInner h1 {
+  margin: 1rem 0 clamp(1.25rem, 3vw, 2rem);
+}
+.faqIntroSub {
+  font-family: var(--font-body);
+  font-size: clamp(0.92rem, 2.1vw, 1.1rem);
+  line-height: 1.75;
+  color: var(--ink-soft);
+  max-width: 54ch;
+  margin-bottom: clamp(1.75rem, 4vw, 2.5rem);
+}
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--white);
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  padding: 0.5rem 0.5rem 0.5rem 1.25rem;
+  max-width: 460px;
+  transition: border-color 250ms;
+}
+.searchBox:focus-within {
+  border-color: var(--ink);
+}
+.searchBox svg {
+  width: 18px;
+  height: 18px;
+  stroke: var(--ink-soft);
+  fill: none;
+  stroke-width: 1.6;
+  flex-shrink: 0;
+}
+.searchBox input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: clamp(0.88rem, 2vw, 0.98rem);
+  color: var(--ink);
+  min-width: 0;
+}
+.searchBox input::placeholder {
+  color: var(--ink-faint);
+}
+.searchClear {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  background: var(--silver);
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  flex-shrink: 0;
+  display: none;
+}
+.searchBox.hasValue .searchClear {
+  display: inline-flex;
+}
+.searchCount {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--ink-faint);
+  margin-top: 0.75rem;
+}
+
+/* ── 02. FAQ list — sticky category rail + content ─────────────── */
+
+.faqShell {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: start;
+}
+@media (max-width: 860px) {
+  .faqShell {
+    grid-template-columns: 1fr;
+  }
+}
+
+.faqRail {
+  position: sticky;
+  top: clamp(1.5rem, 4vw, 3rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+@media (max-width: 860px) {
+  .faqRail {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+}
+
+.faqRail a {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(0.85rem, 1.9vw, 0.95rem);
+  color: var(--ink-soft);
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  transition:
+    background 200ms,
+    color 200ms;
+}
+.faqRail a:hover {
+  color: var(--ink);
+  background: var(--silver);
+}
+.faqRail a.active {
+  color: var(--ink);
+  background: var(--silver);
+  font-weight: 600;
+}
+@media (max-width: 860px) {
+  .faqRail a {
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.5rem 1rem;
+  }
+  .faqRail a.active {
+    border-color: var(--ink);
+  }
+}
+
+.faqCategory {
+  margin-bottom: clamp(2.5rem, 6vw, 4rem);
+  scroll-margin-top: 2rem;
+}
+.faqCategory:last-child {
+  margin-bottom: 0;
+}
+.faqCategoryHead {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: clamp(1rem, 2.5vw, 1.5rem);
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--line-strong);
+}
+.faqCategoryNum {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-size: clamp(1.1rem, 2.4vw, 1.4rem);
+  color: var(--ink-faint);
+}
+
+.faqItem {
+  border-bottom: 1px solid var(--line);
+}
+.faqItem summary {
+  list-style: none;
+  cursor: pointer;
+  padding: clamp(1.1rem, 2.5vw, 1.4rem) 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(0.92rem, 2vw, 1.05rem);
+  color: var(--ink);
+}
+.faqItem summary::-webkit-details-marker {
+  display: none;
+}
+.faqPlus {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition:
+    transform 300ms var(--ease-slow),
+    background 250ms;
+}
+.faqItem[open] summary .faqPlus {
+  transform: rotate(45deg);
+  background: var(--ink);
+  color: var(--white);
+  border-color: var(--ink);
+}
+.faqAnswer {
+  padding: 0 0 clamp(1.1rem, 2.5vw, 1.4rem);
+  font-family: var(--font-body);
+  font-size: clamp(0.85rem, 1.85vw, 0.94rem);
+  line-height: 1.75;
+  color: var(--ink-soft);
+  max-width: 62ch;
+}
+.faqItem.hidden {
+  display: none;
+}
+.faqCategory.hidden {
+  display: none;
+}
