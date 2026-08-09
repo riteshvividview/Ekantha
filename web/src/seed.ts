@@ -378,6 +378,100 @@ async function main() {
   })
   payload.logger.info('✓ Footer seeded.')
 
+  payload.logger.info('Seeding About global...')
+  const overviewImg = await media(
+    'beautiful-shot-few-trees-small-house-valley-cloudy-sky-scaled.jpg',
+    'The Vana Ekantha estate, eleven acres of the Deccan',
+  )
+  await payload.updateGlobal({
+    slug: 'about',
+    data: {
+      manifesto: {
+        eyebrow: 'what we stand for',
+        headline: 'You are not entertained.\nYou are undisturbed.',
+        sub: 'Vana Ekantha exists on the belief that rest is not a product to be packaged — it is a condition you arrive at when nothing is asking anything of you. Everything about the estate, from its silence to its lack of a schedule, is built around that one idea.',
+        primaryCtaLabel: 'See The Stays →',
+        primaryCtaHref: '/stay',
+        secondaryCtaLabel: 'Read The Story',
+        secondaryCtaHref: '#name',
+      },
+      story: {
+        wordGlosses: [
+          { word: 'वन एकांत', translation: 'vana · forest' },
+          { word: 'Ekantha', translation: 'solitude, undisturbed' },
+        ],
+        paragraphs: [
+          {
+            text: '<strong>Vana</strong> means forest. <strong>Ekantha</strong> means solitude — not loneliness, but a state of being wholly with yourself, undisturbed. Together, the name translates simply to "forest solitude," which is less a description of the land than a description of what we hoped it would do to the people who stayed on it.',
+          },
+          {
+            text: "The name wasn't chosen before the land — it was chosen after. The eleven acres existed first, quiet and mostly untouched, for years before anyone thought to build here. When we finally walked the property with the intention of making it a farmstay, the word that kept surfacing in conversation wasn't \"resort\" or \"retreat.\" It was ekantha — that particular, hard-to-translate quality of being alone without being lonely.",
+          },
+          {
+            text: "We didn't want a name that promised an experience. We wanted one that simply named what the land already was, and let the estate grow to meet it.",
+          },
+        ],
+      },
+      philosophy: [
+        {
+          number: '01 / philosophy',
+          word: 'Nature',
+          body: 'We did not landscape this property — we cleared just enough to live in it. The pond, the orchard, the old tamarind, the grove of bamboo: all of it was here before us. Every structure was placed where the land already had a clearing, so that <em>living within nature</em> never had to compete with what we built.',
+        },
+        {
+          number: '02 / philosophy',
+          word: 'Privacy',
+          body: 'None of the cottages face each other. This was deliberate, and it cost us more time to build than it would have to place them in a neat, efficient row. Privacy here isn\'t a locked door — it\'s the simple, structural fact that <em>you may not see or hear another guest</em> for the length of your stay, unless you choose to.',
+        },
+        {
+          number: '03 / philosophy',
+          word: 'Stillness',
+          body: 'Every afternoon, between 14:00 and 16:00, the farm goes quiet on purpose — no staff, no kitchen, no vehicles. We built this rule into the estate before we built most of the cottages, because we believed <em>stillness has to be protected</em>, or it never actually arrives.',
+        },
+      ],
+      founder: {
+        eyebrow: 'why we began',
+        quote: '"We didn\'t set out to build a farmstay. We set out to stop being tired all the time — and this was what worked."',
+        paragraphs: [
+          {
+            text: "Vana Ekantha started as a weekend habit before it became a business. A small group of us kept returning to this same eleven acres outside Hyderabad — first to escape a particularly loud year, then because we noticed something: the quality of rest here wasn't like the rest we got anywhere else. It wasn't the absence of work. It was the absence of anything asking for our attention at all.",
+          },
+          {
+            text: "We built the first cottage mostly for ourselves, with no real plan to open it to guests. It was only after friends kept asking to borrow it, and then friends of friends, that the idea of doing this properly — carefully, without turning it into the kind of place we'd built it to escape from — started to take shape.",
+          },
+          {
+            text: 'We created Vana Ekantha because the rest we found here was rare enough to be worth protecting, and generous enough to be worth sharing. Everything since — the rituals, the held hours, the refusal to print an itinerary — has been in service of keeping that first feeling intact.',
+          },
+        ],
+        signatureName: 'The Vana Ekantha Team',
+        signatureLocation: 'the deccan, india',
+      },
+      different: {
+        eyebrow: 'what makes us different',
+        heading: 'not a resort.\nnot quite a retreat, either.',
+        rows: [
+          { notText: 'A curated itinerary', yesText: 'A rhythm you find on your own' },
+          { notText: 'Activities to keep you busy', yesText: 'Rituals you can join, or skip entirely' },
+          { notText: 'A concierge anticipating requests', yesText: 'A caretaker who leaves you alone, well' },
+          { notText: 'Dynamic pricing and urgency banners', yesText: 'One honest rate, regardless of demand' },
+          { notText: 'A polished, photographed version of nature', yesText: 'The land, mostly left as it already was' },
+        ],
+      },
+      overview: {
+        eyebrow: 'the estate overview',
+        heading: 'eleven acres,\nin plain numbers.',
+        image: overviewImg,
+        facts: [
+          { number: '11', label: 'acres of the Deccan' },
+          { number: '3', label: 'stays — Mango, Stone & Full House' },
+          { number: '2024', label: 'the year we opened to guests' },
+          { number: '2.5', label: 'hrs from Hyderabad, by road' },
+        ],
+      },
+    },
+  })
+  payload.logger.info('✓ About seeded.')
+
   payload.logger.info('Done. Ctrl+C not needed — process will exit.')
   process.exit(0)
 }

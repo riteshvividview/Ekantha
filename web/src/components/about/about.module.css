@@ -1,0 +1,318 @@
+/* ── 01. Manifesto (hero, no chrome) ──────────────────────────── */
+
+.manifesto {
+  min-height: 78vh;
+  min-height: 78svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: clamp(5rem, 12vh, 7rem);
+}
+
+.manifestoEyebrow {
+  margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.manifestoStatement {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.8rem, 5.6vw, 3.8rem);
+  line-height: 1.18;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  max-width: 16ch;
+}
+.manifestoStatement em {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.manifestoSub {
+  margin-top: clamp(1.5rem, 4vw, 2.5rem);
+  font-family: var(--font-body);
+  font-size: clamp(0.95rem, 2.2vw, 1.15rem);
+  line-height: 1.75;
+  color: var(--ink-soft);
+  max-width: 54ch;
+}
+
+.manifestoCtas {
+  margin-top: clamp(2rem, 5vw, 3rem);
+  display: flex;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+}
+
+/* ── 02. The Story Behind The Name ────────────────────────────── */
+
+.story {
+  background: var(--silver);
+}
+.storyInner {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.6fr);
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: start;
+}
+@media (max-width: 720px) {
+  .storyInner {
+    grid-template-columns: 1fr;
+  }
+}
+
+.storyLeft {
+  position: sticky;
+  top: clamp(2rem, 5vw, 4rem);
+}
+@media (max-width: 720px) {
+  .storyLeft {
+    position: static;
+  }
+}
+
+.storyWord {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  color: var(--ink);
+  line-height: 1.1;
+  margin-top: 1rem;
+}
+.storyWord span {
+  display: block;
+  font-family: var(--font-body);
+  font-style: normal;
+  font-weight: 500;
+  font-size: clamp(0.62rem, 1.3vw, 0.7rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-top: 0.75rem;
+}
+
+.storyBody {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 3vw, 2rem);
+}
+.storyBody p {
+  font-family: var(--font-body);
+  font-size: clamp(0.92rem, 2.1vw, 1.05rem);
+  line-height: 1.8;
+  color: var(--ink-soft);
+}
+.storyBody strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ── 03. Our Philosophy — stacked manifesto slabs ─────────────── */
+
+.philoSlab {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: clamp(1.5rem, 5vw, 4rem);
+  align-items: center;
+  padding: clamp(3rem, 7vw, 5rem) var(--pad-x);
+  border-bottom: 1px solid var(--line);
+}
+.philoSlab:last-of-type {
+  border-bottom: none;
+}
+@media (max-width: 720px) {
+  .philoSlab {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}
+
+.philoNum {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(0.66rem, 1.4vw, 0.75rem);
+  letter-spacing: 0.14em;
+  color: var(--ink-faint);
+  margin-bottom: 0.75rem;
+}
+.philoWord {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2rem, 6vw, 4rem);
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  line-height: 1;
+}
+.philoBody {
+  font-family: var(--font-body);
+  font-size: clamp(0.92rem, 2.1vw, 1.1rem);
+  line-height: 1.8;
+  color: var(--ink-soft);
+  max-width: 52ch;
+}
+.philoBody em {
+  font-family: var(--font-accent);
+  font-style: italic;
+  color: var(--ink);
+}
+
+/* ── 04. Why We Created Vana Ekantha — founder's note ─────────── */
+
+.founder {
+  background: var(--silver);
+}
+.founderInner {
+  max-width: 760px;
+  margin: 0 auto;
+}
+.founderQuote {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.3rem, 3.6vw, 2.1rem);
+  line-height: 1.45;
+  color: var(--ink);
+  margin: clamp(1.5rem, 4vw, 2.5rem) 0;
+}
+.founderBody {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.founderBody p {
+  font-family: var(--font-body);
+  font-size: clamp(0.9rem, 2vw, 1.02rem);
+  line-height: 1.8;
+  color: var(--ink-soft);
+}
+.founderSig {
+  margin-top: clamp(1.5rem, 4vw, 2rem);
+  font-family: var(--font-display);
+  font-weight: 500;
+  color: var(--ink);
+  font-size: clamp(0.92rem, 2vw, 1.05rem);
+}
+.founderSig span {
+  display: block;
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: var(--ink-faint);
+  margin-top: 0.25rem;
+}
+
+/* ── 05. What Makes Us Different — contrast comparison rows ───── */
+
+.contrastList {
+  max-width: 900px;
+}
+.contrastRow {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: clamp(1rem, 3vw, 2rem);
+  align-items: center;
+  padding: clamp(1.5rem, 3vw, 2rem) 0;
+  border-bottom: 1px solid var(--line);
+}
+.contrastRow:first-child {
+  border-top: 1px solid var(--line);
+}
+@media (max-width: 600px) {
+  .contrastRow {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    text-align: left;
+  }
+}
+
+.contrastNot {
+  font-family: var(--font-body);
+  font-size: clamp(0.88rem, 2vw, 1rem);
+  color: var(--ink-faint);
+  text-decoration: line-through;
+  text-decoration-color: var(--line-strong);
+  text-align: right;
+}
+@media (max-width: 600px) {
+  .contrastNot {
+    text-align: left;
+  }
+}
+
+.contrastArrow {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  color: var(--ink-faint);
+}
+
+.contrastYes {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1rem, 2.4vw, 1.25rem);
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+/* ── 06. The Estate Overview — fact strip + image ─────────────── */
+
+.overview {
+  background: var(--black);
+  color: var(--white);
+}
+.overviewGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+}
+@media (max-width: 800px) {
+  .overviewGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.overviewFacts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+  margin-top: clamp(1.5rem, 4vw, 2.5rem);
+}
+@media (max-width: 420px) {
+  .overviewFacts {
+    grid-template-columns: 1fr;
+  }
+}
+
+.overviewFact {
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  padding-top: 1rem;
+}
+.overviewFact .num {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+  letter-spacing: -0.02em;
+}
+.overviewFact .label {
+  font-family: var(--font-body);
+  font-size: clamp(0.75rem, 1.6vw, 0.85rem);
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 0.35rem;
+}
+
+.overviewVisual {
+  aspect-ratio: 4 / 3;
+  background: #17130f;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+.overviewVisual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}

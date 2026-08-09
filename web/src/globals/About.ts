@@ -67,14 +67,23 @@ export const About: GlobalConfig = {
       ],
     },
     {
-      name: 'differentiators',
-      label: 'What Makes Us Different (5 rows)',
-      type: 'array',
-      minRows: 5,
-      maxRows: 5,
+      type: 'group',
+      name: 'different',
+      label: 'What Makes Us Different',
       fields: [
-        { name: 'notText', type: 'text', required: true },
-        { name: 'yesText', type: 'text', required: true },
+        { name: 'eyebrow', type: 'text', required: true },
+        { name: 'heading', type: 'text', required: true },
+        {
+          name: 'rows',
+          label: 'Contrast rows',
+          type: 'array',
+          minRows: 5,
+          maxRows: 5,
+          fields: [
+            { name: 'notText', type: 'text', required: true },
+            { name: 'yesText', type: 'text', required: true },
+          ],
+        },
       ],
     },
     {
@@ -82,6 +91,7 @@ export const About: GlobalConfig = {
       name: 'overview',
       label: 'Estate Overview',
       fields: [
+        { name: 'eyebrow', type: 'text', required: true },
         { name: 'heading', type: 'text', required: true },
         { name: 'image', type: 'upload', relationTo: 'media', required: true },
         {

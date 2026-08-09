@@ -877,14 +877,19 @@ export interface About {
     signatureName: string;
     signatureLocation?: string | null;
   };
-  differentiators?:
-    | {
-        notText: string;
-        yesText: string;
-        id?: string | null;
-      }[]
-    | null;
+  different: {
+    eyebrow: string;
+    heading: string;
+    rows?:
+      | {
+          notText: string;
+          yesText: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
   overview: {
+    eyebrow: string;
     heading: string;
     image: number | Media;
     facts?:
@@ -1437,16 +1442,23 @@ export interface AboutSelect<T extends boolean = true> {
         signatureName?: T;
         signatureLocation?: T;
       };
-  differentiators?:
+  different?:
     | T
     | {
-        notText?: T;
-        yesText?: T;
-        id?: T;
+        eyebrow?: T;
+        heading?: T;
+        rows?:
+          | T
+          | {
+              notText?: T;
+              yesText?: T;
+              id?: T;
+            };
       };
   overview?:
     | T
     | {
+        eyebrow?: T;
         heading?: T;
         image?: T;
         facts?:
