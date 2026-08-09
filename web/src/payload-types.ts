@@ -237,6 +237,10 @@ export interface Stay {
    */
   heroBadgeLabel: string;
   heroImage: number | Media;
+  /**
+   * The one-line pitch shown under the hero title on this stay's own page — filled in when that page is built.
+   */
+  heroSub?: string | null;
   priceFrom: number;
   /**
    * e.g. "includes breakfast, chai & farm dinner"
@@ -251,6 +255,12 @@ export interface Stay {
    */
   minNights: string;
   description: {
+    eyebrow?: string | null;
+    /**
+     * The large sticky-column headline, e.g. "Breakfast, some mornings,\nis just what fell." — last word is italicized automatically. Filled in when this stay's own page is built.
+     */
+    pullHeadline?: string | null;
+    accentImage?: (number | null) | Media;
     intro: string;
     pullQuote: string;
     paragraphs?:
@@ -270,26 +280,53 @@ export interface Stay {
      */
     factsLine: string;
   };
-  highlights?:
-    | {
-        title: string;
-        body: string;
-        image: number | Media;
-        id?: string | null;
-      }[]
-    | null;
-  amenities?:
-    | {
-        title: string;
-        body: string;
-        image: number | Media;
-        id?: string | null;
-      }[]
-    | null;
+  highlightsSection?: {
+    /**
+     * The single sticky photo shown alongside the highlight rows.
+     */
+    image?: (number | null) | Media;
+    items?:
+      | {
+          icon:
+            | 'bed'
+            | 'orchard'
+            | 'verandah'
+            | 'animals'
+            | 'fireplace'
+            | 'desk'
+            | 'reading'
+            | 'pond'
+            | 'lawn'
+            | 'kitchen'
+            | 'event'
+            | 'privacy';
+          /**
+           * e.g. "2–3 Adults"
+           */
+          badgeLabel: string;
+          badgeColor: 'green' | 'amber' | 'purple' | 'blue';
+          title: string;
+          body: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  amenitiesSection?: {
+    hint?: string | null;
+    items?:
+      | {
+          title: string;
+          body: string;
+          image: number | Media;
+          id?: string | null;
+        }[]
+      | null;
+  };
   gallery?:
     | {
         image: number | Media;
         caption: string;
+        aspectRatio?: ('3/4' | '1/1' | '4/5' | '4/3') | null;
         id?: string | null;
       }[]
     | null;
@@ -497,6 +534,7 @@ export interface StaysSelect<T extends boolean = true> {
   tagline?: T;
   heroBadgeLabel?: T;
   heroImage?: T;
+  heroSub?: T;
   priceFrom?: T;
   priceNote?: T;
   capacity?: T;
@@ -504,6 +542,9 @@ export interface StaysSelect<T extends boolean = true> {
   description?:
     | T
     | {
+        eyebrow?: T;
+        pullHeadline?: T;
+        accentImage?: T;
         intro?: T;
         pullQuote?: T;
         paragraphs?:
@@ -519,27 +560,40 @@ export interface StaysSelect<T extends boolean = true> {
         quote?: T;
         factsLine?: T;
       };
-  highlights?:
+  highlightsSection?:
     | T
     | {
-        title?: T;
-        body?: T;
         image?: T;
-        id?: T;
+        items?:
+          | T
+          | {
+              icon?: T;
+              badgeLabel?: T;
+              badgeColor?: T;
+              title?: T;
+              body?: T;
+              id?: T;
+            };
       };
-  amenities?:
+  amenitiesSection?:
     | T
     | {
-        title?: T;
-        body?: T;
-        image?: T;
-        id?: T;
+        hint?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              body?: T;
+              image?: T;
+              id?: T;
+            };
       };
   gallery?:
     | T
     | {
         image?: T;
         caption?: T;
+        aspectRatio?: T;
         id?: T;
       };
   idealFor?:

@@ -189,6 +189,143 @@ async function main() {
     payload.logger.info(`  ✓ ${s.title}`)
   }
 
+  payload.logger.info('Seeding Mango House detail page content...')
+  const mhAccentImg = await mediaFromUrl('https://images.unsplash.com/photo-1732472581875-89ff83f18439?q=80&w=900&auto=format&fit=crop', 'A ripe mango hanging from the tree, dew-covered at first light')
+  const mhHighlightsImg = await media('double-bed-apartments-cozy-hotel-scaled.jpg', 'Mango House, wooden cottage exterior tucked into the grove')
+  const mhAm1Img = await mediaFromUrl('https://images.unsplash.com/photo-1523033904333-243d0283acae?q=80&w=800&auto=format&fit=crop', 'A rustic wooden tray of fresh fruit')
+  const mhAm2Img = await mediaFromUrl('https://images.unsplash.com/photo-1643081262278-807976f7f2f7?q=80&w=800&auto=format&fit=crop', 'An outdoor rain shower in misty morning light')
+  const mhAm3Img = await mediaFromUrl('https://images.unsplash.com/photo-1634746027343-985ad425b8b5?q=80&w=800&auto=format&fit=crop', 'A journal, coffee, and camera on a wooden table')
+  const mhAm4Img = await mediaFromUrl('https://images.unsplash.com/photo-1596433904500-97b901c5d274?q=80&w=800&auto=format&fit=crop', 'Folded cotton and linen bedding')
+  const mhGal1Img = await mediaFromUrl('https://images.unsplash.com/photo-1528183429752-a97d0bf99b5a?q=80&w=800&auto=format&fit=crop', 'The mango grove, first light')
+  const mhGal2Img = await mediaFromUrl('https://images.unsplash.com/photo-1727706572437-4fcda0cbd66f?q=80&w=800&auto=format&fit=crop', 'The queen bed, cotton and linen, in the wooden cottage')
+  const mhGal3Img = await mediaFromUrl('https://images.unsplash.com/photo-1593264787646-f07221d3b7de?q=80&w=800&auto=format&fit=crop', 'View through the cottage window onto the orchard at sunrise')
+  const mhGal4Img = await mediaFromUrl('https://images.unsplash.com/photo-1560819400-434c188f63ef?q=80&w=800&auto=format&fit=crop', 'Two goats from the dairy yard')
+  const mhGal5Img = await mediaFromUrl('https://images.unsplash.com/photo-1720706439286-a642d2cd0db2?q=80&w=800&auto=format&fit=crop', 'A verandah table set for tea, mid-morning')
+  const mhIdeal1Img = await mediaFromUrl('https://images.unsplash.com/photo-1643719142162-4406375cbd02?q=80&w=400&auto=format&fit=crop', 'A couple sharing a quiet morning outdoors')
+  const mhIdeal2Img = await mediaFromUrl('https://images.unsplash.com/photo-1730485192112-654ec197f9eb?q=80&w=400&auto=format&fit=crop', 'Children petting a goat in the farm field')
+  const mhIdeal3Img = await mediaFromUrl('https://images.unsplash.com/photo-1508333409359-027beab53750?q=80&w=400&auto=format&fit=crop', 'A welcoming wooden cottage porch')
+  const mhIdeal4Img = await mediaFromUrl('https://images.unsplash.com/photo-1499281851221-5bce936073b0?q=80&w=400&auto=format&fit=crop', 'A silhouette at sunset among tall grass')
+
+  const mhExisting = await payload.find({ collection: 'stays', where: { slug: { equals: 'mango-house' } }, limit: 1 })
+  if (mhExisting.docs[0]) {
+    await payload.update({
+      collection: 'stays',
+      id: mhExisting.docs[0].id,
+      data: {
+        heroSub:
+          'A private cottage for two, tucked beneath the old mango grove — orchard-facing, family-friendly, and never quite silent in the kindest way.',
+        description: {
+          eyebrow: 'the description',
+          pullHeadline: 'Breakfast, some mornings,\nis just what fell.',
+          accentImage: mhAccentImg,
+          intro:
+            'Mango House sits at the edge of the orchard, close enough that the fruit dropping at first light is often the first sound of the day. In season, breakfast might simply be what fell that morning — picked up, washed, and served without ceremony.',
+          pullQuote:
+            'I sit beneath the old mango grove. In season, breakfast might just be what fell that morning. The goats know me well — they pass through twice a day.',
+          paragraphs: [
+            {
+              text: "This is the liveliest of the three stays, in the kindest sense of that word. A small dairy yard sits sixty paces away, and the goats pass through on their own schedule, twice a day, whether or not you're watching. Birds arrive early. Roosters, occasionally, arrive earlier than that.",
+            },
+            {
+              text: "It's a private cottage — one queen bed and a narrow daybed, a large window that opens straight onto the orchard — built for two, comfortable for a small family. If you want deep, uninterrupted silence, this isn't quite that. If you want to feel like the farm is alive around you, it is exactly that.",
+            },
+          ],
+        },
+        highlightsSection: {
+          image: mhHighlightsImg,
+          items: [
+            {
+              icon: 'bed',
+              badgeLabel: '2–3 Adults',
+              badgeColor: 'green',
+              title: 'Queen Bed + Daybed',
+              body: 'One queen bed for two, plus a narrow daybed along the east wall — enough for a small family or a third guest.',
+            },
+            {
+              icon: 'orchard',
+              badgeLabel: 'Orchard-Facing',
+              badgeColor: 'amber',
+              title: 'A Window To The Orchard',
+              body: 'A large window opens straight onto the mango and guava trees — the first thing you see, and hear, each morning.',
+            },
+            {
+              icon: 'verandah',
+              badgeLabel: 'Private Verandah',
+              badgeColor: 'purple',
+              title: 'Verandah & Outdoor Shower',
+              body: 'A covered verandah for slow mornings, and a rain-fed outdoor shower for the rest of the day.',
+            },
+            {
+              icon: 'animals',
+              badgeLabel: '60 Paces',
+              badgeColor: 'blue',
+              title: 'Neighbours With Hooves',
+              body: 'The dairy yard is sixty paces away. The goats are named, and they will introduce themselves — twice a day, on their own schedule.',
+            },
+          ],
+        },
+        amenitiesSection: {
+          hint: 'swipe or scroll to see all four →',
+          items: [
+            {
+              image: mhAm1Img,
+              title: 'Breakfast & Evening Chai',
+              body: 'Delivered to your door or served at the main house — every morning, and again at the bonfire.',
+            },
+            {
+              image: mhAm2Img,
+              title: 'Farm Ritual Access',
+              body: 'Every ritual, every day — first-light honey on toast, the held hours, bonfire chai, the night reading. Join any, skip all.',
+            },
+            {
+              image: mhAm3Img,
+              title: 'A Journal & A Pencil',
+              body: 'Yours to keep, whether you fill three pages or none — the farm library is also open during all waking hours.',
+            },
+            {
+              image: mhAm4Img,
+              title: 'Cotton + Linen, No TV',
+              body: 'Cotton and linen bedding, a wooden rack for hanging things, and — deliberately — no television.',
+            },
+          ],
+        },
+        gallery: [
+          { image: mhGal1Img, caption: 'the mango grove, first light', aspectRatio: '3/4' },
+          { image: mhGal2Img, caption: 'the queen bed, cotton & linen', aspectRatio: '1/1' },
+          { image: mhGal3Img, caption: 'the daybed, by the window', aspectRatio: '4/5' },
+          { image: mhGal4Img, caption: 'the dairy yard, sixty paces off', aspectRatio: '1/1' },
+          { image: mhGal5Img, caption: 'the verandah, mid-morning', aspectRatio: '4/3' },
+          { image: mhAm1Img, caption: 'breakfast — whatever fell that morning', aspectRatio: '3/4' },
+        ],
+        idealFor: [
+          {
+            image: mhIdeal1Img,
+            title: 'Couples Who Want Quiet Mornings',
+            body: 'Two people, one verandah, and a window that does most of the entertaining for you.',
+          },
+          {
+            image: mhIdeal2Img,
+            title: 'Families With Young Kids',
+            body: 'Goats, dairy animals, and fruit that falls off trees — the daybed makes room for a third guest.',
+          },
+          {
+            image: mhIdeal3Img,
+            title: 'First-Time Farmstay Guests',
+            body: 'Lively enough to feel welcoming, private enough to still feel like a retreat — a gentle introduction to the farm.',
+          },
+          {
+            image: mhIdeal4Img,
+            title: 'A 2–3 Night Stay',
+            body: 'Long enough for the mango season to reveal itself, short enough to leave wanting one more morning.',
+          },
+        ],
+        finalCtaNote:
+          'No countdown timers. No "only 1 left!" No urgency theatre.\nIf Mango House is free on your dates, it\'s yours. If it isn\'t, we\'ll suggest Stone House or call you back.',
+      },
+    })
+    payload.logger.info('✓ Mango House detail page seeded.')
+  }
+
   payload.logger.info('Seeding Home global...')
 
   const heroBg = await media('sunset-scene-countryside-scaled.jpg', 'Sunset over the Vana Ekantha estate')

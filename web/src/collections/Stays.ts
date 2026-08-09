@@ -10,6 +10,24 @@ const repeatingImageBlock = (name: string) => ({
   ],
 })
 
+// Icons shared by the Highlights section across all three detail pages
+// (/mango-house, /stone-house, /full-house) — broad enough to cover each
+// stay's distinct highlights without a one-off select per document.
+const HIGHLIGHT_ICON_OPTIONS = [
+  { label: 'Bed', value: 'bed' },
+  { label: 'Orchard / trees', value: 'orchard' },
+  { label: 'Verandah / roofline', value: 'verandah' },
+  { label: 'Animals', value: 'animals' },
+  { label: 'Fireplace', value: 'fireplace' },
+  { label: 'Desk / writing', value: 'desk' },
+  { label: 'Books / reading', value: 'reading' },
+  { label: 'Pond / water', value: 'pond' },
+  { label: 'Lawn / grounds', value: 'lawn' },
+  { label: 'Kitchen', value: 'kitchen' },
+  { label: 'Event / celebration', value: 'event' },
+  { label: 'Privacy / estate', value: 'privacy' },
+]
+
 export const Stays: CollectionConfig = {
   slug: 'stays',
   admin: {
@@ -45,6 +63,7 @@ export const Stays: CollectionConfig = {
       admin: { description: 'e.g. "Stay / Mango House"' },
     },
     { name: 'heroImage', type: 'upload', relationTo: 'media', required: true },
+    { name: 'heroSub', type: 'textarea', admin: { description: 'The one-line pitch shown under the hero title on this stay\'s own page — filled in when that page is built.' } },
     {
       type: 'row',
       fields: [
@@ -63,6 +82,13 @@ export const Stays: CollectionConfig = {
       type: 'group',
       name: 'description',
       fields: [
+        { name: 'eyebrow', type: 'text', defaultValue: 'the description' },
+        {
+          name: 'pullHeadline',
+          type: 'text',
+          admin: { description: 'The large sticky-column headline, e.g. "Breakfast, some mornings,\\nis just what fell." — last word is italicized automatically. Filled in when this stay\'s own page is built.' },
+        },
+        { name: 'accentImage', type: 'upload', relationTo: 'media' },
         { name: 'intro', type: 'textarea', required: true },
         { name: 'pullQuote', type: 'textarea', required: true },
         { name: 'paragraphs', type: 'array', fields: [{ name: 'text', type: 'textarea', required: true }] },
@@ -88,8 +114,60 @@ export const Stays: CollectionConfig = {
       ],
     },
 
-    repeatingImageBlock('highlights'),
-    repeatingImageBlock('amenities'),
+    {
+      type: 'group',
+      name: 'highlightsSection',
+      label: 'Accommodation Highlights',
+      fields: [
+        { name: 'image', type: 'upload', relationTo: 'media', admin: { description: 'The single sticky photo shown alongside the highlight rows.' } },
+        {
+          name: 'items',
+          type: 'array',
+          fields: [
+            { name: 'icon', type: 'select', required: true, options: HIGHLIGHT_ICON_OPTIONS },
+            {
+              type: 'row',
+              fields: [
+                { name: 'badgeLabel', type: 'text', required: true, admin: { width: '60%', description: 'e.g. "2–3 Adults"' } },
+                {
+                  name: 'badgeColor',
+                  type: 'select',
+                  required: true,
+                  defaultValue: 'green',
+                  admin: { width: '40%' },
+                  options: [
+                    { label: 'Green', value: 'green' },
+                    { label: 'Amber', value: 'amber' },
+                    { label: 'Purple', value: 'purple' },
+                    { label: 'Blue', value: 'blue' },
+                  ],
+                },
+              ],
+            },
+            { name: 'title', type: 'text', required: true },
+            { name: 'body', type: 'textarea', required: true },
+          ],
+        },
+      ],
+    },
+
+    {
+      type: 'group',
+      name: 'amenitiesSection',
+      label: 'Amenities & Inclusions',
+      fields: [
+        { name: 'hint', type: 'text', defaultValue: 'swipe or scroll to see more →' },
+        {
+          name: 'items',
+          type: 'array',
+          fields: [
+            { name: 'title', type: 'text', required: true },
+            { name: 'body', type: 'textarea', required: true },
+            { name: 'image', type: 'upload', relationTo: 'media', required: true },
+          ],
+        },
+      ],
+    },
 
     {
       name: 'gallery',
@@ -97,6 +175,17 @@ export const Stays: CollectionConfig = {
       fields: [
         { name: 'image', type: 'upload', relationTo: 'media', required: true },
         { name: 'caption', type: 'text', required: true },
+        {
+          name: 'aspectRatio',
+          type: 'select',
+          defaultValue: '4/3',
+          options: [
+            { label: 'Portrait (3/4)', value: '3/4' },
+            { label: 'Square (1/1)', value: '1/1' },
+            { label: 'Tall portrait (4/5)', value: '4/5' },
+            { label: 'Landscape (4/3)', value: '4/3' },
+          ],
+        },
       ],
     },
 
