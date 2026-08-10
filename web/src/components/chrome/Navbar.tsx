@@ -1,35 +1,53 @@
+'use client'
+
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import type { Navigation } from '@/payload-types'
 import { NavbarMobileMenu } from './NavbarMobileMenu'
 import { resolveMedia } from '@/lib/media'
 
 export function Navbar({ data }: { data: Navigation }) {
   const logoIcon = resolveMedia(data.logo?.icon)
+  const pathname = usePathname()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setMounted(true))
+    return () => cancelAnimationFrame(id)
+  }, [])
 
   return (
-    <header className="ve-navbar">
+    <header className={`ve-navbar${mounted ? ' ve-navbar-in' : ''}`}>
       <Link href="/" className="ve-navbar-logo">
         {logoIcon.url && <img src={logoIcon.url} alt="" aria-hidden="true" />}
         {renderWordmark(data.logo?.wordmark ?? 'Vana Ekantha')}
       </Link>
 
       <nav className="ve-navbar-links" aria-label="Primary">
-        {(data.primaryLinks ?? []).map((link) => (
-          <span className="ve-navbar-link-wrap" key={link.id ?? link.label}>
-            <a href={link.href} className="ve-navbar-link">
-              {link.label}
-            </a>
-            {link.submenu && link.submenu.length > 0 && (
-              <div className="ve-navbar-submenu">
-                {link.submenu.map((sub) => (
-                  <a href={sub.href} key={sub.id ?? sub.label}>
-                    {sub.label}
-                  </a>
-                ))}
-              </div>
-            )}
-          </span>
-        ))}
+        {(data.primaryLinks ?? []).map((link) => {
+          const active = isActive(pathname, link.href, link.submenu)
+          return (
+            <span className="ve-navbar-link-wrap" key={link.id ?? link.label}>
+              <a href={link.href} className={`ve-navbar-link${active ? ' ve-navbar-link-active' : ''}`}>
+                {link.label}
+              </a>
+              {link.submenu && link.submenu.length > 0 && (
+                <div className="ve-navbar-submenu">
+                  {link.submenu.map((sub) => (
+                    <a
+                      href={sub.href}
+                      key={sub.id ?? sub.label}
+                      className={pathname === sub.href ? 've-navbar-submenu-active' : undefined}
+                    >
+                      {sub.label}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </span>
+          )
+        })}
         {data.cta?.href && (
           <a href={data.cta.href} className="btn btn-primary">
             {data.cta.label}
@@ -37,9 +55,18 @@ export function Navbar({ data }: { data: Navigation }) {
         )}
       </nav>
 
-      <NavbarMobileMenu links={data.primaryLinks ?? []} cta={data.cta ?? undefined} />
+      <NavbarMobileMenu links={data.primaryLinks ?? []} cta={data.cta ?? undefined} pathname={pathname} />
     </header>
   )
+}
+
+/** Whether this nav item should read as "current page" — either its own
+ *  href matches exactly, or (for a parent like "Stay") the visitor is on
+ *  one of its submenu pages (e.g. /mango-house under the Stay dropdown). */
+function isActive(pathname: string, href?: string | null, submenu?: NonNullable<Navigation['primaryLinks']>[number]['submenu']) {
+  if (href && pathname === href) return true
+  if (submenu?.some((sub) => sub.href === pathname)) return true
+  return false
 }
 
 /** Splits "Vana Ekantha" → "Vana <em>Ekantha</em>", matching the source

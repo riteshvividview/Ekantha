@@ -277,7 +277,8 @@ section {
 
 /* ── Scroll reveal (base state; GSAP takes over the "in" transition) ── */
 
-.reveal {
+.reveal,
+.footer-reveal {
   opacity: 0;
   transform: translateY(28px);
 }
@@ -286,7 +287,8 @@ section {
   transform: translateY(0);
 }
 @media (prefers-reduced-motion: reduce) {
-  .reveal {
+  .reveal,
+  .footer-reveal {
     opacity: 1;
     transform: none;
   }
@@ -599,6 +601,20 @@ body.on-light .ve-cursor-dot.swollen {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  opacity: 0;
+  transform: translateY(-14px);
+  transition: opacity 620ms var(--ease-slow), transform 620ms var(--ease-slow);
+}
+.ve-navbar-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ve-navbar {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
 .ve-navbar-logo {
   display: flex;
@@ -640,6 +656,19 @@ body.on-light .ve-cursor-dot.swollen {
 .ve-navbar-link:hover {
   color: var(--ink);
 }
+.ve-navbar-link-active {
+  color: var(--ink);
+}
+.ve-navbar-link-active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--ink);
+}
 .ve-navbar-link-wrap {
   position: relative;
 }
@@ -679,6 +708,11 @@ body.on-light .ve-cursor-dot.swollen {
   background: var(--silver);
   color: var(--ink);
 }
+.ve-navbar-submenu-active {
+  background: var(--silver);
+  color: var(--ink);
+  font-weight: 500;
+}
 .ve-navbar-burger {
   display: none;
   width: 40px;
@@ -710,4 +744,13 @@ body.on-light .ve-cursor-dot.swollen {
   font-family: var(--font-display);
   font-size: 1.5rem;
   color: var(--ink);
+}
+.ve-navbar-mobile-item {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 380ms var(--ease-slow), transform 380ms var(--ease-slow);
+}
+.ve-navbar-mobile.open .ve-navbar-mobile-item {
+  opacity: 1;
+  transform: translateY(0);
 }

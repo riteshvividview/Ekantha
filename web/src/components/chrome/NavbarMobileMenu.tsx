@@ -6,9 +6,10 @@ import type { Navigation } from '@/payload-types'
 type Props = {
   links: NonNullable<Navigation['primaryLinks']>
   cta?: Navigation['cta']
+  pathname: string
 }
 
-export function NavbarMobileMenu({ links, cta }: Props) {
+export function NavbarMobileMenu({ links, cta, pathname }: Props) {
   const [open, setOpen] = useState(false)
 
   return (
@@ -42,29 +43,42 @@ export function NavbarMobileMenu({ links, cta }: Props) {
       </button>
 
       <div className={`ve-navbar-mobile${open ? ' open' : ''}`}>
-        {links.map((link) => (
-          <div key={link.id ?? link.label}>
-            <a href={link.href} onClick={() => setOpen(false)}>
-              {link.label}
-            </a>
-            {link.submenu && link.submenu.length > 0 && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem', paddingLeft: '1rem' }}>
-                {link.submenu.map((sub) => (
-                  <a
-                    href={sub.href}
-                    key={sub.id ?? sub.label}
-                    onClick={() => setOpen(false)}
-                    style={{ fontSize: '1rem', color: 'var(--ink-soft)' }}
-                  >
-                    {sub.label}
-                  </a>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
+        {links.map((link, i) => {
+          const active = pathname === link.href || link.submenu?.some((sub) => sub.href === pathname)
+          return (
+            <div
+              key={link.id ?? link.label}
+              className="ve-navbar-mobile-item"
+              style={{ transitionDelay: open ? `${80 + i * 45}ms` : '0ms' }}
+            >
+              <a href={link.href} className={active ? 've-navbar-link-active' : undefined} onClick={() => setOpen(false)}>
+                {link.label}
+              </a>
+              {link.submenu && link.submenu.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem', paddingLeft: '1rem' }}>
+                  {link.submenu.map((sub) => (
+                    <a
+                      href={sub.href}
+                      key={sub.id ?? sub.label}
+                      onClick={() => setOpen(false)}
+                      className={pathname === sub.href ? 've-navbar-link-active' : undefined}
+                      style={{ fontSize: '1rem', color: pathname === sub.href ? undefined : 'var(--ink-soft)' }}
+                    >
+                      {sub.label}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          )
+        })}
         {cta?.href && (
-          <a href={cta.href} className="btn btn-primary" onClick={() => setOpen(false)} style={{ marginTop: '1rem' }}>
+          <a
+            href={cta.href}
+            className="btn btn-primary ve-navbar-mobile-item"
+            onClick={() => setOpen(false)}
+            style={{ marginTop: '1rem', transitionDelay: open ? `${80 + links.length * 45}ms` : '0ms' }}
+          >
             {cta.label}
           </a>
         )}

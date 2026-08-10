@@ -1,14 +1,23 @@
+'use client'
+
+import { useRef } from 'react'
 import type { Footer as FooterData } from '@/payload-types'
 import { resolveMedia } from '@/lib/media'
 import { SocialIcon } from './SocialIcon'
+import { useScrollReveal } from '@/lib/animations/useScrollReveal'
 
 export function Footer({ data }: { data: FooterData }) {
   const brandLogo = resolveMedia(data.brand?.logo)
+  const rootRef = useRef<HTMLElement>(null)
+  // Scoped to the footer's own subtree (rather than the shared page-level
+  // RevealController) so it reveals correctly even on pages that skip
+  // RevealController entirely, e.g. the CmsNotConnected fallback.
+  useScrollReveal(rootRef, '.footer-reveal')
 
   return (
-    <footer className="ve-footer" id="veFooter">
+    <footer className="ve-footer" id="veFooter" ref={rootRef}>
       {data.ctaBanner && (
-        <div className="ve-footer-cta">
+        <div className="ve-footer-cta footer-reveal">
           <span className="eyebrow" style={{ color: 'rgba(255,255,255,0.7)' }}>
             book your escape
           </span>
@@ -21,7 +30,7 @@ export function Footer({ data }: { data: FooterData }) {
       )}
 
       <div className="ve-footer-main">
-        <div>
+        <div className="footer-reveal">
           <div className="ve-navbar-logo">
             {brandLogo.url && <img src={brandLogo.url} alt="" aria-hidden="true" />}
             Vana <em>Ekantha</em>
@@ -30,7 +39,7 @@ export function Footer({ data }: { data: FooterData }) {
           {data.brand?.note && <p className="ve-footer-brand-note">{data.brand.note}</p>}
         </div>
 
-        <div>
+        <div className="footer-reveal">
           <div className="ve-footer-col-head">Quick Links</div>
           <ul className="ve-footer-list">
             {(data.quickLinks ?? []).map((link) => (
@@ -41,7 +50,7 @@ export function Footer({ data }: { data: FooterData }) {
           </ul>
         </div>
 
-        <div>
+        <div className="footer-reveal">
           <div className="ve-footer-col-head">Contact</div>
           <ul className="ve-footer-list">
             {(data.contactInfo ?? []).map((row) => (
@@ -52,7 +61,7 @@ export function Footer({ data }: { data: FooterData }) {
           </ul>
         </div>
 
-        <div>
+        <div className="footer-reveal">
           <div className="ve-footer-col-head">Find Us, Quietly</div>
           <div className="ve-footer-social">
             {(data.socialLinks ?? []).map((link) => (

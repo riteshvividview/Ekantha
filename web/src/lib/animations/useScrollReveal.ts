@@ -15,10 +15,10 @@ import { gsap, ScrollTrigger } from './gsap'
  * (`opacity:0; transform:translateY(28px)`, see globals.css) — this hook
  * animates *away* from that state; it doesn't need `.in` to do it.
  */
-export function useScrollReveal(containerRef?: RefObject<HTMLElement | null>) {
+export function useScrollReveal(containerRef?: RefObject<HTMLElement | null>, selector = '.reveal') {
   useEffect(() => {
     const root = containerRef?.current ?? document
-    const targets = Array.from(root.querySelectorAll<HTMLElement>('.reveal'))
+    const targets = Array.from(root.querySelectorAll<HTMLElement>(selector))
     if (!targets.length) return
 
     const triggers = targets.map((el, i) =>
@@ -43,7 +43,7 @@ export function useScrollReveal(containerRef?: RefObject<HTMLElement | null>) {
     return () => {
       triggers.forEach((tween) => tween.scrollTrigger?.kill())
     }
-  }, [containerRef])
+  }, [containerRef, selector])
 }
 
 export { gsap, ScrollTrigger }
