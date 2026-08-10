@@ -286,12 +286,12 @@ export interface Stay {
      */
     image?: (number | null) | Media;
     /**
-     * Each stay detail page renders this list with its own visual treatment. Mango House: icon + colored badge per row, no per-row image. Stone House: image + plain badge per row, with the first row shown as a large featured card.
+     * Each stay detail page renders this list with its own visual treatment. Mango House: icon + colored badge per row, no per-row image. Stone House: image + plain badge per row, with the first row shown as a large featured card. Full House: icon + image + colored badge together, in a 4-card bento grid.
      */
     items?:
       | {
           /**
-           * Mango-House-style layout only.
+           * Mango House and Full House layouts.
            */
           icon?:
             | (
@@ -307,10 +307,14 @@ export interface Stay {
                 | 'kitchen'
                 | 'event'
                 | 'privacy'
+                | 'group'
+                | 'checkmark'
+                | 'house'
+                | 'chef'
               )
             | null;
           /**
-           * Stone-House-style layout only.
+           * Stone House and Full House layouts.
            */
           image?: (number | null) | Media;
           /**
@@ -318,7 +322,7 @@ export interface Stay {
            */
           badgeLabel: string;
           /**
-           * Mango-House-style layout only.
+           * Mango House and Full House layouts.
            */
           badgeColor?: ('green' | 'amber' | 'purple' | 'blue') | null;
           title: string;

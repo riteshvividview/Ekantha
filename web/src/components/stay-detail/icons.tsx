@@ -11,6 +11,10 @@ export type HighlightIcon =
   | 'kitchen'
   | 'event'
   | 'privacy'
+  | 'group'
+  | 'checkmark'
+  | 'house'
+  | 'chef'
 
 export function HighlightIconSvg({ icon }: { icon: HighlightIcon }) {
   switch (icon) {
@@ -101,6 +105,36 @@ export function HighlightIconSvg({ icon }: { icon: HighlightIcon }) {
         <svg viewBox="0 0 48 48">
           <rect x="12" y="20" width="24" height="18" rx="2" />
           <path d="M17,20 L17,14 Q17,8 24,8 Q31,8 31,14 L31,20" />
+        </svg>
+      )
+    case 'group':
+      return (
+        <svg viewBox="0 0 48 48">
+          <circle cx="14" cy="16" r="5" />
+          <circle cx="24" cy="14" r="5" />
+          <circle cx="34" cy="16" r="5" />
+          <path d="M6,36 Q6,26 14,26 Q22,26 22,36 M18,36 Q18,25 24,25 Q30,25 30,36 M26,36 Q26,26 34,26 Q42,26 42,36" />
+        </svg>
+      )
+    case 'checkmark':
+      return (
+        <svg viewBox="0 0 48 48">
+          <rect x="8" y="8" width="32" height="32" rx="4" />
+          <path d="M16,24 L21,29 L32,17" />
+        </svg>
+      )
+    case 'house':
+      return (
+        <svg viewBox="0 0 48 48">
+          <path d="M12,26 L12,20 L24,10 L36,20 L36,26 M12,26 L12,40 L36,40 L36,26 M12,26 L36,26" />
+        </svg>
+      )
+    case 'chef':
+      return (
+        <svg viewBox="0 0 48 48">
+          <circle cx="24" cy="16" r="6" />
+          <path d="M12,38 Q12,26 24,26 Q36,26 36,38" />
+          <path d="M30,10 L34,6 M34,6 L34,10 M34,6 L30,6" />
         </svg>
       )
   }

@@ -459,6 +459,146 @@ async function main() {
     payload.logger.info('✓ Stone House detail page seeded.')
   }
 
+  payload.logger.info('Seeding Full House detail page content...')
+  const fhHl1Img = await media('large-house-with-large-front-porch-terrace-with-palm-trees-scaled.jpg', 'Mango House at Vana Ekantha')
+  const fhHl2Img = await media('rural-view-catalonia-spain-scaled.jpg', 'The full Vana Ekantha estate')
+  const fhHl3Img = await media('tract-cherkassy-region-ukraine-scaled.jpg', 'The kitchen garden at Vana Ekantha')
+  const fhHl4Img = await media('how-is-rich-people-have-supper-prepared-desk-waiting-food-visitors-evening-time-scaled.jpg', 'A private dinner set for a Vana Ekantha event')
+  const fhAm1Img = await media('family-all-together-camping-garden-father-child-grill-food-divergence-scaled.jpg', 'Guests sharing a meal together at Vana Ekantha')
+  const fhAm2Img = await media('swimming-pool-blue-water-tropical-garden-with-sea-view-background-scaled.jpg', 'The pool at Vana Ekantha')
+  const fhAm3Img = await media('contemporary-house-interior-design-scaled.jpg', 'A quiet evening ritual at Vana Ekantha')
+  const fhAm4Img = await media('aerial-view-rolling-green-vineyards-countryside-village-italy-scaled.jpg', 'The open lawns at Vana Ekantha')
+  const fhGalHeroImg = await media('high-quality-digital-image-wallpaper-scaled.jpg', 'The Vana Ekantha estate, both houses, from above')
+  const fhGal1Img = await media('home-architecture-design-ranch-style-with-front-porch-scaled.jpg', 'Mango House, from the lawn')
+  const fhGal2Img = await media('relax-area-resort-scaled.jpg', 'Stone House, from the wall')
+  const fhGal3Img = await media('sunset-scene-countryside-scaled.jpg', 'The pond at Vana Ekantha, at dusk')
+  const fhGal4Img = await media('golf-course-zlati-gric-slovenia-with-vineyards-trees-sunny-day-scaled.jpg', 'The open lawns at Vana Ekantha')
+  const fhGal5Img = await media('park-with-pond-bushes-scaled.jpg', 'The pergola walkway at Vana Ekantha')
+  const fhIdeal1Img = await media('group-young-indian-asian-people-is-having-lunch-breakfast-together-outdoor-settings-scaled.jpg', 'A family reunion at Vana Ekantha')
+  const fhIdeal2Img = await media('beautiful-jungle-party-decorations-scaled.jpg', 'A milestone celebration at Vana Ekantha')
+  const fhIdeal3Img = await media('jeju-island-korea-october-12-osulloc-tea-museum-is-f-scaled.jpg', 'A corporate retreat at Vana Ekantha')
+  const fhIdeal4Img = await media('photorealistic-wooden-house-interior-with-timber-decor-furnishings-scaled.jpg', 'A multi-generational stay at Vana Ekantha')
+
+  const fhExisting = await payload.find({ collection: 'stays', where: { slug: { equals: 'full-house' } }, limit: 1 })
+  if (fhExisting.docs[0]) {
+    await payload.update({
+      collection: 'stays',
+      id: fhExisting.docs[0].id,
+      data: {
+        heroSub: 'Every cottage, every acre — the pond, the orchard, the kitchen garden besides. For families, reunions, and celebrations that need room to breathe.',
+        description: {
+          eyebrow: 'the description',
+          pullHeadline: 'Take all of me.\nEvery acre.',
+          intro:
+            "Full House isn't a fourth cottage — it's the whole estate, taken exclusively. Mango House and Stone House, the main house, the pond, the orchard, the kitchen garden, the open lawns, all of it, for the length of your stay. No other guests. No sharing the pergola walkway with strangers.",
+          pullQuote:
+            'Take all of me. Every cottage, every acre, the pond and the orchard and the kitchen garden besides. For families, reunions, and celebrations that need room to breathe.',
+          paragraphs: [
+            {
+              text: "This is the booking for the occasions that don't fit into a single cottage — a family reunion spanning three generations, a milestone birthday, a wedding weekend, a corporate offsite that wants lawns instead of a conference room. Up to sixteen adults can be housed across the two standalone houses, with the main house available for shared meals and gathering.",
+            },
+            {
+              text: 'A private events team is available on request, for anything from a simple bonfire dinner to a full celebration under the outdoor cinema screen. The minimum stay for a full-house booking is three nights — long enough for a gathering to find its own rhythm, and for everyone to get at least one quiet morning to themselves.',
+            },
+          ],
+        },
+        highlightsSection: {
+          items: [
+            {
+              image: fhHl1Img,
+              icon: 'group',
+              badgeLabel: 'Up To 16 Adults',
+              badgeColor: 'green',
+              title: 'Mango House + Stone House',
+              body: 'Both standalone houses, combined — enough beds and bedrooms for up to sixteen adults across the property.',
+            },
+            {
+              image: fhHl2Img,
+              icon: 'checkmark',
+              badgeLabel: 'Exclusive Use',
+              badgeColor: 'amber',
+              title: 'The Entire Estate, To Yourselves',
+              body: 'No other guests on the property during your stay — every path, every acre, is yours alone.',
+            },
+            {
+              image: fhHl3Img,
+              icon: 'house',
+              badgeLabel: 'Shared Spaces',
+              badgeColor: 'purple',
+              title: 'Main House & Kitchen Garden',
+              body: 'Full access to the main house for shared meals, and the kitchen garden for picking your own coriander.',
+            },
+            {
+              image: fhHl4Img,
+              icon: 'chef',
+              badgeLabel: 'On Request',
+              badgeColor: 'blue',
+              title: 'A Private Events Team',
+              body: 'Available for bonfire dinners, celebrations, and everything in between — arranged ahead of your arrival.',
+            },
+          ],
+        },
+        amenitiesSection: {
+          items: [
+            {
+              image: fhAm1Img,
+              title: 'All Meals Included',
+              body: 'Breakfast, evening chai, and farm dinners for every guest, every day of the stay — no per-person add-ons.',
+            },
+            {
+              image: fhAm2Img,
+              title: 'The Pool & Outdoor Cinema',
+              body: "Full run of the estate's amenities — the pool, the outdoor projector, the barbecue grill, indoor and outdoor games.",
+            },
+            {
+              image: fhAm3Img,
+              title: 'Every Farm Ritual, For Everyone',
+              body: 'First-light honey on toast, the held hours, bonfire chai, the night reading — open to your whole group.',
+            },
+            {
+              image: fhAm4Img,
+              title: 'The Pergola Walkway & Lawns',
+              body: 'Wide open lawns and a vine-covered walkway connecting both houses — space enough for any size of gathering.',
+            },
+          ],
+        },
+        gallery: [
+          { image: fhGalHeroImg, caption: 'the estate, both houses' },
+          { image: fhGal1Img, caption: 'mango house, from the lawn' },
+          { image: fhGal2Img, caption: 'stone house, from the wall' },
+          { image: fhGal3Img, caption: 'the pond, at dusk' },
+          { image: fhGal4Img, caption: 'the open lawns' },
+          { image: fhGal5Img, caption: 'the pergola walkway' },
+        ],
+        idealFor: [
+          {
+            image: fhIdeal1Img,
+            title: 'Family Reunions',
+            body: 'Three generations under one roof-and-grounds, with enough space that no one has to share a wall.',
+          },
+          {
+            image: fhIdeal2Img,
+            title: 'Milestone Celebrations',
+            body: 'Birthdays, anniversaries, and pre-wedding gatherings — the private events team can help shape the evening.',
+          },
+          {
+            image: fhIdeal3Img,
+            title: 'Corporate Retreats',
+            body: 'Offsites that trade the conference room for open lawns — teams tend to think better outdoors.',
+          },
+          {
+            image: fhIdeal4Img,
+            title: 'Multi-Generational Groups',
+            body: 'Two separate houses mean privacy for couples and room for kids to run, without anyone leaving the property.',
+          },
+        ],
+        finalCtaNote:
+          'No countdown timers. No "only 1 left!" No urgency theatre.\nIf the estate is free on your dates, it\'s yours. If it isn\'t, we\'ll keep your name and call you back.',
+      },
+    })
+    payload.logger.info('✓ Full House detail page seeded.')
+  }
+
   payload.logger.info('Seeding Home global...')
 
   const heroBg = await media('sunset-scene-countryside-scaled.jpg', 'Sunset over the Vana Ekantha estate')

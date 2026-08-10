@@ -2,15 +2,17 @@ import type { Stay } from '@/payload-types'
 import { resolveMediaSize } from '@/lib/media'
 import styles from './stay-detail.module.css'
 
-export function Hero({ stay, badgeNumber }: { stay: Stay; badgeNumber: string }) {
+export function Hero({ stay, badgeNumber, showBg = false }: { stay: Stay; badgeNumber: string; showBg?: boolean }) {
   const bg = resolveMediaSize(stay.heroImage, 'hero')
 
   return (
     <section className={styles.hero} id="top">
-      <div className={styles.heroBg} aria-hidden="true">
-        {bg.url && <img src={bg.url} alt="" />}
-        <div className={styles.heroBgWash} />
-      </div>
+      {showBg && (
+        <div className={styles.heroBg} aria-hidden="true">
+          {bg.url && <img src={bg.url} alt="" />}
+          <div className={styles.heroBgWash} />
+        </div>
+      )}
 
       <div className={`${styles.heroBadge} reveal`}>
         <span className={styles.dot}>{badgeNumber}</span>

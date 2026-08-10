@@ -23,7 +23,7 @@ export function StayDetailPage({ stay }: { stay: Stay }) {
   return (
     <>
       <RevealController />
-      <Hero stay={stay} badgeNumber={badgeNumber} />
+      <Hero stay={stay} badgeNumber={badgeNumber} showBg />
       <Description data={stay.description} />
       <Highlights data={stay.highlightsSection} />
       <Amenities data={stay.amenitiesSection} />

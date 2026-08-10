@@ -26,6 +26,10 @@ const HIGHLIGHT_ICON_OPTIONS = [
   { label: 'Kitchen', value: 'kitchen' },
   { label: 'Event / celebration', value: 'event' },
   { label: 'Privacy / estate', value: 'privacy' },
+  { label: 'Group / people', value: 'group' },
+  { label: 'Checkmark', value: 'checkmark' },
+  { label: 'House', value: 'house' },
+  { label: 'Chef / events team', value: 'chef' },
 ]
 
 export const Stays: CollectionConfig = {
@@ -130,11 +134,11 @@ export const Stays: CollectionConfig = {
           type: 'array',
           admin: {
             description:
-              'Each stay detail page renders this list with its own visual treatment. Mango House: icon + colored badge per row, no per-row image. Stone House: image + plain badge per row, with the first row shown as a large featured card.',
+              'Each stay detail page renders this list with its own visual treatment. Mango House: icon + colored badge per row, no per-row image. Stone House: image + plain badge per row, with the first row shown as a large featured card. Full House: icon + image + colored badge together, in a 4-card bento grid.',
           },
           fields: [
-            { name: 'icon', type: 'select', options: HIGHLIGHT_ICON_OPTIONS, admin: { description: 'Mango-House-style layout only.' } },
-            { name: 'image', type: 'upload', relationTo: 'media', admin: { description: 'Stone-House-style layout only.' } },
+            { name: 'icon', type: 'select', options: HIGHLIGHT_ICON_OPTIONS, admin: { description: 'Mango House and Full House layouts.' } },
+            { name: 'image', type: 'upload', relationTo: 'media', admin: { description: 'Stone House and Full House layouts.' } },
             {
               type: 'row',
               fields: [
@@ -143,7 +147,7 @@ export const Stays: CollectionConfig = {
                   name: 'badgeColor',
                   type: 'select',
                   defaultValue: 'green',
-                  admin: { width: '40%', description: 'Mango-House-style layout only.' },
+                  admin: { width: '40%', description: 'Mango House and Full House layouts.' },
                   options: [
                     { label: 'Green', value: 'green' },
                     { label: 'Amber', value: 'amber' },
