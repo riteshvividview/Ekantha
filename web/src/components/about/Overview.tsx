@@ -1,5 +1,6 @@
 import type { About } from '@/payload-types'
 import { resolveMedia } from '@/lib/media'
+import { CountUp } from '@/components/shared/CountUp'
 import styles from './about.module.css'
 
 export function Overview({ data }: { data: About['overview'] }) {
@@ -18,7 +19,7 @@ export function Overview({ data }: { data: About['overview'] }) {
           <div className={styles.overviewFacts}>
             {facts.map((fact, i) => (
               <div className={`${styles.overviewFact} reveal`} key={fact.id ?? i}>
-                <div className={styles.num}>{fact.number}</div>
+                <div className={styles.num}><CountUp value={fact.number} /></div>
                 <div className={styles.label}>{fact.label}</div>
               </div>
             ))}

@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react'
 import type { Home, Stay } from '@/payload-types'
 import { SectionHead } from '@/components/shared/SectionHead'
+import { CountUp } from '@/components/shared/CountUp'
 import { resolveMediaSize } from '@/lib/media'
 import styles from './home.module.css'
 
@@ -87,7 +88,9 @@ export function StaysCarousel({
                       <span className={styles.dot}>·</span>
                       {stay.homeTeaser?.factsLine}
                       <br />
-                      <span className={styles.price}>from ₹{stay.priceFrom.toLocaleString('en-IN')} / night</span>
+                      <span className={styles.price}>
+                        from ₹<CountUp value={stay.priceFrom} format={(n) => n.toLocaleString('en-IN')} /> / night
+                      </span>
                       {stay.priceNote ? ` · ${stay.priceNote}` : ''}
                     </p>
                     <a href={STAY_SLUG_HREF[stay.slug]} className="btn btn-ghost" style={{ marginTop: '1.25rem' }}>

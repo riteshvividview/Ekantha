@@ -1,5 +1,6 @@
 import type { Stay, StayPage } from '@/payload-types'
 import { resolveMediaSize } from '@/lib/media'
+import { CountUp } from '@/components/shared/CountUp'
 import styles from './stay.module.css'
 
 const STAY_SLUG_HREF: Record<string, string> = {
@@ -59,7 +60,9 @@ export function StaysSection({ data, stays }: { data: StayPage['staysSection']; 
 
                 <div className={`${styles.stayCtaRow} reveal`}>
                   <div className={styles.stayPrice}>
-                    <div className={styles.amount}>from ₹{stay.priceFrom.toLocaleString('en-IN')} / night</div>
+                    <div className={styles.amount}>
+                      from ₹<CountUp value={stay.priceFrom} format={(n) => n.toLocaleString('en-IN')} /> / night
+                    </div>
                     {stay.priceNote && <div className={styles.incl}>{stay.priceNote}</div>}
                   </div>
                   <a href={STAY_SLUG_HREF[stay.slug] ?? '#'} className={`btn btn-primary ${styles.btnSmall}`}>

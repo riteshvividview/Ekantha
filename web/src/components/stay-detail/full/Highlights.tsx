@@ -1,5 +1,9 @@
+'use client'
+
+import { useRef } from 'react'
 import type { Stay } from '@/payload-types'
 import { HighlightIconSvg } from '../icons'
+import { useBentoParallax } from '@/lib/animations/useBentoParallax'
 import styles from './full.module.css'
 
 const DOT_COLOR: Record<string, string> = {
@@ -15,6 +19,9 @@ const DOT_COLOR: Record<string, string> = {
  *  + icon-row treatment and Stone House's featured-card + row treatment,
  *  though all three draw from the same `highlightsSection.items` field. */
 export function Highlights({ data }: { data: Stay['highlightsSection'] }) {
+  const gridRef = useRef<HTMLDivElement>(null)
+  useBentoParallax(gridRef, `.${styles.hlCard}`, `.${styles.hlCardMedia}`)
+
   const items = data?.items ?? []
   if (!items.length) return null
 
@@ -25,7 +32,7 @@ export function Highlights({ data }: { data: Stay['highlightsSection'] }) {
         <p>What &ldquo;the whole estate&rdquo; actually means — no surprises, no fine print.</p>
       </div>
 
-      <div className={styles.hlGrid}>
+      <div className={styles.hlGrid} ref={gridRef}>
         {items.map((item, i) => {
           const bgUrl = typeof item.image === 'object' && item.image ? item.image.url : undefined
           return (

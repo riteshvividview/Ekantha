@@ -3,6 +3,7 @@ import '../globals.css'
 import { SmoothScrollProvider } from '@/components/layout/SmoothScrollProvider'
 import { TheatreStudioLoader } from '@/components/layout/TheatreStudioLoader'
 import { CursorDot } from '@/components/chrome/CursorDot'
+import { InteractionEffects } from '@/components/chrome/InteractionEffects'
 import { HoldPill } from '@/components/chrome/HoldPill'
 import { IdleNudge } from '@/components/chrome/IdleNudge'
 import { Navbar } from '@/components/chrome/Navbar'
@@ -66,6 +67,7 @@ export default async function SiteRootLayout({ children }: { children: React.Rea
       <body>
         <TheatreStudioLoader />
         <CursorDot />
+        <InteractionEffects />
         <HoldPill />
         <IdleNudge />
         <SmoothScrollProvider>

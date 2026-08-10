@@ -1,5 +1,6 @@
 import type { Stay } from '@/payload-types'
 import { resolveMediaSize } from '@/lib/media'
+import { CountUp } from '@/components/shared/CountUp'
 import styles from './stay-detail.module.css'
 
 export function Hero({ stay, badgeNumber, showBg = false }: { stay: Stay; badgeNumber: string; showBg?: boolean }) {
@@ -25,7 +26,10 @@ export function Hero({ stay, badgeNumber, showBg = false }: { stay: Stay; badgeN
 
       <div className={`${styles.heroFacts} reveal`}>
         <span>
-          <span className={styles.amount}>₹{stay.priceFrom.toLocaleString('en-IN')}</span> / night
+          <span className={styles.amount}>
+            ₹<CountUp value={stay.priceFrom} format={(n) => n.toLocaleString('en-IN')} />
+          </span>{' '}
+          / night
         </span>
         <span>·</span>
         <span>{stay.capacity}</span>
