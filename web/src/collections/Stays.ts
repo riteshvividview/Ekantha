@@ -119,12 +119,22 @@ export const Stays: CollectionConfig = {
       name: 'highlightsSection',
       label: 'Accommodation Highlights',
       fields: [
-        { name: 'image', type: 'upload', relationTo: 'media', admin: { description: 'The single sticky photo shown alongside the highlight rows.' } },
+        {
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
+          admin: { description: 'Mango-House-style layout only: the single sticky photo shown alongside the highlight rows.' },
+        },
         {
           name: 'items',
           type: 'array',
+          admin: {
+            description:
+              'Each stay detail page renders this list with its own visual treatment. Mango House: icon + colored badge per row, no per-row image. Stone House: image + plain badge per row, with the first row shown as a large featured card.',
+          },
           fields: [
-            { name: 'icon', type: 'select', required: true, options: HIGHLIGHT_ICON_OPTIONS },
+            { name: 'icon', type: 'select', options: HIGHLIGHT_ICON_OPTIONS, admin: { description: 'Mango-House-style layout only.' } },
+            { name: 'image', type: 'upload', relationTo: 'media', admin: { description: 'Stone-House-style layout only.' } },
             {
               type: 'row',
               fields: [
@@ -132,9 +142,8 @@ export const Stays: CollectionConfig = {
                 {
                   name: 'badgeColor',
                   type: 'select',
-                  required: true,
                   defaultValue: 'green',
-                  admin: { width: '40%' },
+                  admin: { width: '40%', description: 'Mango-House-style layout only.' },
                   options: [
                     { label: 'Green', value: 'green' },
                     { label: 'Amber', value: 'amber' },

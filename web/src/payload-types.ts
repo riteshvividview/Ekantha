@@ -282,29 +282,45 @@ export interface Stay {
   };
   highlightsSection?: {
     /**
-     * The single sticky photo shown alongside the highlight rows.
+     * Mango-House-style layout only: the single sticky photo shown alongside the highlight rows.
      */
     image?: (number | null) | Media;
+    /**
+     * Each stay detail page renders this list with its own visual treatment. Mango House: icon + colored badge per row, no per-row image. Stone House: image + plain badge per row, with the first row shown as a large featured card.
+     */
     items?:
       | {
-          icon:
-            | 'bed'
-            | 'orchard'
-            | 'verandah'
-            | 'animals'
-            | 'fireplace'
-            | 'desk'
-            | 'reading'
-            | 'pond'
-            | 'lawn'
-            | 'kitchen'
-            | 'event'
-            | 'privacy';
+          /**
+           * Mango-House-style layout only.
+           */
+          icon?:
+            | (
+                | 'bed'
+                | 'orchard'
+                | 'verandah'
+                | 'animals'
+                | 'fireplace'
+                | 'desk'
+                | 'reading'
+                | 'pond'
+                | 'lawn'
+                | 'kitchen'
+                | 'event'
+                | 'privacy'
+              )
+            | null;
+          /**
+           * Stone-House-style layout only.
+           */
+          image?: (number | null) | Media;
           /**
            * e.g. "2–3 Adults"
            */
           badgeLabel: string;
-          badgeColor: 'green' | 'amber' | 'purple' | 'blue';
+          /**
+           * Mango-House-style layout only.
+           */
+          badgeColor?: ('green' | 'amber' | 'purple' | 'blue') | null;
           title: string;
           body: string;
           id?: string | null;
@@ -568,6 +584,7 @@ export interface StaysSelect<T extends boolean = true> {
           | T
           | {
               icon?: T;
+              image?: T;
               badgeLabel?: T;
               badgeColor?: T;
               title?: T;

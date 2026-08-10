@@ -326,6 +326,139 @@ async function main() {
     payload.logger.info('✓ Mango House detail page seeded.')
   }
 
+  payload.logger.info('Seeding Stone House detail page content...')
+  const shHlHeroImg = await mediaFromUrl('https://images.unsplash.com/photo-1543393470-b2c833b98dce?q=80&w=1400&auto=format&fit=crop', 'A working stone fireplace at Stone House')
+  const shHlRow1Img = await mediaFromUrl('https://images.unsplash.com/photo-1585620089933-768743dfc8f1?q=80&w=500&auto=format&fit=crop', 'One of the two bedrooms at Stone House')
+  const shHlRow2Img = await mediaFromUrl('https://images.unsplash.com/photo-1535546204504-586398ee6677?q=80&w=500&auto=format&fit=crop', "The writer's desk with a typewriter and lamp")
+  const shHlRow3Img = await mediaFromUrl('https://images.unsplash.com/photo-1647842446246-d2be55aa97a8?q=80&w=500&auto=format&fit=crop', 'An old tree beside the low stone wall')
+  const shAm1Img = await mediaFromUrl('https://images.unsplash.com/photo-1524084848619-1161d3c8501a?q=80&w=900&auto=format&fit=crop', 'Breakfast coffee served on a wooden tray')
+  const shAm2Img = await mediaFromUrl('https://images.unsplash.com/photo-1604004235675-21276186c600?q=80&w=900&auto=format&fit=crop', 'An evening ritual tray with tea and a candle')
+  const shAm3Img = await mediaFromUrl('https://images.unsplash.com/photo-1768913651135-273f8bc59d37?q=80&w=900&auto=format&fit=crop', 'Books lined up on a stone shelf')
+  const shAm4Img = await mediaFromUrl('https://images.unsplash.com/photo-1728034261564-18930dcb2c8e?q=80&w=900&auto=format&fit=crop', 'Folded cotton and linen towels')
+  const shGal1Img = await mediaFromUrl('https://images.unsplash.com/photo-1630579083524-e3ac854edb46?q=80&w=700&auto=format&fit=crop', 'The original stone facade and arched wooden door')
+  const shGal2Img = await mediaFromUrl('https://images.unsplash.com/photo-1697462247864-338e7eba8c4c?q=80&w=700&auto=format&fit=crop', 'One of the two bedrooms')
+  const shGal3Img = await mediaFromUrl('https://images.unsplash.com/photo-1570626742839-59acd9822944?q=80&w=700&auto=format&fit=crop', 'A typewriter at the writing desk by the north window')
+  const shGal4Img = await mediaFromUrl('https://images.unsplash.com/photo-1696814543693-31fcf942ccb7?q=80&w=700&auto=format&fit=crop', 'A stone fireplace lit in the sitting room')
+  const shGal5Img = await mediaFromUrl('https://images.unsplash.com/photo-1723571644513-f3c2689a2232?q=80&w=700&auto=format&fit=crop', 'An old tree shading a stone wall')
+  const shGal6Img = await mediaFromUrl('https://images.unsplash.com/photo-1656483461011-a20df474deae?q=80&w=700&auto=format&fit=crop', 'A low rustic stone wall with a wooden gate')
+  const shIdeal1Img = await mediaFromUrl('https://images.unsplash.com/photo-1764451616600-0e98ea230527?q=80&w=700&auto=format&fit=crop', 'A solitary figure writing at a desk overlooking the water')
+  const shIdeal2Img = await mediaFromUrl('https://images.unsplash.com/photo-1758274252296-a63b1d7d4bb8?q=80&w=700&auto=format&fit=crop', 'Two old friends talking at an outdoor table')
+  const shIdeal3Img = await mediaFromUrl('https://images.unsplash.com/photo-1521022969448-49639904ed7b?q=80&w=700&auto=format&fit=crop', 'Two guests warming by the fireplace')
+  const shIdeal4Img = await mediaFromUrl('https://images.unsplash.com/photo-1664524169977-acc46ea169a0?q=80&w=700&auto=format&fit=crop', 'A wicker porch swing, unhurried')
+
+  const shExisting = await payload.find({ collection: 'stays', where: { slug: { equals: 'stone-house' } }, limit: 1 })
+  if (shExisting.docs[0]) {
+    await payload.update({
+      collection: 'stays',
+      id: shExisting.docs[0].id,
+      data: {
+        heroSub: 'The original house on this land — thick stone walls, a fireplace for winter, and a north window that keeps the same steady light all day.',
+        description: {
+          eyebrow: 'the description',
+          pullHeadline: 'My walls remember\nevery winter.',
+          intro:
+            'Stone House was the first structure built on this land — before the cottages, before the pond path, before the orchard was planted in rows. Its walls are thick, cut stone, and they do what old walls do well: hold the cold in through summer, hold the warmth in through winter.',
+          pullQuote:
+            'I am the original house on this land. My stone walls hold the cold in summer and the warmth in winter. There is a desk by the north window — one chair, on purpose.',
+          paragraphs: [
+            {
+              text: "The second bedroom faces north, which means the light stays even and unchanging for most of the day — the reason we've always called it the writer's room. A wide wooden desk sits under that window, scarred with years of use, with one chair. If you come here to write, we will not ask what you're writing.",
+            },
+            {
+              text: 'A fireplace is lit from November through February. Outside, an old tamarind tree throws shade from around 11am, and a low stone wall — the same stone as the house — gives you somewhere to sit and do nothing in particular. This is the quietest of the three stays, built for people who came here to slow down on purpose.',
+            },
+          ],
+        },
+        highlightsSection: {
+          items: [
+            {
+              image: shHlHeroImg,
+              badgeLabel: 'Nov – Feb',
+              title: 'A Working Fireplace',
+              body: 'Lit through the winter months in the main sitting room — wood is provided, no request required.',
+            },
+            {
+              image: shHlRow1Img,
+              badgeLabel: '2–4 Adults',
+              title: 'Two Bedrooms',
+              body: 'One faces south, one faces north — enough separation for two couples, or a small family sharing the house.',
+            },
+            {
+              image: shHlRow2Img,
+              badgeLabel: 'North-Facing',
+              title: "The Writer's Desk",
+              body: 'A wide wooden desk beneath the north window, where the light stays steady from morning to evening.',
+            },
+            {
+              image: shHlRow3Img,
+              badgeLabel: 'Old & Shaded',
+              title: 'The Tamarind & The Stone Wall',
+              body: 'An old tamarind tree shades the house from around 11am, with a low stone wall built for sitting.',
+            },
+          ],
+        },
+        amenitiesSection: {
+          hint: 'swipe or scroll to see more →',
+          items: [
+            {
+              image: shAm1Img,
+              title: 'Breakfast & Evening Chai',
+              body: 'Delivered to your door or served at the main house — every morning, and again at the bonfire.',
+            },
+            {
+              image: shAm2Img,
+              title: 'Farm Ritual Access',
+              body: 'Every ritual, every day — first-light honey on toast, the held hours, bonfire chai, the night reading. Join any, skip all.',
+            },
+            {
+              image: shAm3Img,
+              title: 'Three Books, Rotated Monthly',
+              body: 'A small shelf inside the house, refreshed monthly — plus full access to the farm library in the main house.',
+            },
+            {
+              image: shAm4Img,
+              title: 'Cotton + Linen, No TV',
+              body: 'Cotton and linen bedding in both rooms, and — deliberately — no television, no wifi in the bedrooms.',
+            },
+          ],
+        },
+        gallery: [
+          { image: shGal1Img, caption: 'the stone facade, original to the land' },
+          { image: shGal2Img, caption: 'the two bedrooms, south & north' },
+          { image: shGal3Img, caption: 'the writing desk, north window' },
+          { image: shGal4Img, caption: 'the fireplace, lit through winter' },
+          { image: shGal5Img, caption: 'the old tamarind, shade from 11am' },
+          { image: shGal6Img, caption: 'the low stone wall, built for sitting' },
+        ],
+        idealFor: [
+          {
+            image: shIdeal1Img,
+            title: 'Writers & Solo Retreats',
+            body: "One chair at the desk, on purpose. North light that doesn't change its mind through the day.",
+          },
+          {
+            image: shIdeal2Img,
+            title: 'Two Couples, Or Old Friends',
+            body: 'Two bedrooms mean two households can share the house without sharing a room.',
+          },
+          {
+            image: shIdeal3Img,
+            title: 'Winter Guests Wanting A Fire',
+            body: 'November through February, this is the only stay with a working fireplace of its own.',
+          },
+          {
+            image: shIdeal4Img,
+            title: 'Guests Wanting Unhurried Days',
+            body: 'The quietest of the three stays — built for people slowing down on purpose, not by accident.',
+          },
+        ],
+        finalCtaNote:
+          'No countdown timers. No "only 1 left!" No urgency theatre.\nIf Stone House is free on your dates, it\'s yours. If it isn\'t, we\'ll suggest Mango House or call you back.',
+      },
+    })
+    payload.logger.info('✓ Stone House detail page seeded.')
+  }
+
   payload.logger.info('Seeding Home global...')
 
   const heroBg = await media('sunset-scene-countryside-scaled.jpg', 'Sunset over the Vana Ekantha estate')

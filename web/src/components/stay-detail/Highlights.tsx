@@ -21,10 +21,10 @@ export function Highlights({ data }: { data: Stay['highlightsSection'] }) {
           {items.map((item, i) => (
             <div className={`${styles.hlRow} reveal`} key={item.id ?? i}>
               <div className={styles.hlIcon} aria-hidden="true">
-                <HighlightIconSvg icon={item.icon} />
+                <HighlightIconSvg icon={item.icon ?? 'bed'} />
               </div>
               <div>
-                <span className={`${styles.hlBadge} ${badgeColorClass(item.badgeColor, styles)}`}>{item.badgeLabel}</span>
+                <span className={`${styles.hlBadge} ${badgeColorClass(item.badgeColor ?? 'green', styles)}`}>{item.badgeLabel}</span>
                 <div className={styles.hlTitle}>{item.title}</div>
                 <div className={styles.hlBody}>{item.body}</div>
               </div>
