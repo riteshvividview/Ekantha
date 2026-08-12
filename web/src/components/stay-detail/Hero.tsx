@@ -27,7 +27,7 @@ export function Hero({ stay, badgeNumber, showBg = false }: { stay: Stay; badgeN
       <div className={`${styles.heroFacts} reveal`}>
         <span>
           <span className={styles.amount}>
-            ₹<CountUp value={stay.priceFrom} format={(n) => n.toLocaleString('en-IN')} />
+            ₹<CountUp value={stay.priceFrom} locale="en-IN" />
           </span>{' '}
           / night
         </span>

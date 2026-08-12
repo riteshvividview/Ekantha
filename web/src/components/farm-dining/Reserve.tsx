@@ -1,3 +1,5 @@
+'use client'
+
 import type { FarmDining } from '@/payload-types'
 import { resolveMedia } from '@/lib/media'
 import styles from './farm-dining.module.css'

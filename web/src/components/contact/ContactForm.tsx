@@ -1,3 +1,5 @@
+'use client'
+
 import type { Contact } from '@/payload-types'
 import styles from './contact.module.css'
 

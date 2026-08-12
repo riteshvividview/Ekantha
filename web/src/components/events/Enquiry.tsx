@@ -1,3 +1,5 @@
+'use client'
+
 import type { Event } from '@/payload-types'
 import styles from './events.module.css'
 

@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import type { Navigation } from '@/payload-types'
 import { NavbarMobileMenu } from './NavbarMobileMenu'
@@ -19,10 +18,15 @@ export function Navbar({ data }: { data: Navigation }) {
 
   return (
     <header className={`ve-navbar${mounted ? ' ve-navbar-in' : ''}`}>
-      <Link href="/" className="ve-navbar-logo">
+      {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- deliberately
+          a plain <a>, not <Link>, matching every other nav link on this site: a full
+          page reload guarantees the active-page state (and the CMS-driven nav/footer
+          data) is always freshly server-rendered, rather than depending on Next's
+          client-side router cache staying in sync. */}
+      <a href="/" className="ve-navbar-logo">
         {logoIcon.url && <img src={logoIcon.url} alt="" aria-hidden="true" />}
         {renderWordmark(data.logo?.wordmark ?? 'Vana Ekantha')}
-      </Link>
+      </a>
 
       <nav className="ve-navbar-links" aria-label="Primary">
         {(data.primaryLinks ?? []).map((link) => {

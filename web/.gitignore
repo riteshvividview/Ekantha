@@ -37,6 +37,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# Payload local media uploads (only used when no S3/Supabase storage
+# adapter is configured — real uploads belong in Supabase Storage, not git)
+/media
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

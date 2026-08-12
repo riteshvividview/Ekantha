@@ -1,3 +1,5 @@
+'use client'
+
 /**
  * The dark "tell us when, and we'll hold a date" banner + form that
  * appears, near-identically, at the bottom of every page (Home, FullHouse,

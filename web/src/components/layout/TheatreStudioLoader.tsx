@@ -18,11 +18,19 @@ export function TheatreStudioLoader() {
 
     let cancelled = false
 
-    import('@theatre/studio').then((mod) => {
-      if (cancelled) return
-      const studio = (mod.default as { default?: typeof mod.default }).default ?? mod.default
-      studio.initialize()
-    })
+    // @theatre/studio throws at init time if @theatre/core's module hasn't
+    // *finished evaluating* yet anywhere in the bundle — importing both in
+    // parallel (e.g. Promise.all) isn't enough, since either promise can
+    // settle first. Awaiting core to completion before even requesting
+    // studio guarantees the ordering regardless of what else on the
+    // current page has (or hasn't) pulled in lib/animations/theatre/project.ts.
+    import('@theatre/core').then(() =>
+      import('@theatre/studio').then((mod) => {
+        if (cancelled) return
+        const studio = (mod.default as { default?: typeof mod.default }).default ?? mod.default
+        studio.initialize()
+      }),
+    )
 
     return () => {
       cancelled = true

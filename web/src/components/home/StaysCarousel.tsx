@@ -89,7 +89,7 @@ export function StaysCarousel({
                       {stay.homeTeaser?.factsLine}
                       <br />
                       <span className={styles.price}>
-                        from ₹<CountUp value={stay.priceFrom} format={(n) => n.toLocaleString('en-IN')} /> / night
+                        from ₹<CountUp value={stay.priceFrom} locale="en-IN" /> / night
                       </span>
                       {stay.priceNote ? ` · ${stay.priceNote}` : ''}
                     </p>

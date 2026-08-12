@@ -61,7 +61,7 @@ export function StaysSection({ data, stays }: { data: StayPage['staysSection']; 
                 <div className={`${styles.stayCtaRow} reveal`}>
                   <div className={styles.stayPrice}>
                     <div className={styles.amount}>
-                      from ₹<CountUp value={stay.priceFrom} format={(n) => n.toLocaleString('en-IN')} /> / night
+                      from ₹<CountUp value={stay.priceFrom} locale="en-IN" /> / night
                     </div>
                     {stay.priceNote && <div className={styles.incl}>{stay.priceNote}</div>}
                   </div>

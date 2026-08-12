@@ -593,9 +593,7 @@ body.on-light .ve-cursor-dot.swollen {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: var(--white);
   border-bottom: 1px solid var(--line);
   padding: clamp(0.9rem, 2vw, 1.25rem) var(--pad-x);
   display: flex;
