@@ -9,7 +9,7 @@ import { Hero } from '@/components/home/Hero'
 import { Ticker } from '@/components/home/Ticker'
 import { Intro } from '@/components/home/Intro'
 import { WhyUs } from '@/components/home/WhyUs'
-import { ExperienceTrack } from '@/components/home/ExperienceTrack'
+import { ExperienceReel } from '@/components/home/ExperienceReel'
 import { StaysCarousel } from '@/components/home/StaysCarousel'
 import { Dine } from '@/components/home/Dine'
 import { EventsPreview } from '@/components/home/EventsPreview'
@@ -40,7 +40,7 @@ export default async function HomePage() {
       <Ticker data={home.ticker} />
       <Intro data={home.intro} />
       <WhyUs data={home.whyUs} />
-      <ExperienceTrack data={home.experience} />
+      <ExperienceReel data={home.experience} />
       <StaysCarousel heading={home.staysTeaser.heading} sub={home.staysTeaser.sub} stays={featuredStays} />
       <Dine data={home.dine} />
       <EventsPreview data={home.eventsPreview} />

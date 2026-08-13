@@ -29,8 +29,13 @@ export function InteractionEffects() {
     const cleanups: Array<() => void> = []
 
     document.querySelectorAll<HTMLElement>(TILT_SELECTOR).forEach((el) => {
-      const rotateXTo = gsap.quickTo(el, 'rotateX', { duration: 0.4, ease: 'power3.out' })
-      const rotateYTo = gsap.quickTo(el, 'rotateY', { duration: 0.4, ease: 'power3.out' })
+      // GSAP's own property names are `rotationX`/`rotationY` — not the
+      // CSS-native `rotateX`/`rotateY`, which its CSSPlugin doesn't parse
+      // and silently no-ops on. This tilt never actually applied any
+      // rotation until this was caught (via a live browser check while
+      // building WhyUs.tsx's card tilt, which had the identical mistake).
+      const rotateXTo = gsap.quickTo(el, 'rotationX', { duration: 0.4, ease: 'power3.out' })
+      const rotateYTo = gsap.quickTo(el, 'rotationY', { duration: 0.4, ease: 'power3.out' })
 
       const onMove = (e: MouseEvent) => {
         const rect = el.getBoundingClientRect()

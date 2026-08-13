@@ -33,3 +33,17 @@ export const heroMediaFrame = heroSheet.object('Media Frame', {
   scale: types.number(1, { range: [0.9, 1.1] }),
   rotate: types.number(0, { range: [-4, 4] }),
 })
+
+/**
+ * Idle ambient glow behind the "Experience The Estate" pinned reel
+ * (ExperienceReel.tsx) — a second hand-authorable accent, same inert-until-
+ * keyframed deal as heroMediaFrame above. The reel's actual scroll-driven
+ * motion (pin, horizontal track, per-card morph) is GSAP/ScrollTrigger —
+ * Theatre.js has no scroll-scrubbing concept, it's strictly for authored,
+ * time-based (or here, idle-looping) animation.
+ */
+export const experienceSheet = project.sheet('Experience Reel')
+
+export const experienceGlow = experienceSheet.object('Ambient Glow', {
+  intensity: types.number(0, { range: [0, 1] }),
+})

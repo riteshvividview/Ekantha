@@ -333,6 +333,73 @@
   color: var(--ink-soft);
 }
 
+/* ── Why Vana Ekantha — hover-tilt 3D cards (WhyUs.tsx) ──────────
+   Deliberately not scroll-driven, unlike ExperienceReel — every effect
+   here is pointer/hover-only. Plain white background with a faint line
+   texture, not the flat --silver fill this section used to have. ── */
+
+.whySection {
+  position: relative;
+  overflow: hidden;
+  background: var(--white);
+}
+.whyLines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+.whyLines path {
+  fill: none;
+  stroke: var(--ink);
+  stroke-opacity: 0.06;
+  stroke-width: 1.5;
+}
+.whySection > :global(.section-head),
+.whySection .whyGrid {
+  position: relative;
+  z-index: 1;
+}
+
+.whyGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(1.1rem, 2.2vw, 1.5rem);
+}
+@media (max-width: 900px) {
+  .whyGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 500px) {
+  .whyGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.whyCard {
+  padding: clamp(1.75rem, 3.5vw, 2.35rem) clamp(1.5rem, 2.5vw, 1.85rem);
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  box-shadow: 0 10px 28px rgba(18, 18, 20, 0.05);
+  transition: box-shadow 400ms var(--ease-slow), border-color 300ms;
+  transform-style: preserve-3d;
+  will-change: transform;
+  cursor: default;
+}
+.whyCard:hover {
+  border-color: var(--line-strong);
+  box-shadow: 0 28px 56px rgba(18, 18, 20, 0.12);
+}
+.whyCardIcon {
+  width: 68px;
+  height: 68px;
+  margin-bottom: clamp(1.1rem, 2.5vw, 1.6rem);
+}
+
 /* ── Experience The Estate (h-card, used inside DragScrollTrack) ── */
 
 .hCard {
@@ -387,6 +454,201 @@
   font-size: clamp(0.82rem, 1.9vw, 0.92rem);
   line-height: 1.6;
   color: var(--ink-soft);
+}
+
+/* ── Experience The Estate — scattered parallax field (ExperienceReel.tsx) ───
+   A pinned, oversized photo canvas that pans diagonally (bottom-right →
+   top-left) as the section scrolls, each photo drifting at its own depth
+   on top of the shared pan — not a card row. Below 860px there's no room
+   to pin, so it falls back to the plain .hCard drag-scroll row above. ── */
+
+.experienceSection {
+  padding: 0;
+  position: relative;
+}
+
+.scatterPinWrap {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--white);
+}
+@media (max-width: 860px) {
+  .scatterPinWrap {
+    display: none;
+  }
+}
+
+.scatterBgTint {
+  position: absolute;
+  inset: 0;
+  background: var(--silver);
+  opacity: 0;
+  z-index: 0;
+}
+
+.scatterLines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+.scatterLines path {
+  fill: none;
+  stroke: var(--ink);
+  stroke-opacity: 0.16;
+  stroke-width: 1.5;
+}
+
+.experienceGlow {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  width: min(60vw, 800px);
+  height: min(60vw, 800px);
+  transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(18, 18, 20, 0.1) 0%, rgba(18, 18, 20, 0) 68%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.scatterField {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 126%;
+  height: 210%;
+  z-index: 2;
+  will-change: transform;
+}
+
+.scatterHeading {
+  position: absolute;
+  top: 10%;
+  left: 7%;
+  max-width: 46vw;
+}
+.scatterHeadingTitle {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.8rem, 4.5vw, 3.2rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-top: 0.75rem;
+}
+.scatterHeadingTitle em {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.scatterQuote {
+  position: absolute;
+  top: 9%;
+  left: 56%;
+  max-width: 26ch;
+}
+.scatterQuote p {
+  font-family: var(--font-body);
+  font-size: clamp(0.95rem, 1.9vw, 1.15rem);
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.scatterPhoto {
+  position: absolute;
+  margin: 0;
+}
+.scatterPhoto figcaption {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 0.6rem;
+}
+.scatterPhotoMedia {
+  aspect-ratio: 4/5;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 18px 40px rgba(18, 18, 20, 0.16);
+}
+.scatterPhotoMedia img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.scatterFooter {
+  /* Left-aligned, not space-between across the full width — the site-wide
+     "hold a date" pill (HoldPill.tsx) is fixed to the bottom-right corner
+     of the viewport, and this section is pinned full-screen while it's
+     active, so a right-aligned skip button collided with it directly. */
+  position: absolute;
+  left: var(--pad-x);
+  bottom: clamp(1.5rem, 4vw, 2.5rem);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+.scatterCounter {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.5rem 0.9rem;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.reelSkip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.1rem 0.6rem 1.3rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--white);
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
+  position: relative;
+  z-index: 1;
+  transition: color 220ms, border-color 220ms, transform 320ms var(--ease-slow);
+}
+.reelSkip:hover {
+  color: var(--ink);
+  border-color: var(--line-strong);
+  transform: translateY(3px);
+}
+.reelSkip svg {
+  animation: reelSkipBounce 1.8s ease-in-out infinite;
+}
+@keyframes reelSkipBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(3px); }
+}
+
+.experienceMobile {
+  display: none;
+}
+@media (max-width: 860px) {
+  .experienceMobile {
+    display: block;
+    padding: var(--pad-y) 0;
+  }
 }
 
 /* ── Choose Your Escape (stays carousel) ──────────────────────── */
