@@ -847,11 +847,23 @@ export interface Home {
   whyUs: {
     heading: string;
     sub?: string | null;
+    /**
+     * The big sticky photo beside the card stack, shown by default before any card is active. Fallback for any item missing its own spotlightImage.
+     */
+    showcaseImage?: (number | null) | Media;
     items?:
       | {
           badgeLabel: string;
           title: string;
           body: string;
+          /**
+           * Shown at the bottom of this card, inside the card itself.
+           */
+          image?: (number | null) | Media;
+          /**
+           * Replaces the big left showcase photo while this card is the active/pinned one — must be a different photo than this card's own image above.
+           */
+          spotlightImage?: (number | null) | Media;
           id?: string | null;
         }[]
       | null;
@@ -1548,12 +1560,15 @@ export interface HomeSelect<T extends boolean = true> {
     | {
         heading?: T;
         sub?: T;
+        showcaseImage?: T;
         items?:
           | T
           | {
               badgeLabel?: T;
               title?: T;
               body?: T;
+              image?: T;
+              spotlightImage?: T;
               id?: T;
             };
       };

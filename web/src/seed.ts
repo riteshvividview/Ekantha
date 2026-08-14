@@ -608,6 +608,15 @@ async function main() {
   const gamesImg = await media('pool-table-with-pool-table-bar-with-two-stools-large-picture-wall-scaled.jpg', 'Indoor games room at Vana Ekantha')
   const lawnsImg = await media('golf-course-zlati-gric-slovenia-with-vineyards-trees-sunny-day-scaled.jpg', 'Open lawns at Vana Ekantha')
   const pergolaImg = await media('park-with-pond-bushes-scaled.jpg', 'Pergola walkway at Vana Ekantha')
+  const whyNatureImg = await mediaFromUrl('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=900&auto=format&fit=crop', 'Untouched forest land at Vana Ekantha')
+  const whyPrivacyImg = await mediaFromUrl('https://images.unsplash.com/photo-1518733057094-95b53143d2a7?q=80&w=900&auto=format&fit=crop', 'A private, secluded verandah')
+  const whyCuratedImg = await mediaFromUrl('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=900&auto=format&fit=crop', 'A thoughtfully laid table setting')
+  const whyDistanceImg = await mediaFromUrl('https://images.unsplash.com/photo-1502920917128-1aa500764cbd?q=80&w=900&auto=format&fit=crop', 'An open road toward the Deccan countryside')
+  const whyShowcaseImg = await mediaFromUrl('https://images.unsplash.com/photo-1499696010180-025ef6e1a8f9?q=80&w=1200&auto=format&fit=crop', 'A quiet forest path at Vana Ekantha')
+  const whyNatureSpotlightImg = await mediaFromUrl('https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=1200&auto=format&fit=crop', 'Sunlight through the estate\'s tree canopy')
+  const whyPrivacySpotlightImg = await mediaFromUrl('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop', 'A secluded private cottage exterior')
+  const whyCuratedSpotlightImg = await mediaFromUrl('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1200&auto=format&fit=crop', 'A curated evening spread laid out for guests')
+  const whyDistanceSpotlightImg = await mediaFromUrl('https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1200&auto=format&fit=crop', 'The open Deccan countryside on the drive in')
   const dineImg = await media('how-is-rich-people-have-supper-prepared-desk-waiting-food-visitors-evening-time-scaled.jpg', 'Dinner table set under the bamboo canopy')
   const birthdayImg = await media('beautiful-jungle-party-decorations-scaled.jpg', 'Birthday celebration at Vana Ekantha')
   const reunionImg = await media('group-young-indian-asian-people-is-having-lunch-breakfast-together-outdoor-settings-scaled.jpg', 'Friends reunion at Vana Ekantha')
@@ -657,26 +666,35 @@ async function main() {
       whyUs: {
         heading: 'why Vana Ekantha.',
         sub: 'Four reasons guests keep coming back — none of them printed on a brochure.',
+        showcaseImage: whyShowcaseImg,
         items: [
           {
             badgeLabel: 'Untouched Land',
             title: 'Nature',
             body: 'Living within nature, not just visiting it. The land was here before us — we built around what it already held.',
+            image: whyNatureImg,
+            spotlightImage: whyNatureSpotlightImg,
           },
           {
             badgeLabel: 'Just For You',
             title: 'Privacy',
             body: 'Not crowded tourism. A private experience — you may not hear your neighbours. You may not see them at all.',
+            image: whyPrivacyImg,
+            spotlightImage: whyPrivacySpotlightImg,
           },
           {
             badgeLabel: 'Thoughtfully Planned',
             title: 'Curated Experiences',
             body: 'No itineraries — only invitations. Every ritual, meal and moment is considered long before you arrive.',
+            image: whyCuratedImg,
+            spotlightImage: whyCuratedSpotlightImg,
           },
           {
             badgeLabel: '2.5 Hrs Away',
             title: 'Close to Hyderabad',
             body: 'Just over two hours from the city — far enough to disconnect, close enough to return to easily.',
+            image: whyDistanceImg,
+            spotlightImage: whyDistanceSpotlightImg,
           },
         ],
       },

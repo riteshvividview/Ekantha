@@ -67,6 +67,12 @@ export const Home: GlobalConfig = {
         { name: 'heading', type: 'text', required: true },
         { name: 'sub', type: 'textarea' },
         {
+          name: 'showcaseImage',
+          type: 'upload',
+          relationTo: 'media',
+          admin: { description: 'The big sticky photo beside the card stack, shown by default before any card is active. Fallback for any item missing its own spotlightImage.' },
+        },
+        {
           name: 'items',
           type: 'array',
           minRows: 4,
@@ -75,6 +81,18 @@ export const Home: GlobalConfig = {
             { name: 'badgeLabel', type: 'text', required: true },
             { name: 'title', type: 'text', required: true },
             { name: 'body', type: 'textarea', required: true },
+            {
+              name: 'image',
+              type: 'upload',
+              relationTo: 'media',
+              admin: { description: 'Shown at the bottom of this card, inside the card itself.' },
+            },
+            {
+              name: 'spotlightImage',
+              type: 'upload',
+              relationTo: 'media',
+              admin: { description: 'Replaces the big left showcase photo while this card is the active/pinned one — must be a different photo than this card\'s own image above.' },
+            },
           ],
         },
       ],

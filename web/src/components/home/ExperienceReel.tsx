@@ -27,12 +27,12 @@ const MOBILE_BREAKPOINT = '(min-width: 861px)'
 // width let a photo's real pixel height exceed the field's own box on a
 // shorter screen, which is what caused the last photo to visibly clip.
 const SLOTS = [
-  { top: '18%', left: '5%', width: 'clamp(300px, 26vh, 600px)', depth: 0.8 },
-  { top: '13%', left: '37%', width: 'clamp(280px, 22vh, 660px)', depth: 1.15 },
-  { top: '30%', left: '61%', width: 'clamp(320px, 30vh, 640px)', depth: 0.9 },
-  { top: '46%', left: '19%', width: 'clamp(300px, 26vh, 600px)', depth: 1.1 },
-  { top: '55%', left: '45%', width: 'clamp(280px, 22vh, 660px)', depth: 1.0 },
-  { top: '62%', left: '69%', width: 'clamp(310px, 28vh, 620px)', depth: 0.85 },
+  { top: '18%', left: '5%', width: 'clamp(250px, 26vh, 600px)', depth: 0.8 },
+  { top: '13%', left: '37%', width: 'clamp(230px, 22vh, 660px)', depth: 1.15 },
+  { top: '30%', left: '61%', width: 'clamp(290px, 30vh, 640px)', depth: 0.9 },
+  { top: '46%', left: '19%', width: 'clamp(250px, 26vh, 600px)', depth: 1.1 },
+  { top: '55%', left: '45%', width: 'clamp(230px, 22vh, 660px)', depth: 1.0 },
+  { top: '62%', left: '69%', width: 'clamp(260px, 28vh, 620px)', depth: 0.85 },
 ]
 
 /**

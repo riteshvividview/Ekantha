@@ -3,8 +3,20 @@
 import { useEffect } from 'react'
 import { gsap } from '@/lib/animations/gsap'
 
+// The [class*="X"] substring matches also caught each card's OWN nested
+// children whose CSS-module-hashed class name happens to contain the same
+// substring (e.g. "hlCard" matches "hlCardMediaWrap"/"hlCardMedia"/
+// "hlCardScrim"/"hlCardBottom" too) — every one of those got its own
+// independent tilt listener, and since transforms compound on nested
+// elements, the visible tilt was multiplied rather than applied once.
+// The :not() exclusions below are the known child suffixes for each
+// prefix; see stay-detail/full/full.module.css and stone/stone.module.css.
 const TILT_SELECTOR =
-  '.gallery-plate, .h-card, .event-card, .testi-card, .cell, .stay, .ideal-card, .am-card, [class*="hlCard"], [class*="idealCard"], [class*="amCell"], [class*="brickItem"], [class*="indexCard"]'
+  '.gallery-plate, .h-card, .event-card, .testi-card, .cell, .stay, .ideal-card, .am-card, ' +
+  '[class*="hlCard"]:not([class*="hlCardMediaWrap"]):not([class*="hlCardMedia"]):not([class*="hlCardScrim"]):not([class*="hlCardBottom"]), ' +
+  '[class*="idealCard"], ' +
+  '[class*="amCell"]:not([class*="amCellScrim"]):not([class*="amCellContent"]):not([class*="amCellTitle"]):not([class*="amCellBody"]), ' +
+  '[class*="brickItem"], [class*="indexCard"]'
 
 /**
  * A subtle 3D tilt on card-like elements (galleries, highlight/ideal/
