@@ -965,37 +965,85 @@
 
 /* ── Bamboo Farm Dine ──────────────────────────────────────── */
 
-.dine {
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: clamp(2rem, 5vw, 5rem);
-  align-items: center;
+.dineSection {
+  position: relative;
+  min-height: 100vh;
+  padding: 0;
+  background: var(--black);
 }
-@media (max-width: 800px) {
-  .dine {
-    grid-template-columns: 1fr;
-  }
-}
-.dineText p {
-  font-family: var(--font-body);
-  font-size: clamp(0.92rem, 2.1vw, 1.05rem);
-  line-height: 1.75;
-  color: var(--ink-soft);
-  max-width: 50ch;
-  margin: 1.25rem 0 2rem;
-}
-.dineVisual {
-  aspect-ratio: 4/3;
-  background: var(--silver);
-  border: 1px solid var(--line);
-  border-radius: 24px;
+.dineBg {
+  position: sticky;
+  top: var(--dine-navbar-h, 84px);
+  height: calc(100vh - var(--dine-navbar-h, 84px));
+  margin-bottom: calc(-100vh + var(--dine-navbar-h, 84px));
+  z-index: 0;
   overflow: hidden;
 }
-.dineVisual img {
+.dineBg img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  filter: brightness(0.85);
+}
+.dineGlare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  background:
+    radial-gradient(38% 34% at 20% 14%, rgba(255, 208, 130, 0.55), transparent 70%),
+    radial-gradient(32% 28% at 82% 10%, rgba(255, 184, 110, 0.4), transparent 70%),
+    radial-gradient(46% 40% at 50% 105%, rgba(255, 255, 255, 0.1), transparent 75%);
+}
+.dineBgVeil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(5, 5, 6, 0.55) 0%, rgba(4, 4, 5, 0.7) 45%, rgba(2, 2, 3, 0.88) 100%);
+}
+
+.dineCentered {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: min(1180px, 86vw);
+  margin: 0 auto;
+  padding: calc(var(--dine-navbar-h, 84px) + clamp(4rem, 12vw, 8rem)) 0 clamp(3rem, 8vw, 5rem);
+}
+.dineCentered .eyebrow {
+  margin-bottom: clamp(1.5rem, 4vw, 2.75rem);
+}
+.dineBody p {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2rem, 5.4vw, 4.4rem);
+  line-height: 1.32;
+  letter-spacing: -0.015em;
+  color: var(--white);
+  max-width: 100%;
+  margin: 0;
+}
+.dineWord {
+  display: inline-block;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+.dineFooter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: clamp(2.5rem, 6vw, 4rem);
+}
+.dineHeading {
+  color: var(--white);
+  margin: 0;
+}
+.dineHeading em {
+  color: rgba(255, 255, 255, 0.82);
 }
 
 /* ── Events & Celebrations ─────────────────────────────────── */
@@ -1122,48 +1170,87 @@
 
 /* ── Gallery preview ───────────────────────────────────────── */
 
-.galleryGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(0.75rem, 2vw, 1.25rem);
-  margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
-}
-@media (max-width: 700px) {
-  .galleryGrid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-@media (max-width: 440px) {
-  .galleryGrid {
-    grid-template-columns: 1fr;
-  }
-}
-.galleryPlate {
-  aspect-ratio: 4/3;
-  background: var(--silver);
-  border: 1px solid var(--line);
-  border-radius: 16px;
+.galleryHeroSection {
+  position: relative;
+  padding: 0;
+  height: clamp(600px, 100vh, 960px);
   overflow: hidden;
-  transition:
-    transform 500ms var(--ease-slow),
-    box-shadow 500ms var(--ease-slow);
+  background: #060010;
 }
-.galleryPlate:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 18px 36px rgba(18, 18, 20, 0.1);
+.galleryWallFull {
+  position: absolute;
+  inset: 0;
 }
-.galleryPlate img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: transform 700ms var(--ease-slow);
+.galleryOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.5rem, 3.5vw, 2.25rem);
+  padding: clamp(3rem, 7vw, 5rem) var(--pad-x) 0;
+  pointer-events: none;
 }
-.galleryPlate:hover img {
-  transform: scale(1.06);
+.galleryOverlay > * {
+  pointer-events: auto;
 }
-.galleryCta {
+.galleryOverlay :global(.section-head) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
+  margin-bottom: 0;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.55);
+}
+.galleryOverlay :global(.eyebrow) {
+  color: rgba(255, 255, 255, 0.75);
+}
+.galleryOverlay :global(.eyebrow)::before {
+  background: var(--white);
+}
+.galleryOverlay :global(.section-head) p {
+  color: rgba(255, 255, 255, 0.72);
+  max-width: 42ch;
+}
+
+.galleryCtaFloat {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.galleryCtaFloat::after {
+  content: '';
+  position: absolute;
+  left: var(--ripple-x, 50%);
+  top: var(--ripple-y, 50%);
+  width: 10px;
+  height: 10px;
+  background: rgba(6, 0, 16, 0.35);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  pointer-events: none;
+}
+.galleryCtaFloat.rippling::after {
+  animation: galleryRipple 650ms ease-out;
+}
+@keyframes galleryRipple {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(22);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .galleryCtaFloat.rippling::after {
+    animation: none;
+  }
 }
 
 /* ── Location ──────────────────────────────────────────────── */
