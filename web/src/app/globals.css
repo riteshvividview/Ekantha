@@ -595,7 +595,7 @@ body.on-light .ve-cursor-dot.swollen {
   z-index: 100;
   background: var(--white);
   border-bottom: 1px solid var(--line);
-  padding: clamp(0.9rem, 2vw, 1.25rem) var(--pad-x);
+  padding: clamp(0.6rem, 1.3vw, 0.85rem) var(--pad-x);
   display: flex;
   align-items: center;
   justify-content: space-between;
