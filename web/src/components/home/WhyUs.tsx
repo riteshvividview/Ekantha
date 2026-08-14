@@ -53,6 +53,24 @@ export function WhyUs({ data }: { data: Home['whyUs'] }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const wrapRefs = useRef<(HTMLDivElement | null)[]>([])
 
+  // The sticky showcase photo must sit below the sticky navbar, not
+  // behind it — measure the navbar's real rendered height and expose it
+  // as a CSS var the showcase's `top` / `height` read from, kept in sync
+  // on resize since the navbar's own height is responsive.
+  useEffect(() => {
+    const navbar = document.querySelector<HTMLElement>('.ve-navbar')
+    if (!navbar) return undefined
+
+    const setVar = () => {
+      document.documentElement.style.setProperty('--why-navbar-h', `${navbar.offsetHeight}px`)
+    }
+    setVar()
+
+    const resizeObserver = new ResizeObserver(setVar)
+    resizeObserver.observe(navbar)
+    return () => resizeObserver.disconnect()
+  }, [])
+
   useEffect(() => {
     const wraps = wrapRefs.current.filter((el): el is HTMLDivElement => !!el)
     if (wraps.length < 2) return

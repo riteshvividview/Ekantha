@@ -162,6 +162,7 @@ svg {
 /* ── Buttons (shared across every page) ───────────────────── */
 
 .btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -173,11 +174,45 @@ svg {
   font-size: clamp(0.85rem, 1.8vw, 0.95rem);
   letter-spacing: 0.005em;
   white-space: nowrap;
+  overflow: hidden;
+  isolation: isolate;
   transition:
     background 260ms,
     color 260ms,
     border-color 260ms,
     transform 320ms var(--ease-slow);
+}
+.btn::after {
+  content: '';
+  position: absolute;
+  left: var(--btn-ripple-x, 50%);
+  top: var(--btn-ripple-y, 50%);
+  width: 10px;
+  height: 10px;
+  background: currentColor;
+  opacity: 0;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  pointer-events: none;
+  mix-blend-mode: difference;
+}
+.btn.btn-rippling::after {
+  animation: btnRipple 650ms ease-out;
+}
+@keyframes btnRipple {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.35;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(14);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn.btn-rippling::after {
+    animation: none;
+  }
 }
 .btn-primary {
   background: var(--ink);

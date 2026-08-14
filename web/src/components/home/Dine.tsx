@@ -12,37 +12,36 @@ const BLUR_STRENGTH = 4
 
 export function Dine({ data }: { data: Home['dine'] }) {
   const media = resolveMediaSize(data.image, 'hero')
-  const trackRef = useRef<HTMLDivElement>(null)
+  const bodyRef = useRef<HTMLDivElement>(null)
 
   // The dark bamboo photo is a plain CSS `position: sticky` layer (see
   // .dineBg / .dineSticky below) — it holds in place behind the text for
-  // as long as the section is scrolling past, then releases naturally,
-  // no JS pinning involved. The text itself is normal in-flow content on
-  // top of it: it scrolls at the ordinary page speed and exits upward out
-  // of the section like everything else, while ScrollReveal (ported onto
-  // the shared GSAP/ScrollTrigger pipeline already bridged to Lenis) runs
-  // its un-rotate + per-word un-blur/fade-in across the whole block —
-  // eyebrow, paragraph, title, and CTA together — as it passes through.
+  // as long as the section is scrolling past, then releases naturally, no
+  // JS pinning involved. The text scrolls at ordinary page speed and
+  // exits upward out of the section like everything else. ScrollReveal
+  // (ported onto the shared GSAP/ScrollTrigger pipeline already bridged
+  // to Lenis) only runs on the big paragraph — un-rotate + per-word
+  // un-blur/fade-in — not the eyebrow, title, or CTA, which stay static.
   useEffect(() => {
-    const track = trackRef.current
-    if (!track) return undefined
+    const body = bodyRef.current
+    if (!body) return undefined
 
-    const words = track.querySelectorAll<HTMLElement>('[data-word]')
+    const words = body.querySelectorAll<HTMLElement>('[data-word]')
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      gsap.set(track, { rotate: 0 })
+      gsap.set(body, { rotate: 0 })
       gsap.set(words, { opacity: 1, filter: 'blur(0px)' })
       return undefined
     }
 
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        track,
+        body,
         { transformOrigin: '50% 0%', rotate: BASE_ROTATION },
         {
           rotate: 0,
           ease: 'none',
-          scrollTrigger: { trigger: track, start: 'top bottom', end: 'top top', scrub: true },
+          scrollTrigger: { trigger: body, start: 'top bottom', end: 'top top', scrub: true },
         },
       )
 
@@ -65,7 +64,7 @@ export function Dine({ data }: { data: Home['dine'] }) {
           },
         )
       })
-    }, track)
+    }, body)
 
     return () => ctx.revert()
   }, [])
@@ -96,10 +95,10 @@ export function Dine({ data }: { data: Home['dine'] }) {
         <div className={styles.dineBgVeil} />
       </div>
 
-      <div className={styles.dineCentered} ref={trackRef}>
-        {data.eyebrow && <span className="eyebrow">{splitWords(data.eyebrow)}</span>}
+      <div className={styles.dineCentered}>
+        {data.eyebrow && <span className="eyebrow">{data.eyebrow}</span>}
 
-        <div className={styles.dineBody}>
+        <div className={styles.dineBody} ref={bodyRef}>
           <p>{splitWords(data.body)}</p>
         </div>
 
@@ -107,7 +106,7 @@ export function Dine({ data }: { data: Home['dine'] }) {
           <h2 className={`section-title ${styles.dineHeading}`}>{renderTitle(data.heading)}</h2>
           {data.ctaHref && (
             <a href={data.ctaHref} className="btn btn-on-dark">
-              {splitWords(data.ctaLabel ?? '')}
+              {data.ctaLabel}
             </a>
           )}
         </div>
@@ -121,7 +120,7 @@ function renderTitle(heading: string) {
   const last = words.pop()
   return (
     <>
-      {splitWords(words.join(' '))} <em data-word className={styles.dineWord}>{last}</em>
+      {words.join(' ')} <em>{last}</em>
     </>
   )
 }

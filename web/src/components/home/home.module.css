@@ -372,7 +372,8 @@
 @media (min-width: 861px) {
   .whyShowcaseSticky {
     position: sticky;
-    top: clamp(8rem, 16vh, 11rem);
+    top: var(--why-navbar-h, 84px);
+    margin-left: calc(var(--pad-x) * -1);
   }
 }
 
@@ -389,7 +390,7 @@
 }
 @media (min-width: 861px) {
   .whyShowcaseImage {
-    height: clamp(560px, 78vh, 760px);
+    height: calc(100vh - var(--why-navbar-h, 84px));
   }
 }
 
@@ -1019,11 +1020,11 @@
 .dineBody p {
   font-family: var(--font-display);
   font-weight: 300;
-  font-size: clamp(2rem, 5.4vw, 4.4rem);
+  font-size: clamp(1.7rem, 4.4vw, 3.6rem);
   line-height: 1.32;
   letter-spacing: -0.015em;
   color: var(--white);
-  max-width: 100%;
+  max-width: min(880px, 76vw);
   margin: 0;
 }
 .dineWord {
@@ -1175,7 +1176,7 @@
   padding: 0;
   height: clamp(600px, 100vh, 960px);
   overflow: hidden;
-  background: #060010;
+  background: var(--white);
 }
 .galleryWallFull {
   position: absolute;
@@ -1203,54 +1204,17 @@
   align-items: center;
   text-align: center;
   margin-bottom: 0;
-  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.55);
+  text-shadow: 0 2px 24px rgba(255, 255, 255, 0.65);
 }
 .galleryOverlay :global(.eyebrow) {
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(18, 18, 20, 0.68);
 }
 .galleryOverlay :global(.eyebrow)::before {
-  background: var(--white);
+  background: var(--ink);
 }
 .galleryOverlay :global(.section-head) p {
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--ink-soft);
   max-width: 42ch;
-}
-
-.galleryCtaFloat {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-}
-.galleryCtaFloat::after {
-  content: '';
-  position: absolute;
-  left: var(--ripple-x, 50%);
-  top: var(--ripple-y, 50%);
-  width: 10px;
-  height: 10px;
-  background: rgba(6, 0, 16, 0.35);
-  border-radius: 50%;
-  transform: translate(-50%, -50%) scale(0);
-  opacity: 0;
-  pointer-events: none;
-}
-.galleryCtaFloat.rippling::after {
-  animation: galleryRipple 650ms ease-out;
-}
-@keyframes galleryRipple {
-  0% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0.5;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(22);
-    opacity: 0;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .galleryCtaFloat.rippling::after {
-    animation: none;
-  }
 }
 
 /* ── Location ──────────────────────────────────────────────── */
