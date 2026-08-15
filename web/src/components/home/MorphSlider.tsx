@@ -185,9 +185,9 @@ function makeFallbackTexture(gl: OGLRenderingContext) {
   const size = 4
   const data = new Uint8Array(size * size * 4)
   for (let i = 0; i < size * size; i++) {
-    data[i * 4] = 243
-    data[i * 4 + 1] = 244
-    data[i * 4 + 2] = 246
+    data[i * 4] = 254 // Pearl Mist (#fef8f8)
+    data[i * 4 + 1] = 248
+    data[i * 4 + 2] = 248
     data[i * 4 + 3] = 255
   }
   return new Texture(gl, { image: data, width: size, height: size, generateMipmaps: false })
@@ -277,7 +277,7 @@ class MorphEngine {
       dpr: Math.min(window.devicePixelRatio || 1, dprCap),
     })
     this.gl = this.renderer.gl
-    this.gl.clearColor(0.953, 0.957, 0.965, 1)
+    this.gl.clearColor(0.996, 0.972, 0.972, 1) // Pearl Mist (#fef8f8)
 
     this.canvas = this.gl.canvas as HTMLCanvasElement
     this.canvas.className = styles.canvas
@@ -547,7 +547,7 @@ const MorphSlider = forwardRef<
     autoplayDelay = 4,
     loop = true,
     radius = 20,
-    overlayColor = '#f3f4f6',
+    overlayColor = '#fef8f8',
     onIndexChange,
     className = '',
   },

@@ -84,7 +84,7 @@ export function NavbarMobileMenu({ links, cta, pathname }: Props) {
           ) : (
             <path
               d="M4,7 L20,7 M4,12 L20,12 M4,17 L20,17"
-              stroke="var(--ink)"
+              stroke="currentColor"
               strokeWidth="1.6"
               strokeLinecap="round"
               fill="none"

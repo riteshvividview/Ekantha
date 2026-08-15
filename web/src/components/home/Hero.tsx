@@ -42,7 +42,8 @@ export function Hero({ data }: { data: Home['hero'] }) {
   }, [])
 
   return (
-    <section className={styles.hero} id="top" ref={heroRef}>
+    // data-nav-hero: toggles the transparent-over-hero nav treatment — see Navbar.tsx
+    <section className={styles.hero} id="top" ref={heroRef} data-nav-hero>
       <div className={styles.heroMedia} aria-hidden="true">
         {bg.url && <img ref={imgRef} src={bg.url} alt="" />}
       </div>

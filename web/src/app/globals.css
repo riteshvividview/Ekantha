@@ -8,18 +8,21 @@
    ────────────────────────────────────────────────────────────── */
 
 :root {
-  --white: #ffffff;
-  --silver: #f3f4f6;
-  --ink: #121214;
-  --ink-soft: rgba(18, 18, 20, 0.62);
-  --ink-faint: rgba(18, 18, 20, 0.42);
-  --line: rgba(18, 18, 20, 0.12);
-  --line-strong: rgba(18, 18, 20, 0.22);
-  --black: #0a0a0b;
+  /* Brand palette. Names match the supplied swatch sheet exactly. */
+  --white: #faf0e6; /* Soft Cream */
+  --silver: #fef8f8; /* Pearl Mist */
+  --ink: #1d1d1b; /* Dark Charcoal */
+  --ink-soft: rgba(29, 29, 27, 0.62);
+  --ink-faint: rgba(29, 29, 27, 0.42);
+  --line: rgba(29, 29, 27, 0.12);
+  --line-strong: rgba(29, 29, 27, 0.22);
+  --black: #1d1d1b; /* Dark Charcoal */
+  --accent: #9d5c26; /* Amber Roast */
+  --accent-deep: #462b32; /* Mulberry Noir */
 
-  --font-display: 'Google Sans Flex', Arial, sans-serif;
-  --font-accent: 'Instrument Serif', Georgia, serif;
-  --font-body: 'DM Sans', Arial, sans-serif;
+  --font-display: var(--font-telegraf), Arial, sans-serif;
+  --font-accent: 'Cascadia Code', 'Courier New', monospace;
+  --font-body: var(--font-telegraf), Arial, sans-serif;
 
   --ease-slow: cubic-bezier(0.6, 0.05, 0.3, 1);
   --ease-soft: cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -215,11 +218,11 @@ svg {
   }
 }
 .btn-primary {
-  background: var(--ink);
+  background: var(--accent);
   color: var(--white);
 }
 .btn-primary:hover {
-  background: #2a2a2d;
+  background: var(--accent-deep);
   transform: translateY(-2px);
 }
 .btn-ghost {
@@ -246,9 +249,14 @@ section {
   padding: var(--pad-y) var(--pad-x);
   position: relative;
 }
-.bg-silver {
-  background: var(--silver);
-}
+/* .bg-silver used to give alternating sections a visibly different fill
+   (a "zebra stripe" pattern) — every full-width section now shares the
+   same background so the page reads as one continuous surface instead of
+   stacked blocks with hard seams between them. --silver itself is
+   untouched and still used for small-scale contrast (cards, chips, hover
+   fills) sitting on top of that shared surface — this only unifies the
+   section-level wash color. */
+.bg-silver,
 .bg-white {
   background: var(--white);
 }
@@ -380,7 +388,7 @@ body.on-light .ve-cursor-dot.swollen {
   bottom: 1.25rem;
   right: 1.25rem;
   z-index: 2147483646;
-  background: var(--ink);
+  background: var(--accent);
   color: var(--white);
   padding: clamp(0.7rem, 2vw, 0.95rem) clamp(1.2rem, 3vw, 1.7rem);
   border-radius: 999px;
@@ -407,7 +415,7 @@ body.on-light .ve-cursor-dot.swollen {
   pointer-events: auto;
 }
 .ve-hold-pill:hover {
-  background: #2a2a2d;
+  background: var(--accent-deep);
 }
 .ve-hold-pill::before {
   content: '';
@@ -624,23 +632,48 @@ body.on-light .ve-cursor-dot.swollen {
 
 /* ── Navbar (shared) ─────────────────────────────────────────────── */
 
+/* No body offset, no per-page layout hack: the nav is always fixed and
+   always transparent at rest, on every page, so it never reserves space
+   or pushes content down — it only gains a background once scrolled. */
+
 .ve-navbar {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
-  background: var(--white);
-  border-bottom: 1px solid var(--line);
-  padding: clamp(0.6rem, 1.3vw, 0.85rem) var(--pad-x);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1rem;
+  margin: 0;
+  padding: 12px var(--pad-x);
+  border-radius: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  box-shadow: none;
+  color: var(--ink);
   opacity: 0;
-  transform: translateY(-14px);
-  transition: opacity 620ms var(--ease-slow), transform 620ms var(--ease-slow);
+  transform: translateY(0);
+  transition:
+    opacity 620ms var(--ease-slow),
+    transform 420ms var(--ease-slow),
+    background-color 380ms var(--ease-slow),
+    border-color 380ms var(--ease-slow),
+    box-shadow 380ms var(--ease-slow),
+    color 320ms var(--ease-slow),
+    margin 380ms var(--ease-slow),
+    padding 380ms var(--ease-slow),
+    border-radius 380ms var(--ease-slow);
 }
 .ve-navbar-in {
   opacity: 1;
-  transform: translateY(0);
+}
+/* Hides upward off-screen on scroll-down, slides back in on scroll-up —
+   a separate transform from the mount-in fade above (opacity only)
+   so the two don't fight over the same property. */
+.ve-navbar-hidden {
+  transform: translateY(-130%);
 }
 @media (prefers-reduced-motion: reduce) {
   .ve-navbar {
@@ -649,6 +682,33 @@ body.on-light .ve-cursor-dot.swollen {
     transition: none;
   }
 }
+
+/* transparent: no chrome at all — the resting state on every page,
+   until the visitor scrolls. Dark text by default (reads fine against
+   the light page backgrounds most pages open on); .ve-navbar-on-dark
+   (set while a `[data-nav-hero]` section is still behind the bar)
+   switches it to light text for readability over a dark hero image. */
+.ve-navbar-transparent {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  color: var(--ink);
+}
+.ve-navbar-transparent.ve-navbar-on-dark {
+  color: var(--white);
+}
+
+/* pill: floating, inset, solid card — the scrolled state everywhere. */
+.ve-navbar-pill {
+  margin: 10px clamp(0.85rem, 3vw, 2rem);
+  padding: 8px clamp(1rem, 2.2vw, 1.5rem);
+  border-radius: 999px;
+  background: var(--white);
+  border-color: var(--line);
+  box-shadow: 0 18px 48px rgba(29, 29, 27, 0.14);
+  color: var(--ink);
+}
+
 .ve-navbar-logo {
   display: flex;
   align-items: center;
@@ -657,7 +717,7 @@ body.on-light .ve-cursor-dot.swollen {
   font-weight: 500;
   font-size: 1.05rem;
   letter-spacing: -0.01em;
-  color: var(--ink);
+  color: inherit;
 }
 .ve-navbar-logo em {
   font-family: var(--font-accent);
@@ -667,6 +727,10 @@ body.on-light .ve-cursor-dot.swollen {
 .ve-navbar-logo img {
   width: 28px;
   height: 28px;
+  transition: transform 480ms var(--ease-slow);
+}
+.ve-navbar-transparent .ve-navbar-logo img {
+  transform: scale(1.08);
 }
 .ve-navbar-links {
   display: flex;
@@ -683,14 +747,15 @@ body.on-light .ve-cursor-dot.swollen {
   font-family: var(--font-body);
   font-weight: 500;
   font-size: 0.9rem;
-  color: var(--ink-soft);
-  transition: color 220ms;
+  color: currentColor;
+  opacity: 0.7;
+  transition: opacity 220ms, color 220ms;
 }
 .ve-navbar-link:hover {
-  color: var(--ink);
+  opacity: 1;
 }
 .ve-navbar-link-active {
-  color: var(--ink);
+  opacity: 1;
 }
 .ve-navbar-link-active::after {
   content: '';
@@ -700,7 +765,7 @@ body.on-light .ve-cursor-dot.swollen {
   bottom: -6px;
   height: 3px;
   border-radius: 2px;
-  background: var(--ink);
+  background: currentColor;
 }
 .ve-navbar-link-wrap {
   position: relative;
@@ -709,25 +774,26 @@ body.on-light .ve-cursor-dot.swollen {
   position: absolute;
   top: calc(100% + 0.75rem);
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(6px) scale(0.97);
+  transform-origin: top center;
   background: var(--white);
   border: 1px solid var(--line);
-  border-radius: 14px;
-  box-shadow: 0 20px 40px rgba(18, 18, 20, 0.12);
+  border-radius: 16px;
+  box-shadow: 0 24px 50px rgba(29, 29, 27, 0.16);
   padding: 0.5rem;
-  min-width: 200px;
+  min-width: 210px;
   opacity: 0;
   visibility: hidden;
-  transform: translateX(-50%) translateY(6px);
   transition:
-    opacity 220ms var(--ease-slow),
-    transform 220ms var(--ease-slow),
-    visibility 220ms;
+    opacity 260ms var(--ease-slow),
+    transform 260ms var(--ease-slow),
+    visibility 260ms;
 }
-.ve-navbar-link-wrap:hover .ve-navbar-submenu {
+.ve-navbar-link-wrap:hover .ve-navbar-submenu,
+.ve-navbar-link-wrap:focus-within .ve-navbar-submenu {
   opacity: 1;
   visibility: visible;
-  transform: translateX(-50%) translateY(0);
+  transform: translateX(-50%) translateY(0) scale(1);
 }
 .ve-navbar-submenu a {
   display: block;
@@ -736,10 +802,13 @@ body.on-light .ve-cursor-dot.swollen {
   font-family: var(--font-body);
   font-size: 0.88rem;
   color: var(--ink-soft);
+  transition: background-color 180ms, color 180ms, padding-left 220ms var(--ease-slow);
 }
-.ve-navbar-submenu a:hover {
+.ve-navbar-submenu a:hover,
+.ve-navbar-submenu a:focus-visible {
   background: var(--silver);
   color: var(--ink);
+  padding-left: 1.05rem;
 }
 .ve-navbar-submenu-active {
   background: var(--silver);
@@ -752,10 +821,58 @@ body.on-light .ve-cursor-dot.swollen {
   height: 40px;
   align-items: center;
   justify-content: center;
+  color: inherit;
 }
 @media (max-width: 860px) {
   .ve-navbar-burger {
     display: flex;
+  }
+}
+
+/* ── Nav cursor-follow preview panel ─────────────────────────────── */
+/* Portaled to <body>; position driven imperatively (GSAP quickTo) from
+   Navbar.tsx, not React state — see NavPreviewPanel. */
+
+.ve-nav-preview {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2000;
+  pointer-events: none;
+  width: 220px;
+  aspect-ratio: 4 / 5;
+  opacity: 0;
+  transform-origin: 0% 100%;
+  transform: translate(24px, -100%) scale(0.85) rotate(-3deg);
+  transition: opacity 320ms var(--ease-slow), transform 420ms var(--ease-slow);
+}
+.ve-nav-preview.visible {
+  opacity: 1;
+  transform: translate(24px, -100%) scale(1) rotate(-1.5deg);
+}
+.ve-nav-preview-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(29, 29, 27, 0.35);
+  background: var(--silver);
+}
+.ve-nav-preview-inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(65%) contrast(1.08) brightness(0.94);
+  transform: scale(1.06);
+  transition: filter 520ms var(--ease-slow), transform 520ms var(--ease-slow);
+}
+.ve-nav-preview.visible .ve-nav-preview-inner img {
+  filter: grayscale(0%) contrast(1) brightness(1);
+  transform: scale(1);
+}
+@media (max-width: 860px), (hover: none) {
+  .ve-nav-preview {
+    display: none;
   }
 }
 .ve-navbar-mobile {

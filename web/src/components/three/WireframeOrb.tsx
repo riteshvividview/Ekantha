@@ -22,7 +22,7 @@ function OrbMesh() {
   return (
     <mesh ref={meshRef}>
       <icosahedronGeometry args={[1, 1]} />
-      <meshBasicMaterial color="#121214" wireframe />
+      <meshBasicMaterial color="#1d1d1b" wireframe />
     </mesh>
   )
 }

@@ -72,7 +72,7 @@ export function GalleryPreview({ data }: { data: Home['galleryPreview'] }) {
             lift={40}
             fade={0.3}
             dim={0.7}
-            overlayColor="#ffffff"
+            overlayColor="#faf0e6"
             radius={7}
             roll={-20}
           />

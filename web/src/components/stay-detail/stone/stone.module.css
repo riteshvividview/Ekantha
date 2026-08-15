@@ -38,7 +38,7 @@
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(180deg, rgba(10, 10, 11, 0) 45%, rgba(10, 10, 11, 0.78) 100%);
+  background: linear-gradient(180deg, rgba(29, 29, 27, 0) 45%, rgba(29, 29, 27, 0.78) 100%);
 }
 .hlHeroContent {
   position: absolute;
@@ -162,11 +162,11 @@
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(180deg, rgba(10, 10, 11, 0) 55%, rgba(10, 10, 11, 0.68) 100%);
+  background: linear-gradient(180deg, rgba(29, 29, 27, 0) 55%, rgba(29, 29, 27, 0.68) 100%);
   transition: background 500ms var(--ease-slow);
 }
 .amCell:hover .amCellScrim {
-  background: linear-gradient(180deg, rgba(10, 10, 11, 0.05) 0%, rgba(10, 10, 11, 0.85) 100%);
+  background: linear-gradient(180deg, rgba(29, 29, 27, 0.05) 0%, rgba(29, 29, 27, 0.85) 100%);
 }
 .amCellContent {
   position: absolute;

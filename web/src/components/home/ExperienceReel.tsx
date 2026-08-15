@@ -110,7 +110,13 @@ export function ExperienceReel({ data }: { data: Home['experience'] }) {
             xTo(-extra * p)
             yTo(-extra * p)
           })
-          if (bgTint) bgTint.style.opacity = String(p)
+          // Sine in/out rather than a flat ramp: the tint peaks mid-scroll
+          // (still a real, felt "background changes as you scroll" moment)
+          // but eases back toward 0 by the time the section un-pins — a
+          // linear ramp instead peaked exactly at the section's own end,
+          // handing off a fully-tinted surface straight into a flat-color
+          // section below with no blend, which read as a hard block seam.
+          if (bgTint) bgTint.style.opacity = String(Math.sin(p * Math.PI))
           if (counterRef.current && items.length) {
             const idx = Math.min(items.length, Math.max(1, Math.round(p * items.length)))
             counterRef.current.textContent = `${String(idx).padStart(2, '0')} / ${String(items.length).padStart(2, '0')}`

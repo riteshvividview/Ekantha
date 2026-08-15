@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { gsap, ScrollTrigger } from '@/lib/animations/gsap'
 import {
   MAIN_LOGO_PATH,
+  TRIANGLE_PATH,
   VIEWBOX,
   RECENTER,
   SCALE_TINY,
@@ -163,6 +164,7 @@ export function PageTransitionOverlay() {
           <g ref={groupRef} transform={apertureTransform(SCALE_TINY)}>
             <g transform={`translate(${RECENTER.dx},${RECENTER.dy})`}>
               <path fill="black" d={MAIN_LOGO_PATH} />
+              <path fill="black" d={TRIANGLE_PATH} />
             </g>
           </g>
         </mask>

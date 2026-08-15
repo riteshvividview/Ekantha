@@ -175,12 +175,12 @@
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(180deg, rgba(10, 10, 11, 0.05) 0%, rgba(10, 10, 11, 0.55) 65%, rgba(10, 10, 11, 0.85) 100%);
+  background: linear-gradient(180deg, rgba(29, 29, 27, 0.05) 0%, rgba(29, 29, 27, 0.55) 65%, rgba(29, 29, 27, 0.85) 100%);
   transition: background 450ms var(--ease-slow);
 }
 .panel:hover::before,
 .panel.active::before {
-  background: linear-gradient(180deg, rgba(10, 10, 11, 0.1) 0%, rgba(10, 10, 11, 0.7) 50%, rgba(10, 10, 11, 0.92) 100%);
+  background: linear-gradient(180deg, rgba(29, 29, 27, 0.1) 0%, rgba(29, 29, 27, 0.7) 50%, rgba(29, 29, 27, 0.92) 100%);
 }
 .panelNum {
   position: absolute;
@@ -268,7 +268,7 @@
     max-height: none !important;
   }
   .panel::before {
-    background: linear-gradient(180deg, rgba(10, 10, 11, 0.15) 0%, rgba(10, 10, 11, 0.55) 60%, rgba(10, 10, 11, 0.85) 100%) !important;
+    background: linear-gradient(180deg, rgba(29, 29, 27, 0.15) 0%, rgba(29, 29, 27, 0.55) 60%, rgba(29, 29, 27, 0.85) 100%) !important;
   }
 }
 
@@ -336,7 +336,7 @@
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 10px;
-  box-shadow: 0 12px 28px rgba(18, 18, 20, 0.1);
+  box-shadow: 0 12px 28px rgba(29, 29, 27, 0.1);
   overflow: hidden;
   transition:
     transform 400ms var(--ease-slow),
@@ -350,7 +350,7 @@
 }
 .collagePlate:hover {
   transform: rotate(0deg) scale(1.06) !important;
-  box-shadow: 0 20px 40px rgba(18, 18, 20, 0.18);
+  box-shadow: 0 20px 40px rgba(29, 29, 27, 0.18);
   z-index: 5;
 }
 .collagePlate:nth-child(1) {

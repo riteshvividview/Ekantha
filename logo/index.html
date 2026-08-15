@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Logo Aperture Transition — Prototype</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ================= PAGE LAYERS (static, never animated) ================= -->
+
+  <section id="page-home" class="page" data-active="true" data-page="home">
+    <h1 class="page-label">Home</h1>
+    <p class="page-sub">Vana Ekantha — a farmstay for intentional disconnection</p>
+    <button class="nav-btn" data-target="about">Go to About</button>
+  </section>
+
+  <section id="page-about" class="page" data-active="false" data-page="about">
+    <h1 class="page-label">About</h1>
+    <p class="page-sub">Our story, our philosophy, our place</p>
+    <button class="nav-btn" data-target="home">Go to Home</button>
+  </section>
+
+  <!-- ================= TRANSITION OVERLAY ================= -->
+
+  <!-- "slice" guarantees the viewBox always covers the full viewport with
+       zero letterbox gaps (a separate opaque backdrop div was tried instead,
+       but it sits behind the whole SVG and blocks the page everywhere,
+       including through the aperture hole itself — this is the only correct
+       way to keep "black outside the aperture" without breaking the hole). -->
+  <svg id="mask-svg" data-visible="false" viewBox="0 0 1601 1483" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <!-- The aperture IS the large main logo path itself, used directly
+           as the mask hole — no derived/smoothed inner shape. -->
+      <clipPath id="bigLogoClip" clipPathUnits="userSpaceOnUse">
+        <path id="big-logo-clip-path" d="" />
+      </clipPath>
+      <!-- Organic wobble on the aperture boundary: displaces the black
+           (hole) path through a noise field before it's used as the mask's
+           luminance source, so the edge reads as hand-drawn rather than a
+           razor-sharp vector curve.
+           NOT applied to #aperture-path right now — a live filter on a
+           shape that gets scaled ~22x for the "huge" state forces the
+           browser to rasterize the noise across a massive pixel area every
+           single animation frame, which stalls the transition outright
+           (confirmed by testing: the GSAP scale tween froze immediately).
+           Kept here, unused, as a reference for the production approach:
+           bake the wobble into the actual path geometry (or a pre-rendered
+           raster) once, ahead of time, rather than live-filtering at
+           transform time. -->
+      <filter id="edge-wobble" x="-30%" y="-30%" width="160%" height="160%">
+        <feTurbulence
+          id="edge-noise"
+          type="fractalNoise"
+          baseFrequency="0.012 0.018"
+          numOctaves="2"
+          seed="7"
+          result="noise"
+        />
+        <feDisplacementMap
+          in="SourceGraphic"
+          in2="noise"
+          scale="14"
+          xChannelSelector="R"
+          yChannelSelector="G"
+        />
+      </filter>
+
+      <mask id="aperture-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1601" height="1483">
+        <rect x="0" y="0" width="1601" height="1483" fill="white" />
+        <g id="aperture-group">
+          <g id="aperture-recenter">
+            <path id="aperture-path" fill="black" d="" />
+          </g>
+        </g>
+      </mask>
+    </defs>
+
+    <rect x="0" y="0" width="1601" height="1483" fill="#F4ECD8" mask="url(#aperture-mask)" />
+
+    <!-- ================= DEBUG LAYER (?debug=1) ================= -->
+    <g id="debug-layer" data-on="false">
+      <rect class="debug-viewbox-rect" x="0" y="0" width="1601" height="1483" />
+      <path id="debug-main-outline" class="debug-main-outline" d="" />
+      <path id="debug-triangle-outline" class="debug-triangle-outline" d="" />
+      <g class="debug-center-mark">
+        <line x1="778.5" y1="741.5" x2="822.5" y2="741.5" />
+        <line x1="800.5" y1="719.5" x2="800.5" y2="763.5" />
+      </g>
+    </g>
+  </svg>
+
+  <div id="debug-legend" data-on="false">
+    <div><span style="background:#ff3b3b"></span>logo / aperture path (same shape)</div>
+    <div><span style="background:#9d9d9d"></span>excluded triangle path</div>
+    <div><span style="background:#3b9dff"></span>viewBox bounds (1601×1483)</div>
+    <div><span style="background:#ffe93b"></span>center (800.5, 741.5)</div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="transition.js"></script>
+</body>
+</html>

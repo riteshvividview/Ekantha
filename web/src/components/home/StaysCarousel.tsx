@@ -203,7 +203,7 @@ export function StaysCarousel({
               drift={0.35}
               duration={1.1}
               radius={0}
-              overlayColor="#f3f4f6"
+              overlayColor="#fef8f8"
               onIndexChange={handleIndexChange}
             />
           </div>

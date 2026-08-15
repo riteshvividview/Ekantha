@@ -722,10 +722,18 @@ export interface Navigation {
     | {
         label: string;
         href: string;
+        /**
+         * Shown in a floating panel that follows the cursor while this link is hovered — optional, the effect is skipped if left empty.
+         */
+        previewImage?: (number | null) | Media;
         submenu?:
           | {
               label: string;
               href: string;
+              /**
+               * Preview image shown in the dropdown panel next to this item.
+               */
+              image?: (number | null) | Media;
               id?: string | null;
             }[]
           | null;
@@ -1441,11 +1449,13 @@ export interface NavigationSelect<T extends boolean = true> {
     | {
         label?: T;
         href?: T;
+        previewImage?: T;
         submenu?:
           | T
           | {
               label?: T;
               href?: T;
+              image?: T;
               id?: T;
             };
         id?: T;

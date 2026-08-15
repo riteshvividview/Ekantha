@@ -24,11 +24,28 @@ export const Navigation: GlobalConfig = {
         { name: 'label', type: 'text', required: true },
         { name: 'href', type: 'text', required: true },
         {
+          name: 'previewImage',
+          type: 'upload',
+          relationTo: 'media',
+          admin: {
+            description:
+              'Shown in a floating panel that follows the cursor while this link is hovered — optional, the effect is skipped if left empty.',
+          },
+        },
+        {
           name: 'submenu',
           type: 'array',
           fields: [
             { name: 'label', type: 'text', required: true },
             { name: 'href', type: 'text', required: true },
+            {
+              name: 'image',
+              type: 'upload',
+              relationTo: 'media',
+              admin: {
+                description: 'Preview image shown in the dropdown panel next to this item.',
+              },
+            },
           ],
         },
       ],
