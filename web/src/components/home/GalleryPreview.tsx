@@ -57,9 +57,9 @@ export function GalleryPreview({ data }: { data: Home['galleryPreview'] }) {
         <div className={styles.galleryWallFull}>
           <DriftWall
             items={items}
-            columns={5}
-            tileWidth={232}
-            tileHeight={130}
+            columns={6}
+            tileWidth={272}
+            tileHeight={176}
             gap={18}
             tilt={40}
             turn={-7}
@@ -67,14 +67,14 @@ export function GalleryPreview({ data }: { data: Home['galleryPreview'] }) {
             depth={120}
             speed={42}
             direction="up"
-            variance={0.95}
-            parallax={2}
-            lift={64}
-            fade={0}
-            dim={0.6}
+            variance={1}
+            parallax={1}
+            lift={40}
+            fade={0.3}
+            dim={0.7}
             overlayColor="#ffffff"
             radius={7}
-            roll={20}
+            roll={-20}
           />
         </div>
       )}

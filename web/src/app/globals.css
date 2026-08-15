@@ -787,3 +787,18 @@ body.on-light .ve-cursor-dot.swollen {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* ── Page-switch aperture transition ───────────────────────── */
+
+.ve-page-transition-svg {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2147483000;
+  pointer-events: none;
+  visibility: hidden;
+}
+.ve-page-transition-svg[data-visible='true'] {
+  visibility: visible;
+}

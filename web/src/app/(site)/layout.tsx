@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import '../globals.css'
 import { SmoothScrollProvider } from '@/components/layout/SmoothScrollProvider'
 import { TheatreStudioLoader } from '@/components/layout/TheatreStudioLoader'
+import { PageTransitionOverlay } from '@/components/chrome/PageTransitionOverlay'
 import { CursorDot } from '@/components/chrome/CursorDot'
 import { InteractionEffects } from '@/components/chrome/InteractionEffects'
 import { HoldPill } from '@/components/chrome/HoldPill'
@@ -16,6 +17,11 @@ import { safeFetch } from '@/lib/safeFetch'
 // whole point of this rebuild. Without forcing dynamic rendering, Next
 // would be free to prerender this layout once at build time and cache
 // that snapshot, so CMS edits wouldn't show up until the next deploy.
+//
+// This layout (and the nav/footer data fetched here) stays mounted across
+// client-side navigations within (site) — see PageTransitionOverlay — so
+// in practice nav/footer only refetch on a hard reload, not every click.
+// Each page.tsx below it is still re-rendered fresh per navigation.
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
@@ -66,6 +72,7 @@ export default async function SiteRootLayout({ children }: { children: React.Rea
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css" rel="stylesheet" />
       </head>
       <body>
+        <PageTransitionOverlay />
         <TheatreStudioLoader />
         <CursorDot />
         <InteractionEffects />
