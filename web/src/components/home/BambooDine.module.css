@@ -1,0 +1,188 @@
+/* Farm dining enhancements — layered on top of the scroll-scrubbed frame
+   sequence styles that live in home.module.css. Light colors here are
+   hard-coded (not var(--white)/var(--ink)) because the page-wide light →
+   dark theme shift (see Why.tsx) retints those variables, and this section
+   is always a dark cinematic frame regardless of the page theme. */
+
+.root {
+  color: #f6ecdc;
+}
+
+/* Legibility vignettes over the canvas. */
+.vignetteLeft,
+.vignetteBottom {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.vignetteLeft {
+  background: linear-gradient(90deg, rgba(10, 7, 5, 0.66) 0%, rgba(10, 7, 5, 0.28) 34%, rgba(10, 7, 5, 0) 62%);
+}
+.vignetteBottom {
+  background: linear-gradient(0deg, rgba(10, 7, 5, 0.6) 0%, rgba(10, 7, 5, 0) 34%);
+}
+
+/* Beat 1 — left-aligned title block. */
+.left {
+  right: auto;
+  width: min(100%, 48rem);
+  max-width: none;
+  margin: 0;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0;
+  text-align: left;
+  padding: 0 var(--pad-x);
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: clamp(0.72rem, 1.4vw, 0.8rem);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(246, 236, 220, 0.78);
+  margin-bottom: clamp(1.1rem, 2.4vw, 1.75rem);
+}
+.eyebrowDash {
+  width: 2.6rem;
+  height: 1px;
+  background: linear-gradient(90deg, #e7c996, rgba(231, 201, 150, 0));
+}
+.headline {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(3.2rem, 8.2vw, 7.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  color: #f8f0e2;
+  margin-bottom: clamp(1.25rem, 2.6vw, 2rem);
+  text-shadow: 0 6px 40px rgba(0, 0, 0, 0.35);
+}
+.gold {
+  background: linear-gradient(100deg, #f2d9a8 0%, #d3a566 55%, #f0cf95 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.sub {
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: clamp(0.78rem, 1.5vw, 0.92rem);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  line-height: 1.9;
+  color: rgba(246, 236, 220, 0.82);
+  max-width: 26em;
+  margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
+}
+.flourish {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  color: #d9b57a;
+  font-size: 1rem;
+}
+.flourish::before {
+  content: '';
+  width: 3.4rem;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(217, 181, 122, 0), #d9b57a);
+}
+
+/* Beat 2 — the CMS body copy, now with a gilded rule. */
+.quote {
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
+  line-height: 1.7;
+  color: #f6ecdc;
+  max-width: 22em;
+  padding-right: clamp(1rem, 2vw, 1.5rem);
+  border-right: 2px solid #d9b57a;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* Beat 3 — three "chapters" of the meal. */
+.chapters {
+  position: absolute;
+  right: var(--pad-x);
+  bottom: clamp(1.75rem, 4.5vw, 3.25rem);
+  z-index: 1;
+  display: flex;
+  gap: clamp(1.25rem, 3vw, 3rem);
+  visibility: hidden;
+  opacity: 0;
+  list-style: none;
+}
+@media (max-width: 800px) {
+  .chapters {
+    flex-direction: column;
+    left: var(--pad-x);
+    right: auto;
+    bottom: 5.5rem;
+  }
+}
+.chapter {
+  max-width: 15rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(246, 236, 220, 0.4);
+}
+.chapterIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  margin-bottom: 0.9rem;
+  border-radius: 50%;
+  border: 1px solid rgba(217, 181, 122, 0.7);
+  background: rgba(10, 7, 5, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #e7c996;
+  font-size: 0.9rem;
+}
+.chapterTitle {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  line-height: 1.05;
+  color: #f8f0e2;
+  margin-bottom: 0.4rem;
+}
+.chapterText {
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: rgba(246, 236, 220, 0.78);
+}
+
+/* Scroll-scrubbed progress rail. */
+.rail {
+  position: absolute;
+  right: clamp(1rem, 2.4vw, 2rem);
+  top: 50%;
+  z-index: 1;
+  width: 1px;
+  height: 34vh;
+  transform: translateY(-50%);
+  background: rgba(246, 236, 220, 0.22);
+  pointer-events: none;
+}
+.railFill {
+  position: absolute;
+  inset: 0;
+  background: #e7c996;
+  transform-origin: top center;
+  transform: scaleY(0);
+}
+@media (max-width: 800px) {
+  .rail {
+    display: none;
+  }
+}

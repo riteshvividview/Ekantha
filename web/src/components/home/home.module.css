@@ -1020,7 +1020,7 @@
   font-size: clamp(1rem, 1.6vw, 1.35rem);
   line-height: 1.4;
   letter-spacing: -0.01em;
-  color: var(--white);
+  color: #f6ecdc;
   max-width: min(360px, 60vw);
   margin: 0;
 }
@@ -1071,7 +1071,7 @@
   line-height: 1.35;
   letter-spacing: 0.02em;
   text-align: center;
-  color: var(--white);
+  color: #f6ecdc;
   transition: opacity 200ms var(--ease-slow);
 }
 .bambooDineCursorArea:hover .bambooDineCursorLabel {
@@ -1084,7 +1084,7 @@
 .bambooDineCursorLabelIdle {
   width: 0.6rem;
   height: 0.6rem;
-  background: var(--white);
+  background: #f6ecdc;
   border-color: transparent;
   box-shadow: none;
 }
@@ -1178,7 +1178,7 @@
   width: 3px;
   height: 9px;
   border-radius: 2px;
-  background: var(--white);
+  background: #f6ecdc;
   transform-origin: 50% 100%;
 }
 .bambooDineAudioActive .bambooDineAudioIcon i {
@@ -1213,7 +1213,7 @@
   font-family: var(--font-accent);
   font-size: 0.82rem;
   letter-spacing: 0.01em;
-  color: var(--white);
+  color: #f6ecdc;
   background: rgba(29, 29, 27, 0.6);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);

@@ -5,6 +5,7 @@ import type { Home } from '@/payload-types'
 import { resolveMediaSize } from '@/lib/media'
 import { gsap } from '@/lib/animations/gsap'
 import styles from './home.module.css'
+import dine from './BambooDine.module.css'
 
 // Frames live in public/bamboo-dine/ (frame-001.webp … frame-240.webp),
 // generated from the raw 240-PNG sequence via scripts/convert-bamboo-frames.mjs
@@ -26,7 +27,15 @@ const TEXT_1_START = 0.04
 const TEXT_1_END = 0.28
 const TEXT_2_START = 0.34
 const TEXT_2_END = 0.68
+const TEXT_3_START = 0.74
+const TEXT_3_END = 0.98
 const FADE_SPAN = 0.06
+
+const CHAPTERS = [
+  { icon: 'fa-wheat-awn', title: 'Grown Here', text: 'Picked from the rows you can see from your table.' },
+  { icon: 'fa-fire', title: 'Cooked Slow', text: 'Over open flame, at the pace of the evening.' },
+  { icon: 'fa-moon', title: 'Served at Dusk', text: 'Under lantern light, as the sky turns to gold.' },
+]
 
 const AMBIENT_AUDIO_SRC = '/audio/farm-dinner-audio.mp3'
 // Ambient background level, not full blast — and never an instant on/off:
@@ -77,6 +86,8 @@ export function BambooDine({ data }: { data: Home['dine'] }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const text1Ref = useRef<HTMLDivElement>(null)
   const text2Ref = useRef<HTMLDivElement>(null)
+  const text3Ref = useRef<HTMLUListElement>(null)
+  const railFillRef = useRef<HTMLSpanElement>(null)
   const audioRef = useRef<HTMLAudioElement>(null)
   const cursorAreaRef = useRef<HTMLAnchorElement>(null)
   const cursorLabelRef = useRef<HTMLSpanElement>(null)
@@ -136,7 +147,9 @@ export function BambooDine({ data }: { data: Home['dine'] }) {
     const canvas = canvasRef.current
     const text1 = text1Ref.current
     const text2 = text2Ref.current
-    if (!section || !canvas || !text1 || !text2) return undefined
+    const text3 = text3Ref.current
+    const railFill = railFillRef.current
+    if (!section || !canvas || !text1 || !text2 || !text3 || !railFill) return undefined
 
     const ctx = canvas.getContext('2d')
     if (!ctx) return undefined
@@ -242,7 +255,7 @@ export function BambooDine({ data }: { data: Home['dine'] }) {
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduced) {
-      gsap.set([text1, text2], { autoAlpha: 1, y: 0 })
+      gsap.set([text1, text2, text3], { autoAlpha: 1, y: 0 })
       return () => {
         cancelled = true
         resizeObserver.disconnect()
@@ -279,6 +292,21 @@ export function BambooDine({ data }: { data: Home['dine'] }) {
     fadeOut(text1, TEXT_1_END - FADE_SPAN)
     fadeIn(text2, TEXT_2_START)
     fadeOut(text2, TEXT_2_END - FADE_SPAN)
+    fadeIn(text3, TEXT_3_START)
+    fadeOut(text3, TEXT_3_END - FADE_SPAN)
+
+    // Each beat's own lines rise in one after another inside the beat's
+    // fade window, and the progress rail fills across the whole sequence.
+    const stagger = (root: HTMLElement, at: number) =>
+      tl.fromTo(
+        root.querySelectorAll('[data-beat]'),
+        { autoAlpha: 0, y: 34 },
+        { autoAlpha: 1, y: 0, duration: 0.05, ease: 'none', stagger: 0.022 },
+        at,
+      )
+    stagger(text1, TEXT_1_START)
+    stagger(text3, TEXT_3_START)
+    tl.fromTo(railFill, { scaleY: 0 }, { scaleY: 1, duration: 1, ease: 'none' }, 0)
     // Pads the timeline's total duration out to exactly 1 (the last real
     // tween ends at TEXT_2_END) so scroll progress 0→1 maps 1:1 onto
     // these position values instead of a duration shorter than 1.
@@ -369,10 +397,13 @@ export function BambooDine({ data }: { data: Home['dine'] }) {
     // data-nav-hero: goes back to the transparent, light-text nav treatment
     // while this section is pinned — see Navbar.tsx — instead of the solid
     // scrolled pill sitting on top of the full-bleed canvas.
-    <section id="dine" className={`${styles.bambooDineSection} bg-black`} ref={sectionRef} data-nav-hero>
+    <section id="dine" className={`${styles.bambooDineSection} bg-black ${dine.root}`} ref={sectionRef} data-nav-hero>
       <div className={styles.bambooDineStage}>
         {!ready && poster.url && <img className={styles.bambooDinePoster} src={poster.url} alt="" aria-hidden="true" />}
         <canvas ref={canvasRef} className={styles.bambooDineCanvas} style={{ opacity: ready ? 1 : 0 }} aria-hidden="true" />
+
+        <div className={dine.vignetteLeft} aria-hidden="true" />
+        <div className={dine.vignetteBottom} aria-hidden="true" />
 
         <audio ref={audioRef} src={AMBIENT_AUDIO_SRC} loop preload="none" />
         <button
@@ -394,16 +425,42 @@ export function BambooDine({ data }: { data: Home['dine'] }) {
           </span>
         </button>
 
-        <div className={styles.bambooDineText} ref={text1Ref}>
-          {data.eyebrow && (
-            <span className="eyebrow">
-              {data.eyebrow} <span aria-hidden="true">🎋</span>
-            </span>
-          )}
+        <div className={`${styles.bambooDineText} ${dine.left}`} ref={text1Ref}>
+          <p className={dine.eyebrow} data-beat>
+            <span className={dine.eyebrowDash} />
+            Bamboo Dine
+          </p>
+          <h2 className={dine.headline} data-beat>
+            Farm Fresh
+            <br />
+            <span className={dine.gold}>Dining</span>
+          </h2>
+          <p className={dine.sub} data-beat>
+            Good food tastes better in nature.
+          </p>
+          <span className={dine.flourish} data-beat aria-hidden="true">
+            <i className="fa-solid fa-wheat-awn" />
+          </span>
         </div>
 
         <div className={`${styles.bambooDineText} ${styles.bambooDineTextCorner}`} ref={text2Ref}>
-          <p className={styles.dineBody}>{data.body}</p>
+          <p className={dine.quote}>{data.body}</p>
+        </div>
+
+        <ul className={dine.chapters} ref={text3Ref}>
+          {CHAPTERS.map((c) => (
+            <li className={dine.chapter} data-beat key={c.title}>
+              <span className={dine.chapterIcon} aria-hidden="true">
+                <i className={`fa-solid ${c.icon}`} />
+              </span>
+              <h3 className={dine.chapterTitle}>{c.title}</h3>
+              <p className={dine.chapterText}>{c.text}</p>
+            </li>
+          ))}
+        </ul>
+
+        <div className={dine.rail} aria-hidden="true">
+          <span className={dine.railFill} ref={railFillRef} />
         </div>
 
         {/* Replaces the old heading + pill-button beat: the whole frame is
