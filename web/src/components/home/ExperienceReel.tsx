@@ -89,52 +89,6 @@ export function ExperienceReel({ data }: { data: Home['experience'] }) {
         yTo: gsap.quickTo(el, 'y', { duration: 0.3, ease: 'power2.out' }),
       }))
 
-      // ── Title + copy effects, driven by the same scroll progress ────────
-      // Big Qalisten type that the photos travel over. The letters ripple as
-      // you scroll, the two title lines slide against each other, tracking
-      // opens up and a gold sweep crosses the last word; the intro copy
-      // lights up word by word; and each caption blooms as its photo nears
-      // the middle of the screen.
-      const titleEl = field.querySelector<HTMLElement>(`.${styles.scatterHeadingTitle}`)
-      const lines = Array.from(field.querySelectorAll<HTMLElement>('[data-est-line]'))
-      const chars = Array.from(field.querySelectorAll<HTMLElement>('[data-est-char]'))
-      const words = Array.from(field.querySelectorAll<HTMLElement>('[data-est-word]'))
-      const figures = Array.from(field.querySelectorAll<HTMLElement>(`.${styles.scatterPhoto}`))
-      const charY = chars.map((c) => gsap.quickSetter(c, 'y', 'px') as (v: number) => void)
-      const lineX = lines.map((l) => gsap.quickSetter(l, 'x', 'px') as (v: number) => void)
-      const titleSize = titleEl ? parseFloat(getComputedStyle(titleEl).fontSize) : 100
-
-      // Letters rise out of their mask as the section arrives.
-      const intro = gsap.from(chars, {
-        yPercent: 115,
-        duration: 1.2,
-        ease: 'power4.out',
-        stagger: 0.022,
-        scrollTrigger: { trigger: section, start: 'top 70%', once: true },
-      })
-
-      const applyText = (p: number) => {
-        const envelope = Math.sin(p * Math.PI) // calm at both ends, liveliest mid-scroll
-        chars.forEach((_, i) => charY[i](Math.sin(p * Math.PI * 3 + i * 0.6) * titleSize * 0.06 * envelope))
-        lines.forEach((_, i) => lineX[i]((i % 2 ? 1 : -1) * p * titleSize * 0.6))
-        if (titleEl) {
-          titleEl.style.letterSpacing = `${(-0.02 + p * 0.06).toFixed(3)}em`
-          titleEl.style.setProperty('--sweep', `${(p * 100).toFixed(1)}%`)
-        }
-        words.forEach((w, i) => {
-          const t = Math.min(1, Math.max(0, (p * 1.7 - i * 0.05) / 0.3))
-          w.style.opacity = String(0.16 + 0.84 * t)
-        })
-        const vw = window.innerWidth
-        const vh = window.innerHeight
-        figures.forEach((f) => {
-          const r = f.getBoundingClientRect()
-          const d = Math.hypot((r.left + r.width / 2 - vw / 2) / vw, (r.top + r.height / 2 - vh / 2) / vh)
-          f.style.setProperty('--near', Math.max(0, 1 - d * 1.7).toFixed(3))
-        })
-      }
-      applyText(0)
-
       const maxPan = () => ({
         x: field.offsetWidth - pinWrap.clientWidth,
         y: field.offsetHeight - pinWrap.clientHeight,
@@ -162,7 +116,6 @@ export function ExperienceReel({ data }: { data: Home['experience'] }) {
           // linear ramp instead peaked exactly at the section's own end,
           // handing off a fully-tinted surface straight into a flat-color
           // section below with no blend, which read as a hard block seam.
-          applyText(p)
           if (bgTint) bgTint.style.opacity = String(Math.sin(p * Math.PI))
           if (counterRef.current && items.length) {
             const idx = Math.min(items.length, Math.max(1, Math.round(p * items.length)))
@@ -179,9 +132,6 @@ export function ExperienceReel({ data }: { data: Home['experience'] }) {
         // over on its next reconciliation (a real "removeChild" crash,
         // not just a dev-only warning).
         trigger.kill(true)
-        intro.scrollTrigger?.kill()
-        intro.kill()
-        gsap.set([...chars, ...lines], { clearProps: 'x,y,transform' })
         // Only clear the transform props GSAP itself wrote (x/y, via
         // quickTo above) — NOT `clearProps: 'all'`. That blanket form
         // wipes the element's entire inline `style` attribute, including
@@ -216,24 +166,13 @@ export function ExperienceReel({ data }: { data: Home['experience'] }) {
 
         <div className={styles.scatterField} ref={fieldRef}>
           <div className={styles.scatterHeading}>
-            <span className={styles.estEyebrow}>
-              <i aria-hidden="true" />
-              the estate
-            </span>
-            <h2 className={styles.scatterHeadingTitle} aria-label={data.heading}>
-              {renderTitle(data.heading)}
-            </h2>
+            <span className="eyebrow">the estate</span>
+            <h2 className={styles.scatterHeadingTitle}>{renderTitle(data.heading)}</h2>
           </div>
 
           {data.sub && (
             <div className={styles.scatterQuote}>
-              <p aria-label={data.sub}>
-                {data.sub.split(' ').map((w, i) => (
-                  <span data-est-word aria-hidden="true" key={i}>
-                    {w}{' '}
-                  </span>
-                ))}
-              </p>
+              <p>{data.sub}</p>
             </div>
           )}
 
@@ -285,30 +224,12 @@ function ScatterPhoto({ item, slot }: { item: NonNullable<Home['experience']['it
   )
 }
 
-// Splits the title into two stacked lines (everything before the last word,
-// then the last word in gold) and each line into single letters, so the scroll
-// effects can move letters and lines independently.
 function renderTitle(heading: string) {
   const words = heading.trim().split(' ')
-  const last = words.pop() ?? ''
-  const letters = (text: string) =>
-    text.split('').map((ch, i) =>
-      ch === ' ' ? (
-        <span className={styles.estSpace} key={i} aria-hidden="true" />
-      ) : (
-        <span className={styles.estChar} data-est-char aria-hidden="true" key={i}>
-          {ch}
-        </span>
-      ),
-    )
+  const last = words.pop()
   return (
     <>
-      <span className={styles.estLine} data-est-line>
-        {letters(words.join(' '))}
-      </span>
-      <span className={`${styles.estLine} ${styles.estLineGold}`} data-est-line>
-        {letters(last)}
-      </span>
+      {words.join(' ')} <em>{last}</em>
     </>
   )
 }
