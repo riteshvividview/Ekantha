@@ -611,56 +611,105 @@
 
 .scatterHeading {
   position: absolute;
-  top: 10%;
-  left: 7%;
-  max-width: 46vw;
+  top: 8%;
+  left: 6%;
+  z-index: 1; /* photos travel over the title */
+  white-space: nowrap;
 }
 .scatterHeadingTitle {
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: clamp(1.8rem, 4.5vw, 3.2rem);
-  line-height: 1.05;
+  --sweep: 0%;
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(3.6rem, 9.4vw, 10rem);
+  line-height: 0.98;
   letter-spacing: -0.02em;
+  text-transform: none;
   color: var(--ink);
-  margin-top: 0.75rem;
+  margin-top: 1.4rem;
 }
 .scatterHeadingTitle em {
-  font-family: var(--font-accent);
-  font-style: italic;
-  font-weight: 400;
+  font-style: normal;
+}
+
+/* ── Estate typography (Qalisten, large, scroll-animated) ─────────────── */
+.estEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: clamp(0.74rem, 1.2vw, 0.86rem);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.estEyebrow i {
+  width: 2.6rem;
+  height: 1px;
+  background: currentColor;
+}
+/* Each line is a mask: letters rise out of it on arrival. Clipped
+   vertically only, so the lines can slide sideways freely. */
+.estLine {
+  display: block;
+  clip-path: inset(-0.12em -100vw -0.16em -100vw);
+  will-change: transform;
+}
+.estChar {
+  display: inline-block;
+  will-change: transform;
+}
+.estSpace {
+  display: inline-block;
+  width: 0.26em;
+}
+.estLineGold .estChar {
+  background: linear-gradient(100deg, #a9793a 0%, #e3c48c 30%, #a9793a 60%, #e3c48c 100%);
+  background-size: 260% 100%;
+  background-position: var(--sweep) 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .scatterQuote {
   position: absolute;
-  top: 9%;
-  left: 56%;
-  max-width: 26ch;
+  top: 11%;
+  left: 54%;
+  z-index: 1;
+  max-width: 12.5em;
 }
 .scatterQuote p {
-  font-family: var(--font-body);
-  font-size: clamp(0.95rem, 1.9vw, 1.15rem);
-  line-height: 1.6;
-  color: var(--ink-soft);
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(1.3rem, 2.2vw, 2.1rem);
+  line-height: 1.22;
+  color: var(--ink);
 }
 
 .scatterPhoto {
+  --near: 0;
   position: absolute;
+  z-index: 2;
   margin: 0;
 }
 .scatterPhoto figcaption {
-  font-family: var(--font-body);
+  font-family: var(--font-mont);
   font-weight: 600;
-  font-size: 0.66rem;
-  letter-spacing: 0.12em;
+  font-size: clamp(0.78rem, 1vw, 0.95rem);
+  letter-spacing: calc(0.14em + var(--near) * 0.2em);
   text-transform: uppercase;
-  color: var(--ink-faint);
-  margin-bottom: 0.6rem;
+  color: var(--ink);
+  opacity: calc(0.5 + var(--near) * 0.5);
+  transform: translateY(calc((1 - var(--near)) * 8px));
+  margin-bottom: 0.8rem;
 }
 .scatterPhotoMedia {
   aspect-ratio: 4/5;
   border-radius: 4px;
   overflow: hidden;
-  box-shadow: 0 18px 40px rgba(29, 29, 27, 0.16);
+  box-shadow: 0 24px 50px rgba(29, 29, 27, 0.22);
+  transform: scale(calc(0.965 + var(--near) * 0.05));
 }
 .scatterPhotoMedia img {
   width: 100%;
