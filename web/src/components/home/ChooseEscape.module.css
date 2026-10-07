@@ -118,6 +118,12 @@
   visibility: hidden;
   will-change: opacity, transform;
 }
+/* Mango House only — see the i === 0 check in ChooseEscape.tsx. */
+.panelRight {
+  left: auto;
+  right: clamp(1.5rem, 6vw, 5rem);
+  text-align: right;
+}
 .panelNum {
   display: block;
   font-family: var(--font-mont);
@@ -145,6 +151,11 @@
   width: 1.6rem;
   height: 1px;
   background: currentColor;
+}
+/* Mirrors the accent dash to trail the text instead of leading it, since
+   this panel hugs the right edge of the stage. */
+.panelRight .panelKicker {
+  flex-direction: row-reverse;
 }
 .panelTitle {
   font-family: var(--font-qalisten), Georgia, serif;
@@ -217,78 +228,6 @@
 .panelCta:hover .panelCtaIcon {
   transform: translateX(3px) rotate(-35deg);
   background: #a9793a;
-}
-
-.nextBtn {
-  position: absolute;
-  z-index: 3;
-  right: clamp(1rem, 3vw, 2.5rem);
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3.4rem;
-  height: 3.4rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  border: 1px solid rgba(246, 236, 220, 0.35);
-  background: rgba(20, 16, 12, 0.4);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  color: #f6ecdc;
-  font-size: 1rem;
-  transition:
-    background-color 350ms var(--ease-slow),
-    transform 450ms var(--ease-slow);
-}
-.nextBtn:hover {
-  background: #e3c48c;
-  color: #1d1d1b;
-  transform: translateY(-50%) scale(1.08);
-}
-
-.rail {
-  position: absolute;
-  z-index: 3;
-  left: clamp(1.5rem, 6vw, 5rem);
-  right: clamp(1.5rem, 6vw, 5rem);
-  bottom: clamp(1.25rem, 2.6vw, 2rem);
-  list-style: none;
-  display: flex;
-  gap: clamp(1rem, 2.4vw, 2rem);
-}
-.railBtn {
-  flex: 1 1 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  text-align: left;
-  color: inherit;
-}
-.railLabel {
-  font-family: var(--font-mont);
-  font-weight: 600;
-  font-size: 0.7rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(246, 236, 220, 0.55);
-  transition: color 300ms;
-}
-.railBtn:hover .railLabel {
-  color: #f6ecdc;
-}
-.railTrack {
-  display: block;
-  height: 2px;
-  background: rgba(246, 236, 220, 0.2);
-  overflow: hidden;
-}
-.railFill {
-  display: block;
-  height: 100%;
-  background: #e3c48c;
-  transform-origin: left center;
-  transform: scaleX(0);
 }
 
 /* ── Mobile / tablet / reduced-motion fallback ───────────────────────── */

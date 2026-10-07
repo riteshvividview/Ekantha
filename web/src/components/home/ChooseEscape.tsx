@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { useLenis } from 'lenis/react'
 import type { Home, Stay } from '@/payload-types'
 import { DragScrollTrack } from '@/components/shared/DragScrollTrack'
 import { CountUp } from '@/components/shared/CountUp'
@@ -91,35 +90,7 @@ export function ChooseEscape({
   const stageRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const panelRefs = useRef<Array<HTMLDivElement | null>>([])
-  const railFillRefs = useRef<Array<HTMLSpanElement | null>>([])
-  const triggerRef = useRef<ScrollTrigger | null>(null)
-  const lenis = useLenis()
   const [ready, setReady] = useState(false)
-
-  // Jump the pinned scroll position to the start of a given chapter — used
-  // by both the rail buttons and the big "next" arrow.
-  const jumpToProgress = (p: number) => {
-    const st = triggerRef.current
-    if (!st) return
-    const y = st.start + clamp(p, 0, 0.999) * (st.end - st.start)
-    if (lenis) lenis.scrollTo(y, { duration: 1.4 })
-    else window.scrollTo({ top: y, behavior: 'smooth' })
-  }
-  const skipAhead = () => {
-    const st = triggerRef.current
-    if (!st) return
-    const p = clamp(st.progress, 0, 1)
-    const next = chapters.find((c) => p < c.end - 0.01)
-    if (next && p < next.end - 0.01 && p >= next.start) {
-      // Already inside the last reachable chapter — leave the section.
-      const after = document.getElementById('dine')
-      after?.scrollIntoView({ behavior: 'smooth' })
-      return
-    }
-    const upcoming = chapters.find((c) => c.start > p + 0.01)
-    if (upcoming) jumpToProgress(upcoming.start + 0.02)
-    else document.getElementById('dine')?.scrollIntoView({ behavior: 'smooth' })
-  }
 
   useEffect(() => {
     const section = sectionRef.current
@@ -252,7 +223,6 @@ export function ChooseEscape({
     // -- scroll-driven pin + chapter crossfade --------------------------
 
     const panels = panelRefs.current.filter((el): el is HTMLDivElement => !!el)
-    const railFills = railFillRefs.current.filter((el): el is HTMLSpanElement => !!el)
 
     const scrollDistance = Math.max(FRAME_COUNT * PX_PER_FRAME, window.innerHeight * MIN_SCROLL_VH)
 
@@ -274,8 +244,6 @@ export function ChooseEscape({
 
         chapters.forEach((c, i) => {
           const panel = panels[i]
-          const fill = railFills[i]
-          if (fill) fill.style.transform = `scaleX(${clamp((p - c.start) / (c.end - c.start || 1), 0, 1)})`
           if (!panel) return
           const span = c.end - c.start
           const fade = Math.min(0.05, span * 0.22)
@@ -296,7 +264,6 @@ export function ChooseEscape({
         })
       },
     })
-    triggerRef.current = trigger
 
     return () => {
       cancelled = true
@@ -305,7 +272,6 @@ export function ChooseEscape({
       // .kill(true) reverts the pin-spacer before React's own cleanup —
       // see the identical note in BambooDine.tsx for why that matters.
       trigger.kill(true)
-      triggerRef.current = null
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chapters.length])
@@ -345,7 +311,7 @@ export function ChooseEscape({
 
           {chapters.map((c, i) => (
             <div
-              className={styles.panel}
+              className={`${styles.panel}${i === 0 ? ` ${styles.panelRight}` : ''}`}
               key={c.slug}
               ref={(el) => {
                 panelRefs.current[i] = el
@@ -373,33 +339,6 @@ export function ChooseEscape({
               </a>
             </div>
           ))}
-
-          <button type="button" className={styles.nextBtn} onClick={skipAhead} aria-label="Next stay">
-            <i className="fa-solid fa-chevron-right" aria-hidden="true" />
-          </button>
-
-          <ol className={styles.rail}>
-            {chapters.map((c, i) => (
-              <li key={c.slug}>
-                <button
-                  type="button"
-                  className={styles.railBtn}
-                  onClick={() => jumpToProgress(c.start + 0.02)}
-                  aria-label={`Jump to ${c.stay.title}`}
-                >
-                  <span className={styles.railLabel}>{c.stay.title}</span>
-                  <span className={styles.railTrack}>
-                    <span
-                      className={styles.railFill}
-                      ref={(el) => {
-                        railFillRefs.current[i] = el
-                      }}
-                    />
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ol>
         </div>
       </div>
 
