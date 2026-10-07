@@ -104,49 +104,6 @@
   display: block;
   transition: opacity 500ms var(--ease-soft);
 }
-.vignette {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background:
-    linear-gradient(0deg, rgba(10, 8, 6, 0.86) 0%, rgba(10, 8, 6, 0.1) 42%, rgba(10, 8, 6, 0) 64%),
-    linear-gradient(180deg, rgba(10, 8, 6, 0.55) 0%, rgba(10, 8, 6, 0) 28%),
-    linear-gradient(90deg, rgba(10, 8, 6, 0.4) 0%, rgba(10, 8, 6, 0) 36%);
-}
-
-.hint {
-  position: absolute;
-  z-index: 3;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.9rem;
-  font-family: var(--font-mont);
-  font-weight: 600;
-  font-size: 0.72rem;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: rgba(246, 236, 220, 0.85);
-  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
-}
-.hint i {
-  font-size: 1.1rem;
-  animation: escapeHintBob 2s ease-in-out infinite;
-}
-@keyframes escapeHintBob {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(6px);
-  }
-}
-
 /* One content block per chapter, all stacked in the same spot; opacity and
    a small lift are driven directly off scroll progress in ChooseEscape.tsx
    (not CSS transitions — the crossfade has to track the scrub exactly). */

@@ -92,7 +92,6 @@ export function ChooseEscape({
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const panelRefs = useRef<Array<HTMLDivElement | null>>([])
   const railFillRefs = useRef<Array<HTMLSpanElement | null>>([])
-  const hintRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<ScrollTrigger | null>(null)
   const lenis = useLenis()
   const [ready, setReady] = useState(false)
@@ -254,7 +253,6 @@ export function ChooseEscape({
 
     const panels = panelRefs.current.filter((el): el is HTMLDivElement => !!el)
     const railFills = railFillRefs.current.filter((el): el is HTMLSpanElement => !!el)
-    const hint = hintRef.current
 
     const scrollDistance = Math.max(FRAME_COUNT * PX_PER_FRAME, window.innerHeight * MIN_SCROLL_VH)
 
@@ -282,18 +280,20 @@ export function ChooseEscape({
           const span = c.end - c.start
           const fade = Math.min(0.05, span * 0.22)
           const edge = span * 0.08
-          const inStart = c.start + edge
-          const inEnd = inStart + fade
+          const isFirst = i === 0
           const isLast = i === chapters.length - 1
+          // Mango House (the first chapter) is already on screen in the
+          // section's very first frame, so it shows at full strength from
+          // p=0 instead of fading in — only the later chapters, which arrive
+          // mid-scroll, get the fade-in.
+          const fadeIn = isFirst ? 1 : smoothstep(c.start + edge, c.start + edge + fade, p)
           const outEnd = isLast ? 1 : c.end - edge
           const outStart = isLast ? 1 : outEnd - fade
-          const visibility = smoothstep(inStart, inEnd, p) * (isLast ? 1 : 1 - smoothstep(outStart, outEnd, p))
+          const visibility = fadeIn * (isLast ? 1 : 1 - smoothstep(outStart, outEnd, p))
           panel.style.opacity = String(visibility)
           panel.style.transform = `translateY(${(1 - visibility) * 26}px)`
           panel.style.visibility = visibility > 0.01 ? 'visible' : 'hidden'
         })
-
-        if (hint) hint.style.opacity = String(1 - smoothstep(0, 0.035, p))
       },
     })
     triggerRef.current = trigger
@@ -342,12 +342,6 @@ export function ChooseEscape({
       <div className={styles.stageDesktop}>
         <div className={styles.stage} ref={stageRef} data-reveal>
           <canvas ref={canvasRef} className={styles.canvas} style={{ opacity: ready ? 1 : 0 }} aria-hidden="true" />
-          <div className={styles.vignette} aria-hidden="true" />
-
-          <div className={styles.hint} ref={hintRef} aria-hidden="true">
-            <i className="fa-solid fa-arrow-down" />
-            scroll to explore
-          </div>
 
           {chapters.map((c, i) => (
             <div
