@@ -1,0 +1,410 @@
+/* ── Choose Your Escape — scroll-scrubbed drone sequence ───────────────
+   One continuous orbit (ground-level pool → rising past the stone façade
+   → full aerial pass) drives a canvas frame player, pinned while the
+   section scrolls; each stay "owns" the stretch of footage that shows its
+   own framing (see CHAPTERS in ChooseEscape.tsx). Header uses the shared
+   --white/--ink page-theme tokens (this section sits inside the dark
+   stretch between Why and Events, same as the old StaysCarousel did) —
+   the stage itself is always a dark cinematic frame regardless, hardcoded
+   below. Below 860px (and under prefers-reduced-motion) the pin/canvas is
+   replaced entirely by a plain drag-scroll card row — see .fallback.
+
+   NOTE: no overflow: hidden on .escape — it wraps a pinned element, and
+   clipping an ancestor of a pinned element breaks the pin. */
+
+.escape {
+  padding: 0; /* overrides the global `section` padding */
+  color: var(--ink);
+}
+
+.head {
+  padding: var(--pad-y) var(--pad-x) clamp(2rem, 4vw, 3rem);
+  max-width: 50rem;
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: clamp(0.72rem, 1.5vw, 0.8rem);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: clamp(1.25rem, 2.6vw, 1.75rem);
+}
+.eyebrowDash {
+  width: 2.5rem;
+  height: 1px;
+  background: currentColor;
+}
+.headline {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(3rem, 7vw, 6.2rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-bottom: clamp(1.25rem, 2.6vw, 1.75rem);
+}
+.line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+.lineInner {
+  display: block;
+  will-change: transform;
+}
+.gold {
+  background: linear-gradient(100deg, #a9793a 0%, #d3a566 50%, #a9793a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.sub {
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+  line-height: 1.75;
+  color: var(--ink-soft);
+  max-width: 34em;
+}
+
+/* ── Desktop: pinned cinematic stage ─────────────────────────────────── */
+.stageDesktop {
+  display: block;
+}
+@media (max-width: 860px) {
+  .stageDesktop {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stageDesktop {
+    display: none;
+  }
+}
+
+.stage {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  background: #14110e;
+  isolation: isolate;
+}
+.canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  transition: opacity 500ms var(--ease-soft);
+}
+.vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(0deg, rgba(10, 8, 6, 0.86) 0%, rgba(10, 8, 6, 0.1) 42%, rgba(10, 8, 6, 0) 64%),
+    linear-gradient(180deg, rgba(10, 8, 6, 0.55) 0%, rgba(10, 8, 6, 0) 28%),
+    linear-gradient(90deg, rgba(10, 8, 6, 0.4) 0%, rgba(10, 8, 6, 0) 36%);
+}
+
+.hint {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(246, 236, 220, 0.85);
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
+}
+.hint i {
+  font-size: 1.1rem;
+  animation: escapeHintBob 2s ease-in-out infinite;
+}
+@keyframes escapeHintBob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+/* One content block per chapter, all stacked in the same spot; opacity and
+   a small lift are driven directly off scroll progress in ChooseEscape.tsx
+   (not CSS transitions — the crossfade has to track the scrub exactly). */
+.panel {
+  position: absolute;
+  z-index: 2;
+  left: clamp(1.5rem, 6vw, 5rem);
+  bottom: clamp(3rem, 8vw, 6rem);
+  max-width: min(34rem, 86vw);
+  color: #f6ecdc;
+  opacity: 0;
+  visibility: hidden;
+  will-change: opacity, transform;
+}
+.panelNum {
+  display: block;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(246, 236, 220, 0.6);
+  margin-bottom: 0.9rem;
+}
+.panelKicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: #e3c48c;
+  margin-bottom: 0.7rem;
+}
+.panelKicker::before {
+  content: '';
+  width: 1.6rem;
+  height: 1px;
+  background: currentColor;
+}
+.panelTitle {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  line-height: 1.02;
+  color: #f8f0e2;
+  margin-bottom: 0.75rem;
+  text-shadow: 0 6px 40px rgba(0, 0, 0, 0.45);
+}
+.panelQuote {
+  font-family: var(--font-mont);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(0.95rem, 1.4vw, 1.15rem);
+  line-height: 1.6;
+  color: rgba(246, 236, 220, 0.85);
+  max-width: 32em;
+  margin-bottom: 1rem;
+}
+.panelFacts {
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: clamp(0.85rem, 1.2vw, 0.95rem);
+  line-height: 1.8;
+  color: rgba(246, 236, 220, 0.75);
+  margin-bottom: 1.4rem;
+}
+.dot {
+  margin: 0 0.5rem;
+  color: rgba(246, 236, 220, 0.4);
+}
+.price {
+  color: #f8f0e2;
+  font-weight: 600;
+  font-size: 1.1em;
+}
+.panelCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.4rem 0.4rem 0.4rem 1.4rem;
+  border-radius: 999px;
+  background: #f6ecdc;
+  color: #1d1d1b;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  box-shadow: 0 18px 34px -16px rgba(0, 0, 0, 0.7);
+  transition: transform 450ms var(--ease-slow);
+}
+.panelCta:hover {
+  transform: translateY(-2px);
+}
+.panelCtaIcon {
+  width: 2.4rem;
+  height: 2.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #1d1d1b;
+  color: #f6ecdc;
+  font-size: 0.8rem;
+  transition:
+    transform 450ms var(--ease-slow),
+    background-color 300ms;
+}
+.panelCta:hover .panelCtaIcon {
+  transform: translateX(3px) rotate(-35deg);
+  background: #a9793a;
+}
+
+.nextBtn {
+  position: absolute;
+  z-index: 3;
+  right: clamp(1rem, 3vw, 2.5rem);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3.4rem;
+  height: 3.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(246, 236, 220, 0.35);
+  background: rgba(20, 16, 12, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #f6ecdc;
+  font-size: 1rem;
+  transition:
+    background-color 350ms var(--ease-slow),
+    transform 450ms var(--ease-slow);
+}
+.nextBtn:hover {
+  background: #e3c48c;
+  color: #1d1d1b;
+  transform: translateY(-50%) scale(1.08);
+}
+
+.rail {
+  position: absolute;
+  z-index: 3;
+  left: clamp(1.5rem, 6vw, 5rem);
+  right: clamp(1.5rem, 6vw, 5rem);
+  bottom: clamp(1.25rem, 2.6vw, 2rem);
+  list-style: none;
+  display: flex;
+  gap: clamp(1rem, 2.4vw, 2rem);
+}
+.railBtn {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  text-align: left;
+  color: inherit;
+}
+.railLabel {
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(246, 236, 220, 0.55);
+  transition: color 300ms;
+}
+.railBtn:hover .railLabel {
+  color: #f6ecdc;
+}
+.railTrack {
+  display: block;
+  height: 2px;
+  background: rgba(246, 236, 220, 0.2);
+  overflow: hidden;
+}
+.railFill {
+  display: block;
+  height: 100%;
+  background: #e3c48c;
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+/* ── Mobile / tablet / reduced-motion fallback ───────────────────────── */
+.fallback {
+  display: none;
+  padding: 0 0 var(--pad-y);
+}
+@media (max-width: 860px) {
+  .fallback {
+    display: block;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fallback {
+    display: block;
+  }
+}
+
+.fallbackCard {
+  flex: none;
+  width: min(80vw, 22rem);
+  padding: 1.5rem 1.5rem 1.75rem;
+  border-radius: 28px;
+  background: var(--silver);
+  border: 1px solid var(--line);
+}
+.fallbackMedia {
+  aspect-ratio: 4 / 3;
+  border-radius: 18px;
+  overflow: hidden;
+  margin-bottom: 1.1rem;
+}
+.fallbackMedia img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.fallbackKicker {
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #a9793a;
+  margin-bottom: 0.5rem;
+}
+.fallbackTitle {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+  font-size: 1.9rem;
+  line-height: 1.05;
+  color: var(--ink);
+  margin-bottom: 0.6rem;
+}
+.fallbackQuote {
+  font-family: var(--font-mont);
+  font-style: italic;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin-bottom: 0.8rem;
+}
+.fallbackFacts {
+  font-family: var(--font-mont);
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: var(--ink-soft);
+  margin-bottom: 1.1rem;
+}
+.fallbackFacts .dot {
+  color: var(--ink-faint);
+}
+.fallbackFacts .price {
+  color: var(--ink);
+}

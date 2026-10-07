@@ -6,16 +6,15 @@ import { RevealController } from '@/components/shared/RevealController.client'
 import { FinalCtaBanner } from '@/components/shared/FinalCtaBanner'
 
 import { Hero } from '@/components/home/Hero'
-import { Ticker } from '@/components/home/Ticker'
-import { Intro } from '@/components/home/Intro'
-import { WhyUs } from '@/components/home/WhyUs'
+import { Story } from '@/components/home/Story'
+import { Why } from '@/components/home/Why'
 import { ExperienceReel } from '@/components/home/ExperienceReel'
-import { StaysCarousel } from '@/components/home/StaysCarousel'
-import { Dine } from '@/components/home/Dine'
-import { EventsPreview } from '@/components/home/EventsPreview'
-import { Testimonials } from '@/components/home/Testimonials'
-import { GalleryPreview } from '@/components/home/GalleryPreview'
-import { LocationSection } from '@/components/home/LocationSection'
+import { ChooseEscape } from '@/components/home/ChooseEscape'
+import { BambooDine } from '@/components/home/BambooDine'
+import { Events } from '@/components/home/Events'
+import { Stories } from '@/components/home/Stories'
+import { Gallery } from '@/components/home/Gallery'
+import { Reach } from '@/components/home/Reach'
 
 export default async function HomePage() {
   // depth: 2 so staysTeaser.featuredStays resolves to full Stay documents,
@@ -37,16 +36,15 @@ export default async function HomePage() {
     <>
       <RevealController />
       <Hero data={home.hero} />
-      <Ticker data={home.ticker} />
-      <Intro data={home.intro} />
-      <WhyUs data={home.whyUs} />
+      <Story />
+      <Why />
       <ExperienceReel data={home.experience} />
-      <StaysCarousel heading={home.staysTeaser.heading} sub={home.staysTeaser.sub} stays={featuredStays} />
-      <Dine data={home.dine} />
-      <EventsPreview data={home.eventsPreview} />
-      <Testimonials data={home.testimonials} />
-      <GalleryPreview data={home.galleryPreview} />
-      <LocationSection data={home.location} />
+      <ChooseEscape heading={home.staysTeaser.heading} sub={home.staysTeaser.sub} stays={featuredStays} />
+      <BambooDine data={home.dine} />
+      <Events />
+      <Stories />
+      <Gallery />
+      <Reach />
       <FinalCtaBanner
         eyebrow={home.finalCta.eyebrow}
         heading={renderFinalHeading(home.finalCta.heading)}
