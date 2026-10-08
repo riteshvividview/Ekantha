@@ -62,7 +62,11 @@
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.32) 30%, rgba(0, 0, 0, 0) 62%);
+  /* A touch stronger/wider than before — the old single static photo was
+     framed with its own built-in shadow on the left; every frame of the
+     scroll-scrubbed entrance (Hero.tsx) needs this to carry that on its
+     own instead, since brightness varies frame to frame. */
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.42) 32%, rgba(0, 0, 0, 0) 68%);
   pointer-events: none;
 }
 
