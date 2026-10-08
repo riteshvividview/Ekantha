@@ -36,26 +36,23 @@
 }
 /* Centered via top/left 50% + translate(-50%,-50%) rather than negative
    insets alongside an explicit width/height — for an absolutely positioned
-   *replaced* element (img), browsers resolve that combination by dropping
-   the explicit width back to 100% instead of the inset, which left the
-   image overhanging on the left and falling short of the right edge. This
-   form has no such conflict, and gives the scroll/cursor parallax a small
-   symmetric overscan to pan into without ever exposing an edge. */
-.heroMediaTrack img {
+   *replaced* element, browsers resolve that combination by dropping the
+   explicit width back to 100% instead of the inset, which left the canvas
+   overhanging on the left and falling short of the right edge. This form
+   has no such conflict, and gives the scroll/cursor parallax a small
+   symmetric overscan to pan into without ever exposing an edge. The 116%
+   oversize is purely a CSS box size — the canvas's own cover-fit draw (see
+   Hero.tsx) handles cropping the frame into whatever that box ends up
+   being, so there's no object-fit needed here the way the old <img> had. */
+.heroCanvas {
   position: absolute;
   top: 50%;
   left: 50%;
-  /* max-width: none overrides the global `img { max-width: 100% }` reset
-     (globals.css) — without it, that reset silently clamps this back down
-     to 100% of the container regardless of the 116% below, which is why
-     the image was only overhanging on the left (from the transform) and
-     falling short of the right edge rather than overhanging symmetrically. */
-  max-width: none;
   width: 116%;
   height: 116%;
   transform: translate(-50%, -50%);
-  object-fit: cover;
   display: block;
+  transition: opacity 500ms var(--ease-soft);
 }
 
 /* A dark fade on the left only, over the background image specifically —
