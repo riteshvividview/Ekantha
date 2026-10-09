@@ -52,8 +52,10 @@ export const montserratBlack = localFont({
 // names, not the font-family strings themselves, so this list and the
 // `next/font` registrations above can never drift out of sync.
 export const HERO_TITLE_FONTS = [
-  'var(--font-chicken-farmhouse)',
+  // First entry = the default shown before scroll starts the cycle, and
+  // what it resets back to if you scroll all the way back to the top.
   'var(--font-christmas-farmhouse)',
+  'var(--font-chicken-farmhouse)',
   'var(--font-farmhouse-monogram)',
   'var(--font-fieldhouse)',
   'var(--font-green-house)',

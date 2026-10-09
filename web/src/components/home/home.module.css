@@ -107,14 +107,17 @@
   font-family: var(--font-qalisten), Georgia, serif;
   font-style: normal;
   font-weight: 400;
-  /* Smaller than before, and sized to fit "The Farmhouse" on one line down
-     to fairly narrow viewports — it wraps naturally rather than clipping
-     if a screen is too narrow for even this size. */
-  font-size: clamp(1.9rem, 5vw, 3.8rem);
-  line-height: 1.05;
+  font-size: clamp(3.4rem, 9vw, 7.2rem);
+  line-height: 0.98;
   letter-spacing: -0.01em;
   color: var(--white);
   margin-bottom: clamp(1.5rem, 4vw, 2.25rem);
+  /* Hero.tsx scales this up further as you scroll (a transform, not a
+     font-size change, for a smooth GPU-cheap grow instead of layout
+     reflow on every frame) — transform-origin keeps that growth anchored
+     to the title's own left edge instead of visibly drifting rightward. */
+  transform-origin: left center;
+  will-change: transform;
   max-width: 100%;
 }
 

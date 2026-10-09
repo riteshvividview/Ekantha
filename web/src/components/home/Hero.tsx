@@ -23,6 +23,10 @@ const MIN_SCROLL_VH = 1.4
 // pinned entrance.
 const INTRO_FADE_START = 0
 const INTRO_FADE_END = 0.08
+// How close to the very top counts as "back at the top" for resetting the
+// title — not a bit-exact 0, since Lenis's own smoothing means scrolling
+// back up tends to settle a hair above it rather than landing on it exactly.
+const RESET_THRESHOLD = 0.004
 
 // How often the title swaps to the next font in HERO_TITLE_FONTS, and how
 // long each swap's little flicker-out/flicker-in takes — both scaled down
@@ -31,11 +35,16 @@ const FONT_SWAP_MS = 200
 const FONT_SWAP_OUT = 0.05
 const FONT_SWAP_IN = 0.08
 
-// Full opacity and no font-cycling at all until the intro text has cleared
-// (see INTRO_FADE_END above) — only then does the title dim down to this
-// and the cycle start, and it never reverts even if you scroll back up.
+// Full opacity, default font, no growth at all until the intro text has
+// cleared (see INTRO_FADE_END above) — only then does the title dim down,
+// start growing, and start cycling fonts. Scrolling all the way back up to
+// the very top (progress all the way back to 0) reverses all three: the
+// cycle stops, and the title resets to its default font at full size/
+// opacity — scroll back down past INTRO_FADE_END and it all starts again.
 const TITLE_REST_OPACITY = 1
-const TITLE_CYCLE_OPACITY = 0.55
+const TITLE_CYCLE_OPACITY = 0.35
+const TITLE_SCALE_REST = 1
+const TITLE_SCALE_GROWN = 1.3
 
 const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v))
 const smoothstep = (edge0: number, edge1: number, x: number) => {
@@ -72,17 +81,23 @@ export function Hero({ data }: { data: Home['hero'] }) {
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    // Default, static appearance: full opacity, first font in the rotation,
-    // no cycling — this is what's on screen until scroll triggers the
-    // effect below (or forever, under reduced motion).
-    gsap.set(title, { fontFamily: HERO_TITLE_FONTS[0], opacity: TITLE_REST_OPACITY })
-
     const frames: Array<HTMLImageElement | null> = new Array(FRAME_COUNT).fill(null)
     let currentFrame = 0
     let cancelled = false
-    let cycleStarted = false
+    let cycleRunning = false
     let cycleIndex = 0
     let cycleIntervalId: ReturnType<typeof setInterval> | undefined
+
+    // Default, static appearance: full opacity, full size, default font
+    // (Christmas Farmhouse — HERO_TITLE_FONTS[0]), no cycling — this is
+    // what's on screen until scroll triggers the effect below (or forever,
+    // under reduced motion), and what it resets back to at the very top.
+    const resetTitle = () => {
+      gsap.killTweensOf(title)
+      gsap.set(title, { fontFamily: HERO_TITLE_FONTS[0], opacity: TITLE_REST_OPACITY })
+      cycleIndex = 0
+    }
+    resetTitle()
 
     // -- canvas sizing / drawing (same cover-fit technique as BambooDine) --
 
@@ -196,12 +211,24 @@ export function Hero({ data }: { data: Home['hero'] }) {
         // second, independent writer of the same CSS property would fight it.
         explore.style.opacity = String(1 - introFade)
 
-        // The title's font-cycle is a one-time latch, not reversible: once
-        // the intro text has fully cleared, the title dims down and starts
-        // looping through HERO_TITLE_FONTS, and it keeps running even if
-        // you scroll back up past this point.
-        if (!cycleStarted && p >= INTRO_FADE_END) {
-          cycleStarted = true
+        // Size growth: a continuous function of scroll progress (not a
+        // one-shot tween), so it needs no special-case reset logic — it
+        // naturally shrinks back to TITLE_SCALE_REST as p returns to 0.
+        // transform only (see the will-change/transform-origin comment on
+        // .heroTitle in home.module.css) — cheap every frame, unlike
+        // animating font-size directly would be.
+        const growth = smoothstep(INTRO_FADE_END, 1, p)
+        title.style.transform = `scale(${TITLE_SCALE_REST + (TITLE_SCALE_GROWN - TITLE_SCALE_REST) * growth})`
+
+        // The font-cycle, unlike the growth above, is stateful (which font
+        // is showing is a matter of which interval tick last fired, not a
+        // pure function of p) — so it needs explicit start/stop. Once the
+        // intro text has cleared, it dims the title and starts cycling;
+        // scrolling all the way back up to the very top stops the cycle
+        // and resets the title to its default font/size/opacity. Scrolling
+        // back down past INTRO_FADE_END re-starts it from there.
+        if (!cycleRunning && p >= INTRO_FADE_END) {
+          cycleRunning = true
           gsap.to(title, { opacity: TITLE_CYCLE_OPACITY, duration: 0.3, ease: 'power2.out' })
           cycleIntervalId = setInterval(() => {
             cycleIndex = (cycleIndex + 1) % HERO_TITLE_FONTS.length
@@ -211,6 +238,12 @@ export function Hero({ data }: { data: Home['hero'] }) {
               .set(title, { fontFamily: HERO_TITLE_FONTS[cycleIndex] })
               .to(title, { opacity: TITLE_CYCLE_OPACITY, duration: FONT_SWAP_IN, ease: 'power2.out' })
           }, FONT_SWAP_MS)
+        } else if (cycleRunning && p <= RESET_THRESHOLD) {
+          // <= a small epsilon, not a bit-exact 0 — Lenis's own smoothing
+          // means scrolling back "to the top" settles a hair above 0.
+          cycleRunning = false
+          clearInterval(cycleIntervalId)
+          resetTitle()
         }
       },
     })
@@ -282,7 +315,9 @@ export function Hero({ data }: { data: Home['hero'] }) {
         </p>
 
         <h1 className={`${styles.heroTitle} reveal`} ref={titleRef}>
-          The Farmhouse
+          The
+          <br />
+          Farmhouse
         </h1>
 
         <p className={`${styles.heroSub} reveal`} ref={subRef}>
