@@ -121,6 +121,16 @@
   max-width: 100%;
 }
 
+/* Each word is its own block, shrink-to-fit (not stretched to the full
+   line width) so Hero.tsx can read its true width/position for the
+   one-line merge shift, and transformed independently of the scale above. */
+.heroTitleWord {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  will-change: transform;
+}
+
 .heroSub {
   font-family: var(--font-mont);
   font-weight: 500;
