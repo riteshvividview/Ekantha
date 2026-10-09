@@ -18,20 +18,18 @@ const framePath = (i: number) => `/hero-entrance/frame-${String(i + 1).padStart(
 const PX_PER_FRAME = 8
 const MIN_SCROLL_VH = 1.4
 
-// The eyebrow/sub disappear fast, right as scrolling begins — the title
-// itself (and its font-cycle, see below) stays on screen and keeps running
-// for the whole pinned entrance; only the CTA follows the old "hand off to
-// Story near the very end" beat.
+// The eyebrow/sub/CTA all disappear fast, right as scrolling begins — only
+// the title (and its font-cycle, see below) stays on screen for the whole
+// pinned entrance.
 const INTRO_FADE_START = 0
 const INTRO_FADE_END = 0.08
-const CTA_FADE_START = 0.72
-const CTA_FADE_END = 0.98
 
 // How often the title swaps to the next font in HERO_TITLE_FONTS, and how
-// long each swap's little flicker-out/flicker-in takes.
-const FONT_SWAP_MS = 650
-const FONT_SWAP_OUT = 0.14
-const FONT_SWAP_IN = 0.22
+// long each swap's little flicker-out/flicker-in takes — both scaled down
+// from the interval so consecutive swaps never overlap.
+const FONT_SWAP_MS = 200
+const FONT_SWAP_OUT = 0.05
+const FONT_SWAP_IN = 0.08
 
 const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v))
 const smoothstep = (edge0: number, edge1: number, x: number) => {
@@ -195,18 +193,17 @@ export function Hero({ data }: { data: Home['hero'] }) {
         const nearest = nearestLoadedFrame(currentFrame)
         if (nearest >= 0) drawFrame(nearest)
 
-        // Eyebrow + sub: gone almost as soon as scrolling starts.
+        // Eyebrow + sub + CTA: all gone almost as soon as scrolling starts.
+        // The title is deliberately left out of this — it, and its
+        // font-cycle, stay put for the entire pinned scroll.
         const introFade = smoothstep(INTRO_FADE_START, INTRO_FADE_END, p)
         const introStyle = { opacity: String(1 - introFade), transform: `translateY(${-10 * introFade}%)` }
         Object.assign(eyebrow.style, introStyle)
         Object.assign(sub.style, introStyle)
-
-        // CTA: kept through the whole entrance, lifts away right at the end
-        // (the title itself is deliberately left out of this — it, and its
-        // font-cycle, stay put for the entire pinned scroll).
-        const ctaFade = smoothstep(CTA_FADE_START, CTA_FADE_END, p)
-        explore.style.opacity = String(1 - ctaFade)
-        explore.style.transform = `translateY(${-14 * ctaFade}%)`
+        // explore (the CTA) gets opacity only, no transform — its transform
+        // is already owned by the cursor-parallax quickTo(x/y) below, and a
+        // second, independent writer of the same CSS property would fight it.
+        explore.style.opacity = String(1 - introFade)
       },
     })
 
