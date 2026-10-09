@@ -31,6 +31,12 @@ const FONT_SWAP_MS = 200
 const FONT_SWAP_OUT = 0.05
 const FONT_SWAP_IN = 0.08
 
+// Full opacity and no font-cycling at all until the intro text has cleared
+// (see INTRO_FADE_END above) — only then does the title dim down to this
+// and the cycle start, and it never reverts even if you scroll back up.
+const TITLE_REST_OPACITY = 1
+const TITLE_CYCLE_OPACITY = 0.55
+
 const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v))
 const smoothstep = (edge0: number, edge1: number, x: number) => {
   const t = clamp((x - edge0) / (edge1 - edge0 || 1), 0, 1)
@@ -52,46 +58,31 @@ export function Hero({ data }: { data: Home['hero'] }) {
   const exploreRef = useRef<HTMLAnchorElement>(null)
   const [ready, setReady] = useState(false)
 
-  // The title's font-cycling effect — runs continuously for as long as the
-  // page is open (not tied to scroll progress at all), looping through
-  // every face in HERO_TITLE_FONTS with a quick flicker transition between
-  // each. Skipped entirely under reduced motion, leaving the title on its
-  // default (Qalisten) font.
-  useEffect(() => {
-    const title = titleRef.current
-    if (!title) return undefined
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
-
-    let i = 0
-    const swap = () => {
-      i = (i + 1) % HERO_TITLE_FONTS.length
-      gsap
-        .timeline()
-        .to(title, { autoAlpha: 0.1, duration: FONT_SWAP_OUT, ease: 'power2.in' })
-        .set(title, { fontFamily: HERO_TITLE_FONTS[i] })
-        .to(title, { autoAlpha: 1, duration: FONT_SWAP_IN, ease: 'power2.out' })
-    }
-    gsap.set(title, { fontFamily: HERO_TITLE_FONTS[0] })
-    const id = setInterval(swap, FONT_SWAP_MS)
-    return () => clearInterval(id)
-  }, [])
-
   useEffect(() => {
     const hero = heroRef.current
     const canvas = canvasRef.current
     const eyebrow = eyebrowRef.current
+    const title = titleRef.current
     const sub = subRef.current
     const explore = exploreRef.current
-    if (!hero || !canvas || !eyebrow || !sub || !explore) return undefined
+    if (!hero || !canvas || !eyebrow || !title || !sub || !explore) return undefined
 
     const ctx2d = canvas.getContext('2d')
     if (!ctx2d) return undefined
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
+    // Default, static appearance: full opacity, first font in the rotation,
+    // no cycling — this is what's on screen until scroll triggers the
+    // effect below (or forever, under reduced motion).
+    gsap.set(title, { fontFamily: HERO_TITLE_FONTS[0], opacity: TITLE_REST_OPACITY })
+
     const frames: Array<HTMLImageElement | null> = new Array(FRAME_COUNT).fill(null)
     let currentFrame = 0
     let cancelled = false
+    let cycleStarted = false
+    let cycleIndex = 0
+    let cycleIntervalId: ReturnType<typeof setInterval> | undefined
 
     // -- canvas sizing / drawing (same cover-fit technique as BambooDine) --
 
@@ -204,12 +195,30 @@ export function Hero({ data }: { data: Home['hero'] }) {
         // is already owned by the cursor-parallax quickTo(x/y) below, and a
         // second, independent writer of the same CSS property would fight it.
         explore.style.opacity = String(1 - introFade)
+
+        // The title's font-cycle is a one-time latch, not reversible: once
+        // the intro text has fully cleared, the title dims down and starts
+        // looping through HERO_TITLE_FONTS, and it keeps running even if
+        // you scroll back up past this point.
+        if (!cycleStarted && p >= INTRO_FADE_END) {
+          cycleStarted = true
+          gsap.to(title, { opacity: TITLE_CYCLE_OPACITY, duration: 0.3, ease: 'power2.out' })
+          cycleIntervalId = setInterval(() => {
+            cycleIndex = (cycleIndex + 1) % HERO_TITLE_FONTS.length
+            gsap
+              .timeline()
+              .to(title, { opacity: 0.1, duration: FONT_SWAP_OUT, ease: 'power2.in' })
+              .set(title, { fontFamily: HERO_TITLE_FONTS[cycleIndex] })
+              .to(title, { opacity: TITLE_CYCLE_OPACITY, duration: FONT_SWAP_IN, ease: 'power2.out' })
+          }, FONT_SWAP_MS)
+        }
       },
     })
 
     return () => {
       cancelled = true
       resizeObserver.disconnect()
+      clearInterval(cycleIntervalId)
       // .kill(true) reverts the pin-spacer before React's own cleanup —
       // see the identical note in BambooDine.tsx for why that matters.
       trigger.kill(true)
@@ -273,9 +282,7 @@ export function Hero({ data }: { data: Home['hero'] }) {
         </p>
 
         <h1 className={`${styles.heroTitle} reveal`} ref={titleRef}>
-          The
-          <br />
-          Farmhouse
+          The Farmhouse
         </h1>
 
         <p className={`${styles.heroSub} reveal`} ref={subRef}>

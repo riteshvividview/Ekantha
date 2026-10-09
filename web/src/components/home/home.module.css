@@ -99,19 +99,23 @@
      --font-qalisten doesn't exist yet at that point in the tree), and that
      invalid value is what inherits down — the descendant's own valid
      --font-qalisten never gets a chance to re-resolve it. */
-  /* The starting font — Hero.tsx's font-cycle effect overrides this with an
-     inline style the instant it mounts (and keeps cycling it from there),
-     so this is only ever seen for a flash before JS runs, or at all under
-     prefers-reduced-motion (where the cycle is skipped). */
+  /* The starting font — Hero.tsx sets the real default (first entry in
+     HERO_TITLE_FONTS, at full opacity) imperatively on mount, then keeps it
+     there until scroll triggers the dim-down + font-cycle effect (or
+     forever, under prefers-reduced-motion). This is only ever seen for a
+     flash before that JS runs. */
   font-family: var(--font-qalisten), Georgia, serif;
   font-style: normal;
   font-weight: 400;
-  /* A little smaller than before, now that the font itself keeps changing. */
-  font-size: clamp(2.9rem, 7.6vw, 6.1rem);
-  line-height: 0.98;
+  /* Smaller than before, and sized to fit "The Farmhouse" on one line down
+     to fairly narrow viewports — it wraps naturally rather than clipping
+     if a screen is too narrow for even this size. */
+  font-size: clamp(1.9rem, 5vw, 3.8rem);
+  line-height: 1.05;
   letter-spacing: -0.01em;
   color: var(--white);
   margin-bottom: clamp(1.5rem, 4vw, 2.25rem);
+  max-width: 100%;
 }
 
 .heroSub {
