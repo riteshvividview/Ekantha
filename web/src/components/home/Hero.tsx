@@ -37,15 +37,14 @@ const FONT_SWAP_MS = 200
 const FONT_SWAP_OUT = 0.05
 const FONT_SWAP_IN = 0.08
 
-// Dimmed (not full-strength), default font, no growth at all until the
-// intro text has cleared (see INTRO_FADE_END above) — only then does the
-// title dim down further, start growing, and start cycling fonts. Both the
-// dim-down and the reset back to rest are real gsap.to transitions (not an
-// instant jump), and scrolling all the way back up to the very top
-// reverses all three: the cycle stops, and the title resets to its
-// default font at full size/rest opacity — scroll back down past
-// INTRO_FADE_END and it all starts again.
-const TITLE_REST_OPACITY = 0.45
+// Full opacity, default font, no growth at all until the intro text has
+// cleared (see INTRO_FADE_END above) — only then does the title dim down,
+// start growing, and start cycling fonts. Both the dim-down and the reset
+// back to rest are real gsap.to transitions (not an instant jump), and
+// scrolling all the way back up to the very top reverses all three: the
+// cycle stops, and the title resets to its default font at full size/rest
+// opacity — scroll back down past INTRO_FADE_END and it all starts again.
+const TITLE_REST_OPACITY = 1
 const TITLE_CYCLE_OPACITY = 0.1
 const TITLE_SCALE_REST = 1
 const TITLE_SCALE_GROWN = 1.3
