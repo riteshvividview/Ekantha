@@ -110,14 +110,17 @@ export function Hero({ data }: { data: Home['hero'] }) {
       gsap.killTweensOf(title)
       gsap.set(title, { fontFamily: HERO_TITLE_FONTS[0], opacity: TITLE_REST_OPACITY })
       cycleIndex = 0
+      measureMerge()
     }
-    resetTitle()
 
-    // The one-line merge shift (second word only) — measured once against
-    // the *untransformed* layout (both words at rest) so the onUpdate
-    // handler can apply a fixed target offset scaled by progress, rather
-    // than re-deriving it from a rect that's already been moved by a
-    // previous frame's transform.
+    // The one-line merge shift (second word only) — measured against the
+    // *untransformed* layout (both words at rest) so the onUpdate handler
+    // can apply a fixed target offset scaled by progress, rather than
+    // re-deriving it from a rect that's already been moved by a previous
+    // frame's transform. Re-measured on every font swap (not just once at
+    // mount) since each of the HERO_TITLE_FONTS has very different glyph
+    // widths/ascent, and centers (not tops) are what's aligned, since
+    // baselines don't line up consistently across such different faces.
     let mergeShiftX = 0
     let mergeShiftY = 0
     function measureMerge() {
@@ -126,12 +129,16 @@ export function Hero({ data }: { data: Home['hero'] }) {
       wordTwo.style.transform = 'none'
       const r1 = wordOne.getBoundingClientRect()
       const r2 = wordTwo.getBoundingClientRect()
-      const gap = r1.height * 0.22
+      const fontSize = parseFloat(getComputedStyle(wordOne).fontSize) || r1.height
+      const gap = fontSize * 0.22
       mergeShiftX = r1.width + gap
-      mergeShiftY = r1.top - r2.top
+      mergeShiftY = r1.top + r1.height / 2 - (r2.top + r2.height / 2)
       wordTwo.style.transform = prevTransform
     }
-    measureMerge()
+    resetTitle()
+    document.fonts.ready.then(() => {
+      if (!cancelled) measureMerge()
+    })
     const wordResizeObserver = new ResizeObserver(measureMerge)
     wordResizeObserver.observe(title)
 
@@ -281,6 +288,7 @@ export function Hero({ data }: { data: Home['hero'] }) {
               .timeline()
               .to(title, { opacity: 0.04, duration: FONT_SWAP_OUT, ease: 'power2.in' })
               .set(title, { fontFamily: HERO_TITLE_FONTS[cycleIndex] })
+              .call(measureMerge)
               .to(title, { opacity: TITLE_CYCLE_OPACITY, duration: FONT_SWAP_IN, ease: 'power2.out' })
           }, FONT_SWAP_MS)
         } else if (cycleRunning && p <= RESET_THRESHOLD) {
