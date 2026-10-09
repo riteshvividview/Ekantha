@@ -1,12 +1,10 @@
 import type { Metadata } from 'next'
-import localFont from 'next/font/local'
 import '../globals.css'
+import { qalisten, heroTitleFontVariables } from '@/lib/fonts'
 import { SmoothScrollProvider } from '@/components/layout/SmoothScrollProvider'
 import { TheatreStudioLoader } from '@/components/layout/TheatreStudioLoader'
 import { PageTransitionOverlay } from '@/components/chrome/PageTransitionOverlay'
-import { CursorDot } from '@/components/chrome/CursorDot'
 import { InteractionEffects } from '@/components/chrome/InteractionEffects'
-import { HoldPill } from '@/components/chrome/HoldPill'
 import { IdleNudge } from '@/components/chrome/IdleNudge'
 import { Navbar } from '@/components/chrome/Navbar'
 import { Footer } from '@/components/chrome/Footer'
@@ -30,24 +28,6 @@ export const metadata: Metadata = {
   description: 'Vana Ekantha — a farmstay for intentional disconnection. The Deccan, India.',
 }
 
-// Telegraf is the brand's own font file (not on Google Fonts), so it's
-// self-hosted via next/font/local rather than a <link> tag — that gets it
-// inlined as a preloaded, subsetted @font-face with font-display: swap
-// automatically, no extra round-trip to a CDN and no render-blocking
-// request, which is strictly faster than the <link>-tag approach used
-// below for Cascadia Code (kept as a plain Google Fonts <link>, matching
-// this app's established convention for CDN-hosted fonts — see the
-// comment on <html> below).
-const telegraf = localFont({
-  src: [
-    { path: '../../fonts/Telegraf-UltraLight.woff', weight: '200', style: 'normal' },
-    { path: '../../fonts/Telegraf-Regular.woff', weight: '400', style: 'normal' },
-    { path: '../../fonts/Telegraf-UltraBold.woff', weight: '800', style: 'normal' },
-  ],
-  variable: '--font-telegraf',
-  display: 'swap',
-})
-
 // This is the public site's own root layout — a sibling to (payload)'s root
 // layout, not a child of it. Next.js's "multiple root layouts" pattern:
 // each top-level route group owns its full <html>/<body>, and there is no
@@ -69,31 +49,41 @@ export default async function SiteRootLayout({ children }: { children: React.Rea
   ])
 
   return (
-    <html lang="en" data-scroll-behavior="smooth" className={telegraf.variable}>
+    <html lang="en" data-scroll-behavior="smooth">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://api.fontshare.com" />
+        <link rel="preconnect" href="https://cdn.fontshare.com" crossOrigin="anonymous" />
         {/* eslint-disable-next-line @next/next/no-page-custom-font -- this
             rule is a Pages Router-era check for per-page <Head> usage; this
             is the App Router *root* layout, so these tags are already
             site-wide, which is exactly what the rule is asking for. */}
         <link
-          href="https://fonts.googleapis.com/css2?family=Cascadia+Code:ital,wght@0,200..700;1,200..700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Cascadia+Code:ital,wght@0,200..700;1,200..700&family=Fraunces:ital,wght@0,400;1,400..600&family=Montserrat:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+        {/* Clash Display (headlines) + General Sans (body) from Fontshare —
+            free-license stand-ins for noomoagency.com's Neue Machina / Neue
+            Haas Grotesk Display pairing, which are paid commercial fonts we
+            don't hold a license for. Loaded the same way as Cascadia Code
+            above: a single hosted stylesheet, not next/font/local, since
+            there's no font file in this repo to subset. */}
+        <link
+          href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=general-sans@400,500,600,700&display=swap"
           rel="stylesheet"
         />
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css" rel="stylesheet" />
       </head>
-      <body>
+      <body className={`${qalisten.variable} ${heroTitleFontVariables}`}>
         <PageTransitionOverlay />
         <TheatreStudioLoader />
-        <CursorDot />
         <InteractionEffects />
-        <HoldPill />
         <IdleNudge />
         <SmoothScrollProvider>
           {nav.data && <Navbar data={nav.data} />}
           {children}
-          {footer.data && <Footer data={footer.data} />}
+          {footer.data && <Footer data={footer.data} nav={nav.data ?? undefined} />}
         </SmoothScrollProvider>
       </body>
     </html>

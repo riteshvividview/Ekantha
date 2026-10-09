@@ -99,10 +99,15 @@
      --font-qalisten doesn't exist yet at that point in the tree), and that
      invalid value is what inherits down — the descendant's own valid
      --font-qalisten never gets a chance to re-resolve it. */
+  /* The starting font — Hero.tsx's font-cycle effect overrides this with an
+     inline style the instant it mounts (and keeps cycling it from there),
+     so this is only ever seen for a flash before JS runs, or at all under
+     prefers-reduced-motion (where the cycle is skipped). */
   font-family: var(--font-qalisten), Georgia, serif;
   font-style: normal;
   font-weight: 400;
-  font-size: clamp(3.4rem, 9vw, 7.2rem);
+  /* A little smaller than before, now that the font itself keeps changing. */
+  font-size: clamp(2.9rem, 7.6vw, 6.1rem);
   line-height: 0.98;
   letter-spacing: -0.01em;
   color: var(--white);

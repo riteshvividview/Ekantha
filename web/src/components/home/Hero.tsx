@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Home } from '@/payload-types'
 import { gsap, ScrollTrigger } from '@/lib/animations/gsap'
+import { HERO_TITLE_FONTS } from '@/lib/fonts'
 import styles from './home.module.css'
 
 // Frames live in public/hero-entrance/ (frame-001.webp … frame-440.webp),
@@ -17,13 +18,20 @@ const framePath = (i: number) => `/hero-entrance/frame-${String(i + 1).padStart(
 const PX_PER_FRAME = 8
 const MIN_SCROLL_VH = 1.4
 
-// Where, in the pinned scroll range, the title/eyebrow/CTA start lifting
-// away — kept near the very end so they read as "present for the whole
-// walk in", then hand off to Story right as the entrance finishes (the
-// same beat the old non-pinned version had, just now tied to the frame
-// sequence's own progress instead of the hero's on-screen scroll range).
-const CONTENT_FADE_START = 0.72
-const CONTENT_FADE_END = 0.98
+// The eyebrow/sub disappear fast, right as scrolling begins — the title
+// itself (and its font-cycle, see below) stays on screen and keeps running
+// for the whole pinned entrance; only the CTA follows the old "hand off to
+// Story near the very end" beat.
+const INTRO_FADE_START = 0
+const INTRO_FADE_END = 0.08
+const CTA_FADE_START = 0.72
+const CTA_FADE_END = 0.98
+
+// How often the title swaps to the next font in HERO_TITLE_FONTS, and how
+// long each swap's little flicker-out/flicker-in takes.
+const FONT_SWAP_MS = 650
+const FONT_SWAP_OUT = 0.14
+const FONT_SWAP_IN = 0.22
 
 const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v))
 const smoothstep = (edge0: number, edge1: number, x: number) => {
@@ -40,15 +48,43 @@ export function Hero({ data }: { data: Home['hero'] }) {
   // cursor-parallax drift still has a symmetric overscan to pan into
   // without ever exposing an edge.
   const trackRef = useRef<HTMLDivElement>(null)
-  const contentRef = useRef<HTMLDivElement>(null)
+  const eyebrowRef = useRef<HTMLParagraphElement>(null)
+  const titleRef = useRef<HTMLHeadingElement>(null)
+  const subRef = useRef<HTMLParagraphElement>(null)
   const exploreRef = useRef<HTMLAnchorElement>(null)
   const [ready, setReady] = useState(false)
+
+  // The title's font-cycling effect — runs continuously for as long as the
+  // page is open (not tied to scroll progress at all), looping through
+  // every face in HERO_TITLE_FONTS with a quick flicker transition between
+  // each. Skipped entirely under reduced motion, leaving the title on its
+  // default (Qalisten) font.
+  useEffect(() => {
+    const title = titleRef.current
+    if (!title) return undefined
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
+
+    let i = 0
+    const swap = () => {
+      i = (i + 1) % HERO_TITLE_FONTS.length
+      gsap
+        .timeline()
+        .to(title, { autoAlpha: 0.1, duration: FONT_SWAP_OUT, ease: 'power2.in' })
+        .set(title, { fontFamily: HERO_TITLE_FONTS[i] })
+        .to(title, { autoAlpha: 1, duration: FONT_SWAP_IN, ease: 'power2.out' })
+    }
+    gsap.set(title, { fontFamily: HERO_TITLE_FONTS[0] })
+    const id = setInterval(swap, FONT_SWAP_MS)
+    return () => clearInterval(id)
+  }, [])
 
   useEffect(() => {
     const hero = heroRef.current
     const canvas = canvasRef.current
-    const content = contentRef.current
-    if (!hero || !canvas || !content) return undefined
+    const eyebrow = eyebrowRef.current
+    const sub = subRef.current
+    const explore = exploreRef.current
+    if (!hero || !canvas || !eyebrow || !sub || !explore) return undefined
 
     const ctx2d = canvas.getContext('2d')
     if (!ctx2d) return undefined
@@ -137,7 +173,7 @@ export function Hero({ data }: { data: Home['hero'] }) {
     preload()
 
     if (reduced) {
-      gsap.set(content, { autoAlpha: 1, y: 0 })
+      gsap.set([eyebrow, sub, explore], { autoAlpha: 1, y: 0 })
       return () => {
         cancelled = true
         resizeObserver.disconnect()
@@ -159,9 +195,18 @@ export function Hero({ data }: { data: Home['hero'] }) {
         const nearest = nearestLoadedFrame(currentFrame)
         if (nearest >= 0) drawFrame(nearest)
 
-        const fade = smoothstep(CONTENT_FADE_START, CONTENT_FADE_END, p)
-        content.style.opacity = String(1 - fade)
-        content.style.transform = `translateY(${-14 * fade}%)`
+        // Eyebrow + sub: gone almost as soon as scrolling starts.
+        const introFade = smoothstep(INTRO_FADE_START, INTRO_FADE_END, p)
+        const introStyle = { opacity: String(1 - introFade), transform: `translateY(${-10 * introFade}%)` }
+        Object.assign(eyebrow.style, introStyle)
+        Object.assign(sub.style, introStyle)
+
+        // CTA: kept through the whole entrance, lifts away right at the end
+        // (the title itself is deliberately left out of this — it, and its
+        // font-cycle, stay put for the entire pinned scroll).
+        const ctaFade = smoothstep(CTA_FADE_START, CTA_FADE_END, p)
+        explore.style.opacity = String(1 - ctaFade)
+        explore.style.transform = `translateY(${-14 * ctaFade}%)`
       },
     })
 
@@ -225,16 +270,20 @@ export function Hero({ data }: { data: Home['hero'] }) {
       </div>
       <div className={styles.heroLeftFade} aria-hidden="true" />
 
-      <div className={styles.heroContent} ref={contentRef}>
-        <p className={`${styles.heroEyebrow} reveal`}>A Stay Amidst Nature</p>
+      <div className={styles.heroContent}>
+        <p className={`${styles.heroEyebrow} reveal`} ref={eyebrowRef}>
+          A Stay Amidst Nature
+        </p>
 
-        <h1 className={`${styles.heroTitle} reveal`}>
+        <h1 className={`${styles.heroTitle} reveal`} ref={titleRef}>
           The
           <br />
           Farmhouse
         </h1>
 
-        <p className={`${styles.heroSub} reveal`}>Two Homes. One Unforgettable Escape.</p>
+        <p className={`${styles.heroSub} reveal`} ref={subRef}>
+          Two Homes. One Unforgettable Escape.
+        </p>
 
         <a href={data.primaryCtaHref || '#'} className={`${styles.heroExplore} reveal`} ref={exploreRef}>
           <span className={styles.heroExploreCircle} aria-hidden="true">
