@@ -114,9 +114,11 @@
   margin-bottom: clamp(1.5rem, 4vw, 2.25rem);
   /* Hero.tsx scales this up further as you scroll (a transform, not a
      font-size change, for a smooth GPU-cheap grow instead of layout
-     reflow on every frame) — transform-origin keeps that growth anchored
-     to the title's own left edge instead of visibly drifting rightward. */
-  transform-origin: left center;
+     reflow on every frame), growing evenly around its own center — it
+     also recenters the whole title in the hero section over that same
+     scroll range (see measureCenter/centerShiftX/Y in Hero.tsx), which
+     assumes this same center-based growth as its baseline. */
+  transform-origin: center center;
   will-change: transform;
   max-width: 100%;
 }

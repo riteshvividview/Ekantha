@@ -49,12 +49,16 @@ const TITLE_CYCLE_OPACITY = 0.1
 const TITLE_SCALE_REST = 1
 const TITLE_SCALE_GROWN = 1.3
 
-// The title starts as two stacked lines ("The" / "Farmhouse") and merges
-// into one as you scroll — a pure function of scroll progress applied to
-// the second word only (see measureMerge/mergeShiftX/Y below), so it's
-// reversible for free, same as the scale-growth above.
-const MERGE_START = INTRO_FADE_END
-const MERGE_END = 0.55
+// The title starts as two stacked lines ("The" / "Farmhouse"), left-
+// aligned with the rest of the intro copy — then, over this same scroll
+// range, it grows, merges into one line (second word only sliding up
+// beside the first, see measureMerge/mergeShiftX/Y below), and the whole
+// thing recenters in the hero section (see measureCenter/centerShiftX/Y
+// below). All three share this one progress curve so they read as a
+// single effect, and it's reversible for free: scrolling back up unwinds
+// all of it in lockstep, same as the scale-growth alone used to.
+const EFFECT_START = INTRO_FADE_END
+const EFFECT_END = 0.55
 
 const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v))
 const smoothstep = (edge0: number, edge1: number, x: number) => {
@@ -108,9 +112,13 @@ export function Hero({ data }: { data: Home['hero'] }) {
     // under reduced motion), and what it resets back to at the very top.
     const resetTitle = () => {
       gsap.killTweensOf(title)
-      gsap.set(title, { fontFamily: HERO_TITLE_FONTS[0], opacity: TITLE_REST_OPACITY })
+      // Font snaps back instantly (nothing meaningful to interpolate
+      // between two typefaces), but opacity eases back to full strength
+      // rather than jumping — same real transition the dim-down gets.
+      gsap.set(title, { fontFamily: HERO_TITLE_FONTS[0] })
+      gsap.to(title, { opacity: TITLE_REST_OPACITY, duration: 0.3, ease: 'power2.out' })
       cycleIndex = 0
-      measureMerge()
+      measureEffect()
     }
 
     // The one-line merge shift (second word only) — measured against the
@@ -121,25 +129,89 @@ export function Hero({ data }: { data: Home['hero'] }) {
     // mount) since each of the HERO_TITLE_FONTS has very different glyph
     // widths/ascent, and centers (not tops) are what's aligned, since
     // baselines don't line up consistently across such different faces.
+    // The gap is generous (not just a hair of breathing room) because
+    // several of these fonts are decorative/hand-lettered with swashes
+    // that overshoot their own logical glyph box — too tight a gap and
+    // those overshoots visually collide even though the boxes don't.
     let mergeShiftX = 0
     let mergeShiftY = 0
     function measureMerge() {
-      if (!wordOne || !wordTwo) return
-      const prevTransform = wordTwo.style.transform
+      if (!title || !wordOne || !wordTwo) return
+      // Font swaps fire on their own timer, independent of scroll — title
+      // can have any in-progress scale() applied at that instant. Since
+      // CSS transforms compose through the tree, that scale would get
+      // baked into these measured rects as a screen-pixel value, then
+      // re-scaled a second time when it's applied as wordTwo's own (local)
+      // transform — so both transforms are reset to get a clean,
+      // scale-1 measurement, consistent regardless of when it fires.
+      const prevTitleTransform = title.style.transform
+      const prevWordTwoTransform = wordTwo.style.transform
+      title.style.transform = 'none'
       wordTwo.style.transform = 'none'
       const r1 = wordOne.getBoundingClientRect()
       const r2 = wordTwo.getBoundingClientRect()
       const fontSize = parseFloat(getComputedStyle(wordOne).fontSize) || r1.height
-      const gap = fontSize * 0.22
+      const gap = fontSize * 0.4
       mergeShiftX = r1.width + gap
       mergeShiftY = r1.top + r1.height / 2 - (r2.top + r2.height / 2)
-      wordTwo.style.transform = prevTransform
+      title.style.transform = prevTitleTransform
+      wordTwo.style.transform = prevWordTwoTransform
     }
+
+    // The outer recenter shift (the whole title) — how far the *final*
+    // grown, merged, one-line title needs to move for its own center to
+    // land on the hero section's center. Measured by briefly posing the
+    // title in that final state (full scale + full merge, no recenter
+    // yet), reading its rect, then restoring whatever was actually on
+    // screen — same "simulate the end state once, scale the result by
+    // progress every frame" trick as measureMerge, so the real per-frame
+    // work stays a single multiply-and-set.
+    let centerShiftX = 0
+    let centerShiftY = 0
+    function measureCenter() {
+      if (!hero || !title || !wordOne || !wordTwo) return
+      const prevTitleTransform = title.style.transform
+      const prevWordTwoTransform = wordTwo.style.transform
+      title.style.transform = `scale(${TITLE_SCALE_GROWN})`
+      wordTwo.style.transform = `translate(${mergeShiftX}px, ${mergeShiftY}px)`
+      const heroRect = hero.getBoundingClientRect()
+      // The h1's own box doesn't expand to follow a transformed child
+      // sticking out of it — transforms affect paint position, not layout
+      // size — so the title's *visual* extent once merged is the union of
+      // both words' actual (transformed) rects, not title.getBoundingClientRect().
+      const r1 = wordOne.getBoundingClientRect()
+      const r2 = wordTwo.getBoundingClientRect()
+      const left = Math.min(r1.left, r2.left)
+      const right = Math.max(r1.right, r2.right)
+      const top = Math.min(r1.top, r2.top)
+      const bottom = Math.max(r1.bottom, r2.bottom)
+      centerShiftX = heroRect.left + heroRect.width / 2 - (left + right) / 2
+      centerShiftY = heroRect.top + heroRect.height / 2 - (top + bottom) / 2
+      title.style.transform = prevTitleTransform
+      wordTwo.style.transform = prevWordTwoTransform
+    }
+
+    function measureEffect() {
+      measureMerge()
+      measureCenter()
+    }
+
     resetTitle()
-    document.fonts.ready.then(() => {
-      if (!cancelled) measureMerge()
-    })
-    const wordResizeObserver = new ResizeObserver(measureMerge)
+    // Each of HERO_TITLE_FONTS is a separate font file next/font/local
+    // registers with `display: swap` — the browser only actually fetches
+    // one the first time it's *used*, rendering with fallback metrics
+    // until it arrives. Without this, the first time the timer-cycle
+    // reaches a font it hasn't shown yet, measureEffect() (called right
+    // after that swap) would measure the wrong, fallback-sized rect.
+    // Kicking off every font's load here, well before the cycle ever
+    // starts, means they're almost always already cached by then — and
+    // 'loadingdone' (not just the one-shot `fonts.ready`) catches it and
+    // remeasures even on the rare cold-cache swap that still races ahead.
+    for (const fontVar of HERO_TITLE_FONTS) {
+      document.fonts.load(`16px ${fontVar}`).catch(() => {})
+    }
+    document.fonts.addEventListener('loadingdone', measureEffect)
+    const wordResizeObserver = new ResizeObserver(measureEffect)
     wordResizeObserver.observe(title)
 
     // -- canvas sizing / drawing (same cover-fit technique as BambooDine) --
@@ -225,6 +297,7 @@ export function Hero({ data }: { data: Home['hero'] }) {
         cancelled = true
         resizeObserver.disconnect()
         wordResizeObserver.disconnect()
+        document.fonts.removeEventListener('loadingdone', measureEffect)
       }
     }
 
@@ -255,21 +328,20 @@ export function Hero({ data }: { data: Home['hero'] }) {
         // second, independent writer of the same CSS property would fight it.
         explore.style.opacity = String(1 - introFade)
 
-        // Size growth: a continuous function of scroll progress (not a
-        // one-shot tween), so it needs no special-case reset logic — it
-        // naturally shrinks back to TITLE_SCALE_REST as p returns to 0.
-        // transform only (see the will-change/transform-origin comment on
-        // .heroTitle in home.module.css) — cheap every frame, unlike
-        // animating font-size directly would be.
-        const growth = smoothstep(INTRO_FADE_END, 1, p)
-        title.style.transform = `scale(${TITLE_SCALE_REST + (TITLE_SCALE_GROWN - TITLE_SCALE_REST) * growth})`
-
-        // One-line merge: also a continuous function of p, applied only to
-        // the second word — "The" never moves, "Farmhouse" slides up and
-        // right to sit beside it as you scroll, and slides back apart on
-        // the way back up.
-        const merge = smoothstep(MERGE_START, MERGE_END, p)
-        wordTwo.style.transform = `translate(${mergeShiftX * merge}px, ${mergeShiftY * merge}px)`
+        // Grow + merge + recenter: one shared progress curve driving all
+        // three (not a one-shot tween), so it needs no special-case reset
+        // logic — it naturally unwinds back to TITLE_SCALE_REST/two stacked
+        // lines/original left-aligned position as p returns to 0.
+        const effect = smoothstep(EFFECT_START, EFFECT_END, p)
+        const scaleNow = TITLE_SCALE_REST + (TITLE_SCALE_GROWN - TITLE_SCALE_REST) * effect
+        // translate before scale: centerShiftX/Y are literal pixel deltas
+        // measured against the already-grown, already-merged state (see
+        // measureCenter), so they must apply in that same post-scale space
+        // — translate() listed first in the transform does exactly that.
+        title.style.transform = `translate(${centerShiftX * effect}px, ${centerShiftY * effect}px) scale(${scaleNow})`
+        // "The" never moves — "Farmhouse" slides up and right to sit
+        // beside it as you scroll, and slides back apart on the way back up.
+        wordTwo.style.transform = `translate(${mergeShiftX * effect}px, ${mergeShiftY * effect}px)`
 
         // The font-cycle, unlike the growth/merge above, is stateful (which
         // font is showing is a matter of which interval tick last fired,
@@ -288,7 +360,7 @@ export function Hero({ data }: { data: Home['hero'] }) {
               .timeline()
               .to(title, { opacity: 0.04, duration: FONT_SWAP_OUT, ease: 'power2.in' })
               .set(title, { fontFamily: HERO_TITLE_FONTS[cycleIndex] })
-              .call(measureMerge)
+              .call(measureEffect)
               .to(title, { opacity: TITLE_CYCLE_OPACITY, duration: FONT_SWAP_IN, ease: 'power2.out' })
           }, FONT_SWAP_MS)
         } else if (cycleRunning && p <= RESET_THRESHOLD) {
@@ -305,6 +377,7 @@ export function Hero({ data }: { data: Home['hero'] }) {
       cancelled = true
       resizeObserver.disconnect()
       wordResizeObserver.disconnect()
+      document.fonts.removeEventListener('loadingdone', measureEffect)
       clearInterval(cycleIntervalId)
       // .kill(true) reverts the pin-spacer before React's own cleanup —
       // see the identical note in BambooDine.tsx for why that matters.
