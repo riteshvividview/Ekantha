@@ -18,6 +18,16 @@ const framePath = (i: number) => `/hero-entrance/frame-${String(i + 1).padStart(
 const PX_PER_FRAME = 8
 const MIN_SCROLL_VH = 1.4
 
+// Extra scroll distance (in viewport-heights) the hero stays pinned for
+// *after* its own effects below have fully finished, before unpinning —
+// a brief held beat so Story (the next section, with its own dark bg)
+// doesn't appear to snap in right on the heels of the title settling.
+// Nothing new happens during this extra stretch; see how `p` is derived
+// from `rawProgress` in the trigger's onUpdate below for why the existing
+// effects still complete at exactly the same scroll depth as before,
+// unstretched, regardless of this addition.
+const HOLD_VH = 0.5
+
 // The eyebrow/sub/CTA all disappear fast, right as scrolling begins — only
 // the title (and its font-cycle, see below) stays on screen for the whole
 // pinned entrance.
@@ -81,6 +91,7 @@ export function Hero({ data }: { data: Home['hero'] }) {
   const wordTwoRef = useRef<HTMLSpanElement>(null)
   const subRef = useRef<HTMLParagraphElement>(null)
   const exploreRef = useRef<HTMLAnchorElement>(null)
+  const leavesRef = useRef<HTMLSpanElement>(null)
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
@@ -302,16 +313,24 @@ export function Hero({ data }: { data: Home['hero'] }) {
     }
 
     const scrollDistance = Math.max(FRAME_COUNT * PX_PER_FRAME, window.innerHeight * MIN_SCROLL_VH)
+    const holdDistance = window.innerHeight * HOLD_VH
+    const totalDistance = scrollDistance + holdDistance
+    // What fraction of the *extended* pin is the original effect — used to
+    // rescale rawProgress back down to the same 0..1 "p" the effects below
+    // have always used, so adding the hold distance doesn't stretch/slow
+    // them down. p clamps at 1 once rawProgress moves past that fraction,
+    // i.e. for the entire hold phase.
+    const heroFrac = scrollDistance / totalDistance
 
     const trigger = ScrollTrigger.create({
       trigger: hero,
       start: 'top top',
-      end: () => `+=${scrollDistance}`,
+      end: () => `+=${totalDistance}`,
       pin: true,
       scrub: true,
       invalidateOnRefresh: true,
       onUpdate: (self) => {
-        const p = self.progress
+        const p = Math.min(1, self.progress / heroFrac)
         currentFrame = Math.round(p * (FRAME_COUNT - 1))
         const nearest = nearestLoadedFrame(currentFrame)
         if (nearest >= 0) drawFrame(nearest)
@@ -426,6 +445,52 @@ export function Hero({ data }: { data: Home['hero'] }) {
     }
   }, [])
 
+  // A little puff of leaves that scatters off the circle each time the CTA
+  // is hovered — a one-shot burst-and-fade (not a held hover state), which
+  // reads more like a small, deliberate flourish than a sticky UI state.
+  // Separate from the cursor-parallax effect above since it animates its
+  // own child elements, not exploreRef's own x/y (already owned by that
+  // effect's quickTo).
+  useEffect(() => {
+    const explore = exploreRef.current
+    const leaves = leavesRef.current
+    if (!explore || !leaves) return undefined
+    if (window.matchMedia('(hover: none)').matches) return undefined
+
+    const leafEls = Array.from(leaves.querySelectorAll<HTMLElement>('i'))
+    const burstX = [-15, 2, 17]
+    const burstY = [-19, -27, -17]
+    const burstRotate = [-28, 6, 32]
+
+    const onEnter = () => {
+      gsap.killTweensOf(leafEls)
+      gsap.set(leafEls, { opacity: 0, x: 0, y: 0, rotate: 0, scale: 0.3 })
+      gsap
+        .timeline()
+        .to(leafEls, {
+          opacity: 0.9,
+          scale: 1,
+          x: (i) => burstX[i],
+          y: (i) => burstY[i],
+          rotate: (i) => burstRotate[i],
+          duration: 0.5,
+          ease: 'power2.out',
+          stagger: 0.05,
+        })
+        .to(
+          leafEls,
+          { opacity: 0, y: '+=14', duration: 0.45, ease: 'power1.in', stagger: 0.05 },
+          '+=0.05',
+        )
+    }
+
+    explore.addEventListener('pointerenter', onEnter)
+    return () => {
+      explore.removeEventListener('pointerenter', onEnter)
+      gsap.killTweensOf(leafEls)
+    }
+  }, [])
+
   return (
     // data-nav-hero: toggles the transparent-over-hero nav treatment — see Navbar.tsx
     <section className={styles.hero} id="top" ref={heroRef} data-nav-hero>
@@ -457,6 +522,11 @@ export function Hero({ data }: { data: Home['hero'] }) {
         <a href={data.primaryCtaHref || '#'} className={`${styles.heroExplore} reveal`} ref={exploreRef}>
           <span className={styles.heroExploreCircle} aria-hidden="true">
             <i className="fa-solid fa-arrow-right" />
+            <span className={styles.heroExploreLeaves} ref={leavesRef} aria-hidden="true">
+              <i className="fa-solid fa-leaf" />
+              <i className="fa-solid fa-leaf" />
+              <i className="fa-solid fa-leaf" />
+            </span>
           </span>
           Explore the Experience
         </a>

@@ -8,6 +8,11 @@
 
 .hero {
   position: relative;
+  /* Explicit (not just relying on default DOM-order stacking) so Story
+     reliably paints above it once GSAP pins it fixed — see the
+     pin-and-cover ScrollTrigger in Story.tsx, and .story's z-index in
+     Story.module.css. */
+  z-index: 1;
   overflow: hidden;
   min-height: 100vh;
   min-height: 100svh;
@@ -83,7 +88,7 @@
 .heroEyebrow {
   font-family: var(--font-mont);
   font-weight: 600;
-  font-size: clamp(0.72rem, 1.6vw, 0.82rem);
+  font-size: clamp(0.66rem, 1.4vw, 0.76rem);
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.82);
@@ -136,7 +141,7 @@
 .heroSub {
   font-family: var(--font-mont);
   font-weight: 500;
-  font-size: clamp(0.8rem, 1.8vw, 0.95rem);
+  font-size: clamp(0.74rem, 1.6vw, 0.86rem);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   line-height: 1.7;
@@ -149,14 +154,17 @@
   display: inline-flex;
   align-items: center;
   gap: 0.85rem;
-  font-family: var(--font-mont);
-  font-weight: 600;
-  font-size: clamp(0.78rem, 1.6vw, 0.85rem);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  /* --font-qalisten is set on <body> (next/font/local's `variable`
+     class) — the title's own display font, not the site's usual body
+     font (--font-mont). */
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(1.15rem, 2.3vw, 1.35rem);
+  letter-spacing: 0.1em;
   color: var(--white);
 }
 .heroExploreCircle {
+  position: relative;
   width: 44px;
   height: 44px;
   flex-shrink: 0;
@@ -173,6 +181,29 @@
   color: var(--ink);
   border-color: var(--white);
   transform: translateX(4px);
+}
+
+/* A little puff of leaves that scatters off the circle on hover (see
+   Hero.tsx's leaf-burst GSAP timeline, triggered on pointerenter) — each
+   <i> starts invisible, pinned to the circle's center, and gets animated
+   outward/rotated/faded entirely via inline style by that timeline. */
+.heroExploreLeaves {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.heroExploreLeaves i {
+  /* Centered via inset+margin:auto, not transform — GSAP owns `transform`
+     entirely for the burst (x/y/rotation/scale), and needs a clean slate
+     to animate from rather than a pre-existing translate to decompose. */
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: fit-content;
+  height: fit-content;
+  font-size: 0.6rem;
+  color: var(--white);
+  opacity: 0;
 }
 
 /* ── Ticker ─────────────────────────────────────────────────── */

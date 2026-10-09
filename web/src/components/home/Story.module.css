@@ -1,13 +1,56 @@
-/* Always dark — matches the hero video's own tone (#211610), independent
-   of the shared --white/--ink page-theme tokens the rest of the homepage
-   crossfades between (same "always dark regardless of page theme" pattern
-   BambooDine/ExperienceReel/Gallery's hero already use). */
+/* Always dark, independent of the shared --white/--ink page-theme tokens
+   the rest of the homepage crossfades between (same "always dark
+   regardless of page theme" pattern BambooDine/ExperienceReel/Gallery's
+   hero already use) — a near-black, deliberately *not* warm/brown like
+   the hero's own lighting, plus a couple of soft ambient glows and a
+   fine grain texture (see .glowWarm/.glowCool/.grain) for depth instead
+   of a flat fill. z-index above the hero (see .hero in home.module.css)
+   so it visually covers the hero as it scrolls up over it — see the
+   pin-and-cover ScrollTrigger in Story.tsx. */
 .story {
   position: relative;
+  z-index: 5;
   overflow: hidden;
   padding: clamp(6rem, 14vw, 12rem) var(--pad-x) clamp(5rem, 10vw, 9rem);
-  background: #211610;
+  background: #0c0e0c;
   color: #f6ecdc;
+}
+
+.glow {
+  position: absolute;
+  z-index: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform;
+}
+.glowWarm {
+  composes: glow;
+  top: -10%;
+  right: -10%;
+  width: min(55vw, 760px);
+  height: min(55vw, 760px);
+  background: radial-gradient(circle, rgba(214, 150, 80, 0.16) 0%, rgba(214, 150, 80, 0) 70%);
+}
+.glowCool {
+  composes: glow;
+  bottom: -15%;
+  left: -8%;
+  width: min(50vw, 680px);
+  height: min(50vw, 680px);
+  background: radial-gradient(circle, rgba(90, 140, 110, 0.12) 0%, rgba(90, 140, 110, 0) 70%);
+}
+
+/* Fine grain for cinematic depth over the flat fill — an inline SVG
+   feTurbulence noise, not an image asset. mix-blend-mode so it reads as
+   texture rather than a visible gray haze. */
+.grain {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 /* Outlined giant backdrop word, drifting sideways on scroll. */
