@@ -5,11 +5,11 @@ import type { Home } from '@/payload-types'
 import { gsap, ScrollTrigger } from '@/lib/animations/gsap'
 import styles from './home.module.css'
 
-// Frames live in public/hero-entrance/ (frame-001.webp … frame-240.webp),
-// generated from the raw 240-PNG "walking into the estate" sequence via
+// Frames live in public/hero-entrance/ (frame-001.webp … frame-440.webp),
+// extracted at 24fps from a single landscape video via
 // scripts/convert-hero-frames.mjs — see that file's header comment. Same
 // technique as BambooDine.tsx: a canvas, not DOM <img>s, scroll-scrubbed.
-const FRAME_COUNT = 240
+const FRAME_COUNT = 440
 const framePath = (i: number) => `/hero-entrance/frame-${String(i + 1).padStart(3, '0')}.webp`
 
 // Scroll distance (px) the hero stays pinned for, spread across the whole

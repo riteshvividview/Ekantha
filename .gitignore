@@ -1,7 +1,9 @@
-# Raw source frame sequences for the site's scroll-scrubbed sections — each
-# is a disposable intermediate (hundreds of MB of full-size PNGs) that gets
-# converted to a much smaller WebP sequence under web/public/ by a one-off
-# script (see web/scripts/convert-*-frames.mjs); that converted output is
-# what the site actually serves and is what's committed, not these.
+# Raw source material for the site's scroll-scrubbed sections — each is a
+# disposable intermediate (a full-size PNG sequence, or a single source
+# video) that gets converted to a much smaller WebP sequence under
+# web/public/ by a one-off script (see web/scripts/convert-*-frames.mjs);
+# that converted output is what the site actually serves and is what's
+# committed, not these.
 choose-your-escape-frames/
 Hero-page-entrance-frames/
+hero-bg-frames-replace.mp4
