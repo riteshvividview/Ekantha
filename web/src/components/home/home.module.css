@@ -141,7 +141,6 @@
   color: var(--white);
 }
 .heroExploreCircle {
-  position: relative;
   width: 44px;
   height: 44px;
   flex-shrink: 0;
@@ -160,24 +159,32 @@
   transform: translateX(4px);
 }
 
-/* A little puff of leaves that scatters off the circle on hover (see
-   Hero.tsx's leaf-burst GSAP timeline, triggered on pointerenter) — each
-   <i> starts invisible, pinned to the circle's center, and gets animated
-   outward/rotated/faded entirely via inline style by that timeline. */
+/* Anchors the leaf-burst to the top-right corner of the text (right at
+   the end of "Experience"), not the circle — positioning context for
+   .heroExploreLeaves below. */
+.heroExploreText {
+  position: relative;
+  display: inline-block;
+}
+
+/* A little puff of leaves that scatters off the end of the text on hover
+   (see Hero.tsx's leaf-burst GSAP timeline, triggered on pointerenter) —
+   each <i> starts invisible, pinned to this top-right corner, and gets
+   animated outward/rotated/faded entirely via inline style by that
+   timeline. */
 .heroExploreLeaves {
   position: absolute;
-  inset: 0;
+  top: -0.3em;
+  right: -0.2em;
   pointer-events: none;
 }
 .heroExploreLeaves i {
-  /* Centered via inset+margin:auto, not transform — GSAP owns `transform`
-     entirely for the burst (x/y/rotation/scale), and needs a clean slate
-     to animate from rather than a pre-existing translate to decompose. */
+  /* GSAP owns `transform` entirely for the burst (x/y/rotation/scale),
+     starting from this shared anchor point — no pre-existing transform
+     to decompose. */
   position: absolute;
-  inset: 0;
-  margin: auto;
-  width: fit-content;
-  height: fit-content;
+  top: 0;
+  right: 0;
   font-size: 0.6rem;
   color: var(--white);
   opacity: 0;

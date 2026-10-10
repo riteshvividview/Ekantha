@@ -227,12 +227,13 @@ export function Hero({ data }: { data: Home['hero'] }) {
     }
   }, [])
 
-  // A little puff of leaves that scatters off the circle each time the CTA
-  // is hovered — a one-shot burst-and-fade (not a held hover state), which
-  // reads more like a small, deliberate flourish than a sticky UI state.
-  // Separate from the cursor-parallax effect above since it animates its
-  // own child elements, not exploreRef's own x/y (already owned by that
-  // effect's quickTo).
+  // A little puff of leaves that scatters off the top-right corner of
+  // "Explore the Experience" each time the CTA is hovered — a one-shot
+  // burst-and-fade (not a held hover state), which reads more like a
+  // small, deliberate flourish than a sticky UI state. Separate from the
+  // cursor-parallax effect above since it animates its own child
+  // elements, not exploreRef's own x/y (already owned by that effect's
+  // quickTo).
   useEffect(() => {
     const explore = exploreRef.current
     const leaves = leavesRef.current
@@ -240,9 +241,12 @@ export function Hero({ data }: { data: Home['hero'] }) {
     if (window.matchMedia('(hover: none)').matches) return undefined
 
     const leafEls = Array.from(leaves.querySelectorAll<HTMLElement>('i'))
-    const burstX = [-15, 2, 17]
-    const burstY = [-19, -27, -17]
-    const burstRotate = [-28, 6, 32]
+    // Fanning up and to the right, away from the text — the anchor point
+    // itself already sits at the corner (see .heroExploreLeaves), so
+    // these only need to carry the leaves further outward from there.
+    const burstX = [6, 16, 26]
+    const burstY = [-18, -28, -14]
+    const burstRotate = [-12, 12, 30]
 
     const onEnter = () => {
       gsap.killTweensOf(leafEls)
@@ -301,13 +305,15 @@ export function Hero({ data }: { data: Home['hero'] }) {
         <a href={data.primaryCtaHref || '#'} className={`${styles.heroExplore} reveal`} ref={exploreRef}>
           <span className={styles.heroExploreCircle} aria-hidden="true">
             <i className="fa-solid fa-arrow-right" />
+          </span>
+          <span className={styles.heroExploreText}>
+            Explore the Experience
             <span className={styles.heroExploreLeaves} ref={leavesRef} aria-hidden="true">
               <i className="fa-solid fa-leaf" />
               <i className="fa-solid fa-leaf" />
               <i className="fa-solid fa-leaf" />
             </span>
           </span>
-          Explore the Experience
         </a>
       </div>
     </section>
