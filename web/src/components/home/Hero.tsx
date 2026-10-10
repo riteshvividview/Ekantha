@@ -118,7 +118,7 @@ export function Hero({ data }: { data: Home['hero'] }) {
     let cycleIntervalId: ReturnType<typeof setInterval> | undefined
 
     // Default, static appearance: full opacity, full size, default font
-    // (Christmas Farmhouse — HERO_TITLE_FONTS[0]), no cycling — this is
+    // (Qalisten, uppercase — HERO_TITLE_FONTS[0]), no cycling — this is
     // what's on screen until scroll triggers the effect below (or forever,
     // under reduced motion), and what it resets back to at the very top.
     const resetTitle = () => {

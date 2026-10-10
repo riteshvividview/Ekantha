@@ -112,6 +112,7 @@
   font-family: var(--font-qalisten), Georgia, serif;
   font-style: normal;
   font-weight: 400;
+  text-transform: uppercase;
   font-size: clamp(2.9rem, 7.8vw, 6.2rem);
   line-height: 0.98;
   letter-spacing: -0.01em;

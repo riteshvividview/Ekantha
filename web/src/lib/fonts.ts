@@ -54,13 +54,13 @@ export const montserratBlack = localFont({
 export const HERO_TITLE_FONTS = [
   // First entry = the default shown before scroll starts the cycle, and
   // what it resets back to if you scroll all the way back to the top.
+  'var(--font-qalisten)',
   'var(--font-christmas-farmhouse)',
   'var(--font-chicken-farmhouse)',
   'var(--font-farmhouse-monogram)',
   'var(--font-fieldhouse)',
   'var(--font-green-house)',
   'var(--font-montserrat-black)',
-  'var(--font-qalisten)',
 ] as const
 
 // Combined so the site root layout can put every variable's class on <body>
