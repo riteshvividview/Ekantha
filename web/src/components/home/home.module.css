@@ -104,39 +104,15 @@
      --font-qalisten doesn't exist yet at that point in the tree), and that
      invalid value is what inherits down — the descendant's own valid
      --font-qalisten never gets a chance to re-resolve it. */
-  /* The starting font — Hero.tsx sets the real default (first entry in
-     HERO_TITLE_FONTS, at full opacity) imperatively on mount, then keeps it
-     there until scroll triggers the dim-down + font-cycle effect (or
-     forever, under prefers-reduced-motion). This is only ever seen for a
-     flash before that JS runs. */
   font-family: var(--font-qalisten), Georgia, serif;
   font-style: normal;
   font-weight: 400;
-  text-transform: uppercase;
   font-size: clamp(2.9rem, 7.8vw, 6.2rem);
   line-height: 0.98;
   letter-spacing: -0.01em;
   color: var(--white);
   margin-bottom: clamp(1.5rem, 4vw, 2.25rem);
-  /* Hero.tsx scales this up further as you scroll (a transform, not a
-     font-size change, for a smooth GPU-cheap grow instead of layout
-     reflow on every frame), growing evenly around its own center — it
-     also recenters the whole title in the hero section over that same
-     scroll range (see measureCenter/centerShiftX/Y in Hero.tsx), which
-     assumes this same center-based growth as its baseline. */
-  transform-origin: center center;
-  will-change: transform;
   max-width: 100%;
-}
-
-/* Each word is its own block, shrink-to-fit (not stretched to the full
-   line width) so Hero.tsx can read its true width/position for the
-   one-line merge shift, and transformed independently of the scale above. */
-.heroTitleWord {
-  display: block;
-  width: max-content;
-  max-width: 100%;
-  will-change: transform;
 }
 
 .heroSub {

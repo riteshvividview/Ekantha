@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import '../globals.css'
-import { qalisten, heroTitleFontVariables } from '@/lib/fonts'
+import { qalisten } from '@/lib/fonts'
 import { SmoothScrollProvider } from '@/components/layout/SmoothScrollProvider'
 import { TheatreStudioLoader } from '@/components/layout/TheatreStudioLoader'
 import { PageTransitionOverlay } from '@/components/chrome/PageTransitionOverlay'
@@ -75,7 +75,7 @@ export default async function SiteRootLayout({ children }: { children: React.Rea
         />
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css" rel="stylesheet" />
       </head>
-      <body className={`${qalisten.variable} ${heroTitleFontVariables}`}>
+      <body className={qalisten.variable}>
         <PageTransitionOverlay />
         <TheatreStudioLoader />
         <InteractionEffects />
