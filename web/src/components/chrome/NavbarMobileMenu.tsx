@@ -1,65 +1,151 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import type { CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
+import { useLenis } from 'lenis/react'
 import type { Navigation } from '@/payload-types'
+import { isItemActive } from './navModel'
+import type { NavItem } from './navModel'
 
 type Props = {
-  links: NonNullable<Navigation['primaryLinks']>
+  items: NavItem[]
   cta?: Navigation['cta']
   pathname: string
 }
 
-export function NavbarMobileMenu({ links, cta, pathname }: Props) {
+/**
+ * Full-screen menu for tablet/phone widths. Opens as a circle that grows out
+ * of the burger, then the links rise in one after another; Stay/Experiences
+ * expand as accordions with the same thumbnails as the desktop dropdown.
+ */
+export function NavbarMobileMenu({ items, cta, pathname }: Props) {
   const [open, setOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [expanded, setExpanded] = useState<string | null>(null)
+  const lenis = useLenis()
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setMounted(true))
     return () => cancelAnimationFrame(id)
   }, [])
 
+  // Close when the route changes.
+  useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      setOpen(false)
+      setExpanded(null)
+    })
+    return () => cancelAnimationFrame(id)
+  }, [pathname])
+
+  // Lock page scroll while open, Escape to close.
+  useEffect(() => {
+    if (!open) return undefined
+    lenis?.stop()
+    document.documentElement.style.overflow = 'hidden'
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false)
+    window.addEventListener('keydown', onKey)
+    return () => {
+      lenis?.start()
+      document.documentElement.style.overflow = ''
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [open, lenis])
+
+  // Leaving the phone/tablet range while open would strand the panel.
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1101px)')
+    const onChange = () => mq.matches && setOpen(false)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
+  const close = () => setOpen(false)
+  const step = (i: number) => ({ '--d': `${140 + i * 60}ms` }) as CSSProperties
+
   const panel = (
-    <div className={`ve-navbar-mobile${open ? ' open' : ''}`}>
-      {links.map((link, i) => {
-        const active = pathname === link.href || link.submenu?.some((sub) => sub.href === pathname)
-        return (
-          <div
-            key={link.id ?? link.label}
-            className="ve-navbar-mobile-item"
-            style={{ transitionDelay: open ? `${80 + i * 45}ms` : '0ms' }}
-          >
-            <a href={link.href} className={active ? 've-navbar-link-active' : undefined} onClick={() => setOpen(false)}>
-              {link.label}
-            </a>
-            {link.submenu && link.submenu.length > 0 && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem', paddingLeft: '1rem' }}>
-                {link.submenu.map((sub) => (
+    <div className="ve-mnav" data-open={open ? 'true' : 'false'} aria-hidden={!open}>
+      <div className="ve-mnav-glow" aria-hidden="true" />
+      <nav className="ve-mnav-inner" aria-label="Mobile">
+        <ul className="ve-mnav-list">
+          {items.map((item, i) => {
+            const active = isItemActive(pathname, item)
+            const kids = item.children ?? []
+            const isOpen = expanded === item.key
+            return (
+              <li className="ve-mnav-item" style={step(i)} key={item.key}>
+                {kids.length > 0 ? (
+                  <>
+                    <button
+                      type="button"
+                      className={`ve-mnav-row${active ? ' ve-mnav-active' : ''}`}
+                      aria-expanded={isOpen}
+                      onClick={() => setExpanded(isOpen ? null : item.key)}
+                      tabIndex={open ? 0 : -1}
+                    >
+                      <span className="ve-mnav-num">{String(i + 1).padStart(2, '0')}</span>
+                      <span className="ve-mnav-label">{item.label}</span>
+                      <span className="ve-mnav-plus" aria-hidden="true">
+                        <i className="fa-solid fa-plus" />
+                      </span>
+                    </button>
+                    <div className="ve-mnav-sub" data-open={isOpen ? 'true' : 'false'}>
+                      <div className="ve-mnav-sub-inner">
+                        {kids.map((c) => (
+                          <a
+                            href={c.href}
+                            key={c.href}
+                            className={`ve-mnav-child${pathname === c.href ? ' ve-mnav-active' : ''}`}
+                            onClick={close}
+                            tabIndex={open && isOpen ? 0 : -1}
+                          >
+                            <span className="ve-mnav-thumb">
+                              {c.image ? <img src={c.image} alt="" /> : <i className={`fa-solid ${c.icon}`} aria-hidden="true" />}
+                            </span>
+                            <span>
+                              <strong>{c.label}</strong>
+                              {c.sub && <small>{c.sub}</small>}
+                            </span>
+                            <i className="fa-solid fa-arrow-right" aria-hidden="true" />
+                          </a>
+                        ))}
+                        {item.all && (
+                          <a href={item.all.href} className="ve-mnav-all" onClick={close} tabIndex={open && isOpen ? 0 : -1}>
+                            {item.all.label} <i className="fa-solid fa-arrow-right" aria-hidden="true" />
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                ) : (
                   <a
-                    href={sub.href}
-                    key={sub.id ?? sub.label}
-                    onClick={() => setOpen(false)}
-                    className={pathname === sub.href ? 've-navbar-link-active' : undefined}
-                    style={{ fontSize: '1rem', color: pathname === sub.href ? undefined : 'var(--ink-soft)' }}
+                    href={item.href ?? '#'}
+                    className={`ve-mnav-row${active ? ' ve-mnav-active' : ''}`}
+                    onClick={close}
+                    tabIndex={open ? 0 : -1}
                   >
-                    {sub.label}
+                    <span className="ve-mnav-num">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="ve-mnav-label">{item.label}</span>
+                    <span className="ve-mnav-plus ve-mnav-go" aria-hidden="true">
+                      <i className="fa-solid fa-arrow-right" />
+                    </span>
                   </a>
-                ))}
-              </div>
-            )}
-          </div>
-        )
-      })}
-      {cta?.href && (
-        <a
-          href={cta.href}
-          className="btn btn-primary ve-navbar-mobile-item"
-          onClick={() => setOpen(false)}
-          style={{ marginTop: '1rem', transitionDelay: open ? `${80 + links.length * 45}ms` : '0ms' }}
-        >
-          {cta.label}
-        </a>
-      )}
+                )}
+              </li>
+            )
+          })}
+        </ul>
+
+        {cta?.href && (
+          <a href={cta.href} className="ve-mnav-cta" style={step(items.length)} onClick={close} tabIndex={open ? 0 : -1}>
+            <span>{cta.label}</span>
+            <span className="ve-nav-cta-icon" aria-hidden="true">
+              <i className="fa-solid fa-arrow-right" />
+            </span>
+          </a>
+        )}
+      </nav>
     </div>
   )
 
@@ -67,38 +153,20 @@ export function NavbarMobileMenu({ links, cta, pathname }: Props) {
     <>
       <button
         type="button"
-        className="ve-navbar-burger"
+        className="ve-nav-burger"
+        data-open={open ? 'true' : 'false'}
         aria-label={open ? 'Close menu' : 'Open menu'}
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
       >
-        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-          {open ? (
-            <path
-              d="M6,6 L18,18 M18,6 L6,18"
-              stroke="var(--ink)"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-              fill="none"
-            />
-          ) : (
-            <path
-              d="M4,7 L20,7 M4,12 L20,12 M4,17 L20,17"
-              stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-              fill="none"
-            />
-          )}
-        </svg>
+        <span />
+        <span />
+        <span />
       </button>
 
-      {/* Portaled straight to <body> rather than rendered inline here —
-          this panel is `position: fixed`, and any ancestor with a
-          `transform` (even the navbar's own entrance-fade `translateY(0)`)
-          would silently change what "fixed" is positioned relative to,
-          leaving it stuck near the top of the page instead of off-screen.
-          See the git history for how that actually happened once. */}
+      {/* Portaled straight to <body>: this panel is `position: fixed`, and any
+          transformed ancestor (the header's hide-on-scroll transform) would
+          silently change what "fixed" is relative to. */}
       {mounted && createPortal(panel, document.body)}
     </>
   )

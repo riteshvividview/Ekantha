@@ -1,6 +1,7 @@
 /* ── Hero ──────────────────────────────────────────────────────── */
 
 .hero {
+  position: relative;
   min-height: 88vh;
   min-height: 88svh;
   display: flex;
@@ -11,6 +12,30 @@
   padding: clamp(4rem, 10vh, 6rem) var(--pad-x) clamp(3rem, 8vh, 5rem);
   background: var(--silver);
   overflow: hidden;
+}
+/* Two soft, warm glows — the one deliberate "orchard light" ambience that
+   sets Mango House's hero apart from the Stay overview's flatter wash. */
+.heroGlowA,
+.heroGlowB {
+  position: absolute;
+  z-index: 0;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+}
+.heroGlowA {
+  width: clamp(260px, 36vw, 480px);
+  height: clamp(260px, 36vw, 480px);
+  top: -8%;
+  left: -6%;
+  background: radial-gradient(circle, rgba(157, 92, 38, 0.22) 0%, rgba(157, 92, 38, 0) 70%);
+}
+.heroGlowB {
+  width: clamp(220px, 30vw, 420px);
+  height: clamp(220px, 30vw, 420px);
+  bottom: -10%;
+  right: -4%;
+  background: radial-gradient(circle, rgba(107, 122, 84, 0.2) 0%, rgba(107, 122, 84, 0) 70%);
 }
 .heroBg {
   position: absolute;
@@ -62,8 +87,21 @@
   font-size: 0.85rem;
 }
 .heroHeadline {
+  /* Overrides the shared .display-xl utility's Clash Display — Qalisten
+     (self-hosted, --font-qalisten on <body>) is the one deliberately
+     shared element with the homepage's and Stay overview's titles. */
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
   max-width: 16ch;
   margin-bottom: clamp(1.25rem, 3vw, 2rem);
+}
+.heroWord {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+}
+.heroWordInner {
+  display: inline-block;
 }
 .heroSub {
   font-family: var(--font-body);
@@ -100,6 +138,14 @@
   justify-content: center;
   gap: 0.9rem;
   flex-wrap: wrap;
+}
+
+/* Applied alongside the shared `section-title` class on every <h2> on this
+   page — overrides its Clash Display with Qalisten, same as .heroHeadline
+   above and the Stay overview's own `.sectionTitle`. */
+.sectionTitle {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
 }
 
 /* ── Description ───────────────────────────────────────────────── */
@@ -141,7 +187,7 @@
   margin-top: 1.25rem;
 }
 .introPull em {
-  font-family: var(--font-accent);
+  font-family: var(--font-qalisten), Georgia, serif;
   font-style: italic;
   font-weight: 400;
 }
@@ -174,14 +220,25 @@
   color: var(--ink-soft);
 }
 .introQuote {
-  font-family: var(--font-accent);
+  position: relative;
+  font-family: var(--font-qalisten), Georgia, serif;
   font-style: italic;
   font-weight: 400;
   font-size: clamp(1rem, 2.3vw, 1.25rem);
   line-height: 1.55;
   color: var(--ink);
-  border-left: 2px solid var(--line-strong);
   padding-left: clamp(1rem, 2.5vw, 1.5rem);
+}
+/* Draws in on scroll instead of sitting as a static border — see
+   Description.tsx's gsap.context. */
+.introQuoteLine {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--accent, var(--line-strong));
+  transform-origin: top;
 }
 
 /* ── Highlights: sticky photo + fact list ───────────────────────── */
@@ -444,7 +501,7 @@
   right: clamp(-0.5rem, 2vw, 1rem);
   top: 50%;
   transform: translateY(-50%);
-  font-family: var(--font-accent);
+  font-family: var(--font-qalisten), Georgia, serif;
   font-style: italic;
   font-weight: 400;
   font-size: clamp(4.5rem, 11vw, 8rem);

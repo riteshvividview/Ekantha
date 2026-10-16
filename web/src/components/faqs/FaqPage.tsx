@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import type { Faq } from '@/payload-types'
+import { gsap } from '@/lib/animations/gsap'
 import styles from './faqs.module.css'
 
 /**
@@ -10,6 +11,12 @@ import styles from './faqs.module.css'
  * filters items rendered in section 02 — same cross-section interaction
  * FAQs.html's own vanilla script has, just re-homed as a single React
  * component instead of two independently-querying `<script>` blocks.
+ *
+ * Motion here is deliberately quiet: this is a utility page people land on
+ * to find one answer fast, so the only "effects" are a calm entrance for
+ * the intro block, a gentle reveal per category as it scrolls into view,
+ * and a smooth (not instant-snap) open/close on each accordion item —
+ * nothing that competes with scanning the actual questions.
  */
 export function FaqPage({ data }: { data: Faq }) {
   const categories = data.categories ?? []
@@ -34,6 +41,80 @@ export function FaqPage({ data }: { data: Faq }) {
     )
     categoryEls.forEach((el) => observer.observe(el))
     return () => observer.disconnect()
+  }, [])
+
+  // Light-touch entrance + per-category reveal, and a smooth height
+  // animation on each accordion item's open/close (native <details> just
+  // snaps instantly otherwise). Everything here lives inside one
+  // gsap.context scoped to the root so Strict Mode's dev double-invoke
+  // can't leave an orphaned tween racing a second copy of itself.
+  useEffect(() => {
+    const root = rootRef.current
+    if (!root) return undefined
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    const ctx = gsap.context(() => {
+      gsap.from(root.querySelectorAll(`.${styles.faqIntroInner} > *`), {
+        opacity: 0,
+        y: 16,
+        duration: 0.7,
+        ease: 'power2.out',
+        stagger: 0.07,
+      })
+
+      if (reduceMotion) return
+
+      root.querySelectorAll<HTMLElement>(`.${styles.faqCategory}`).forEach((cat) => {
+        gsap.from(cat, {
+          opacity: 0,
+          y: 20,
+          duration: 0.7,
+          ease: 'power2.out',
+          scrollTrigger: { trigger: cat, start: 'top 88%', once: true },
+        })
+      })
+    }, root)
+
+    // Accordion open/close: intercept the summary click, drive the
+    // answer's height with GSAP (it understands `height: 'auto'` as an
+    // end value), then sync the native `open` attribute so keyboard
+    // activation, screen readers, and the forced-open-on-search effect
+    // above all keep working exactly as before.
+    const detailsEls = Array.from(root.querySelectorAll<HTMLDetailsElement>('[data-faq-item]'))
+    const removers: Array<() => void> = []
+
+    if (!reduceMotion) {
+      detailsEls.forEach((details) => {
+        const summary = details.querySelector('summary')
+        const answer = details.querySelector<HTMLElement>(`.${styles.faqAnswer}`)
+        if (!summary || !answer) return
+
+        const onClick = (e: MouseEvent) => {
+          e.preventDefault()
+          if (details.open) {
+            gsap.to(answer, {
+              height: 0,
+              duration: 0.35,
+              ease: 'power2.inOut',
+              onComplete: () => {
+                details.open = false
+                gsap.set(answer, { clearProps: 'height' })
+              },
+            })
+          } else {
+            details.open = true
+            gsap.fromTo(answer, { height: 0 }, { height: 'auto', duration: 0.4, ease: 'power2.out' })
+          }
+        }
+        summary.addEventListener('click', onClick)
+        removers.push(() => summary.removeEventListener('click', onClick))
+      })
+    }
+
+    return () => {
+      removers.forEach((fn) => fn())
+      ctx.revert()
+    }
   }, [])
 
   const trimmed = query.trim().toLowerCase()
@@ -68,7 +149,7 @@ export function FaqPage({ data }: { data: Faq }) {
       <section className={styles.faqIntro} id="top">
         <div className={styles.faqIntroInner}>
           <span className="eyebrow">{data.eyebrow}</span>
-          <h1 className="display-lg">{renderHeading(data.heading)}</h1>
+          <h1 className={`display-lg ${styles.sectionTitle}`}>{renderHeading(data.heading)}</h1>
           {data.sub && <p className={styles.faqIntroSub}>{data.sub}</p>}
 
           <div className={`${styles.searchBox}${query ? ` ${styles.hasValue}` : ''}`}>

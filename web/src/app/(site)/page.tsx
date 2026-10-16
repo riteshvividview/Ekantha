@@ -12,7 +12,8 @@ import { ExperienceReel } from '@/components/home/ExperienceReel'
 import { ChooseEscape } from '@/components/home/ChooseEscape'
 import { BambooDine } from '@/components/home/BambooDine'
 import { Events } from '@/components/home/Events'
-import { Stories } from '@/components/home/Stories'
+
+import { LivingStories } from '@/components/home/LivingStories'
 import { Gallery } from '@/components/home/Gallery'
 import { Reach } from '@/components/home/Reach'
 
@@ -42,7 +43,8 @@ export default async function HomePage() {
       <ChooseEscape heading={home.staysTeaser.heading} sub={home.staysTeaser.sub} stays={featuredStays} />
       <BambooDine data={home.dine} />
       <Events />
-      <Stories />
+
+      <LivingStories />
       <Gallery />
       <Reach />
       <FinalCtaBanner

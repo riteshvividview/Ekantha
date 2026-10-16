@@ -20,9 +20,24 @@
   --accent: #9d5c26; /* Amber Roast */
   --accent-deep: #462b32; /* Mulberry Noir */
 
-  --font-display: var(--font-telegraf), Arial, sans-serif;
-  --font-accent: 'Cascadia Code', 'Courier New', monospace;
-  --font-body: var(--font-telegraf), Arial, sans-serif;
+  /* Clash Display / General Sans (Fontshare, free for commercial use) —
+     free-license stand-ins for the Neue Machina / Neue Haas Grotesk Display
+     pairing on noomoagency.com, matched for the same geometric-technical
+     headline + clean grotesk body feel without needing a paid license. */
+  --font-display: 'Clash Display', Arial, sans-serif;
+  --font-body: 'General Sans', Arial, sans-serif;
+  /* The old monospace/typewriter accent (--font-accent, Cascadia Code) used
+     for labels, counters and eyebrows has been retired site-wide — every
+     former usage now sets `font-family: var(--font-qalisten), Georgia,
+     serif;` directly (not through a :root custom property: --font-qalisten
+     only exists on <body>, via next/font/local's `variable` class — see the
+     identical note on .heroTitle in home.module.css for why a :root-level
+     var(--font-accent) referencing it would've computed to invalid and
+     never resolved). --font-accent-italic (Fraunces) is unrelated and
+     unchanged — it's the one-italic-word editorial accent inside headings
+     (e.g. the "Ekantha" in "why Vana Ekantha"), never the monospace one. */
+  --font-accent-italic: 'Fraunces', Georgia, serif;
+  --font-mont: 'Montserrat', Arial, sans-serif;
 
   --ease-slow: cubic-bezier(0.6, 0.05, 0.3, 1);
   --ease-soft: cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -53,12 +68,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-@media (min-width: 1024px) {
-  body {
-    cursor: none;
-  }
-}
-
 ::selection {
   background: var(--ink);
   color: var(--white);
@@ -83,14 +92,6 @@ svg {
   max-width: 100%;
 }
 
-@media (min-width: 1024px) {
-  button,
-  a,
-  .hover-zone {
-    cursor: none;
-  }
-}
-
 /* ── Typography primitives ─────────────────────────────────── */
 
 .display-xl {
@@ -102,7 +103,7 @@ svg {
   color: var(--ink);
 }
 .display-xl em {
-  font-family: var(--font-accent);
+  font-family: var(--font-accent-italic);
   font-style: italic;
   font-weight: 400;
   color: var(--ink);
@@ -117,7 +118,7 @@ svg {
   color: var(--ink);
 }
 .display-lg em {
-  font-family: var(--font-accent);
+  font-family: var(--font-accent-italic);
   font-style: italic;
   font-weight: 400;
 }
@@ -131,7 +132,7 @@ svg {
   color: var(--ink);
 }
 .section-title em {
-  font-family: var(--font-accent);
+  font-family: var(--font-accent-italic);
   font-style: italic;
   font-weight: 400;
 }
@@ -337,95 +338,8 @@ section {
   }
 }
 
-/* ── Page chrome (cursor dot, hold-pill, idle nudge) — appear once,
-   site-wide, so their CSS lives here rather than per-page ─────────── */
-
-.ve-cursor-dot {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 7px;
-  height: 7px;
-  background: var(--ink);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 2147483647;
-  transform: translate(-50%, -50%);
-  transition:
-    width 320ms var(--ease-slow),
-    height 320ms var(--ease-slow),
-    background-color 320ms var(--ease-slow),
-    border 320ms var(--ease-slow);
-}
-.ve-cursor-dot.swollen {
-  width: 32px;
-  height: 32px;
-  background: transparent;
-  border: 1px solid var(--ink);
-}
-body.on-dark .ve-cursor-dot {
-  background: var(--white);
-}
-body.on-dark .ve-cursor-dot.swollen {
-  background: transparent;
-  border-color: var(--white);
-}
-body.on-light .ve-cursor-dot {
-  background: var(--ink);
-}
-body.on-light .ve-cursor-dot.swollen {
-  background: transparent;
-  border-color: var(--ink);
-}
-@media (hover: none), (max-width: 1023px) {
-  .ve-cursor-dot {
-    display: none;
-  }
-}
-
-.ve-hold-pill {
-  position: fixed;
-  bottom: 1.25rem;
-  right: 1.25rem;
-  z-index: 2147483646;
-  background: var(--accent);
-  color: var(--white);
-  padding: clamp(0.7rem, 2vw, 0.95rem) clamp(1.2rem, 3vw, 1.7rem);
-  border-radius: 999px;
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: clamp(0.75rem, 1.8vw, 0.85rem);
-  letter-spacing: 0.01em;
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  opacity: 0;
-  transform: translateY(20px);
-  pointer-events: none;
-  transition:
-    opacity 500ms var(--ease-slow),
-    transform 500ms var(--ease-slow),
-    background 280ms;
-  max-width: calc(100vw - 2.5rem);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
-}
-.ve-hold-pill.visible {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-.ve-hold-pill:hover {
-  background: var(--accent-deep);
-}
-.ve-hold-pill::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--white);
-  display: block;
-  flex-shrink: 0;
-}
+/* ── Page chrome (hold-pill, idle nudge) — appear once, site-wide, so
+   their CSS lives here rather than per-page ─────────────────────── */
 
 .idle-nudge {
   position: fixed;
@@ -452,262 +366,9 @@ body.on-light .ve-cursor-dot.swollen {
   opacity: 0.9;
 }
 
-/* ── Final CTA banner (dark, form) — identical pattern on every page ── */
-
-.final-cta {
-  padding-top: var(--pad-y);
-  padding-bottom: var(--pad-y);
-}
-.final-row {
-  margin-top: clamp(1.5rem, 4vw, 3rem);
-  padding: clamp(1.5rem, 4vw, 3rem) 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.16);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
-  display: grid;
-  grid-template-columns: 1.2fr 1fr 1fr auto;
-  gap: clamp(1rem, 3vw, 2.5rem);
-  align-items: end;
-}
-@media (max-width: 700px) {
-  .final-row {
-    grid-template-columns: 1fr 1fr;
-    gap: 1.25rem;
-  }
-  .final-row .final-cta-btn {
-    grid-column: 1 / -1;
-    text-align: center;
-  }
-}
-@media (max-width: 420px) {
-  .final-row {
-    grid-template-columns: 1fr;
-  }
-}
-.final-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-.final-field .label {
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: clamp(0.68rem, 1.5vw, 0.75rem);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
-}
-.final-field input {
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: clamp(1rem, 3vw, 1.35rem);
-  letter-spacing: -0.01em;
-  color: var(--white);
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 0.5rem 0;
-  outline: none;
-  width: 100%;
-  transition: border-color 320ms var(--ease-slow);
-}
-.final-field input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
-}
-.final-field input:focus {
-  border-color: var(--white);
-}
-.final-note {
-  margin-top: clamp(1.25rem, 3vw, 2rem);
-  font-family: var(--font-body);
-  font-size: clamp(0.78rem, 1.7vw, 0.88rem);
-  color: rgba(255, 255, 255, 0.55);
-  max-width: 60ch;
-  line-height: 1.7;
-}
-
-/* ── Footer (shared, standardized — see Footer.tsx) ─────────────────── */
-
-.ve-footer {
-  background: var(--white);
-}
-.ve-footer-cta {
-  background: var(--black);
-  color: var(--white);
-  padding: clamp(2.5rem, 6vw, 4rem) var(--pad-x);
-  text-align: center;
-}
-.ve-footer-cta h2 {
-  color: var(--white);
-  margin-top: 0.75rem;
-  margin-bottom: 1.25rem;
-}
-.ve-footer-cta p {
-  color: rgba(255, 255, 255, 0.62);
-  max-width: 50ch;
-  margin: 0 auto 1.75rem;
-  font-family: var(--font-body);
-  line-height: 1.7;
-}
-.ve-footer-main {
-  padding: clamp(3rem, 7vw, 5rem) var(--pad-x) clamp(2rem, 5vw, 3rem);
-  display: grid;
-  grid-template-columns: 1.3fr 1fr 1fr 1fr;
-  gap: clamp(2rem, 5vw, 3rem);
-}
-@media (max-width: 800px) {
-  .ve-footer-main {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-@media (max-width: 480px) {
-  .ve-footer-main {
-    grid-template-columns: 1fr;
-  }
-}
-.ve-footer-brand-tagline {
-  font-family: var(--font-accent);
-  font-style: italic;
-  font-size: clamp(1rem, 2.2vw, 1.15rem);
-  color: var(--ink);
-  margin: 1rem 0 0.6rem;
-}
-.ve-footer-brand-note {
-  font-family: var(--font-body);
-  font-size: 0.85rem;
-  color: var(--ink-faint);
-}
-.ve-footer-col-head {
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-  margin-bottom: 1.1rem;
-}
-.ve-footer-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  font-family: var(--font-body);
-  font-size: 0.88rem;
-  color: var(--ink-soft);
-}
-.ve-footer-list a:hover {
-  color: var(--ink);
-}
-.ve-footer-social {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-.ve-footer-social svg {
-  width: 16px;
-  height: 16px;
-  stroke: var(--ink);
-  fill: none;
-  stroke-width: 1.4;
-}
-.ve-footer-bottom {
-  border-top: 1px solid var(--line);
-  padding: 1.5rem var(--pad-x);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  align-items: center;
-  justify-content: space-between;
-  font-family: var(--font-body);
-  font-size: 0.78rem;
-  color: var(--ink-faint);
-}
-.ve-footer-bottom nav {
-  display: flex;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-}
-.ve-footer-bottom nav a:hover {
-  color: var(--ink);
-}
-
-/* ── Navbar (shared) ─────────────────────────────────────────────── */
-
-/* No body offset, no per-page layout hack: the nav is always fixed and
-   always transparent at rest, on every page, so it never reserves space
-   or pushes content down — it only gains a background once scrolled. */
-
-.ve-navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin: 0;
-  padding: 12px var(--pad-x);
-  border-radius: 0;
-  background: transparent;
-  border: 1px solid transparent;
-  box-shadow: none;
-  color: var(--ink);
-  opacity: 0;
-  transform: translateY(0);
-  transition:
-    opacity 620ms var(--ease-slow),
-    transform 420ms var(--ease-slow),
-    background-color 380ms var(--ease-slow),
-    border-color 380ms var(--ease-slow),
-    box-shadow 380ms var(--ease-slow),
-    color 320ms var(--ease-slow),
-    margin 380ms var(--ease-slow),
-    padding 380ms var(--ease-slow),
-    border-radius 380ms var(--ease-slow);
-}
-.ve-navbar-in {
-  opacity: 1;
-}
-/* Hides upward off-screen on scroll-down, slides back in on scroll-up —
-   a separate transform from the mount-in fade above (opacity only)
-   so the two don't fight over the same property. */
-.ve-navbar-hidden {
-  transform: translateY(-130%);
-}
-@media (prefers-reduced-motion: reduce) {
-  .ve-navbar {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
-}
-
-/* transparent: no chrome at all — the resting state on every page,
-   until the visitor scrolls. Dark text by default (reads fine against
-   the light page backgrounds most pages open on); .ve-navbar-on-dark
-   (set while a `[data-nav-hero]` section is still behind the bar)
-   switches it to light text for readability over a dark hero image. */
-.ve-navbar-transparent {
-  background: transparent;
-  border-color: transparent;
-  box-shadow: none;
-  color: var(--ink);
-}
-.ve-navbar-transparent.ve-navbar-on-dark {
-  color: var(--white);
-}
-
-/* pill: floating, inset, solid card — the scrolled state everywhere. */
-.ve-navbar-pill {
-  margin: 10px clamp(0.85rem, 3vw, 2rem);
-  padding: 8px clamp(1rem, 2.2vw, 1.5rem);
-  border-radius: 999px;
-  background: var(--white);
-  border-color: var(--line);
-  box-shadow: 0 18px 48px rgba(29, 29, 27, 0.14);
-  color: var(--ink);
-}
+/* ── Navbar ────────────────────────────────────────────────────────
+   The header itself is styled in components/chrome/navbar.css. Only the logo
+   lockup stays here because the Footer reuses .ve-navbar-logo. */
 
 .ve-navbar-logo {
   display: flex;
@@ -720,7 +381,7 @@ body.on-light .ve-cursor-dot.swollen {
   color: inherit;
 }
 .ve-navbar-logo em {
-  font-family: var(--font-accent);
+  font-family: var(--font-accent-italic);
   font-style: italic;
   font-weight: 400;
 }
@@ -729,104 +390,8 @@ body.on-light .ve-cursor-dot.swollen {
   height: 28px;
   transition: transform 480ms var(--ease-slow);
 }
-.ve-navbar-transparent .ve-navbar-logo img {
+.ve-navbar-logo:hover img {
   transform: scale(1.08);
-}
-.ve-navbar-links {
-  display: flex;
-  align-items: center;
-  gap: clamp(1.25rem, 2.5vw, 2rem);
-}
-@media (max-width: 860px) {
-  .ve-navbar-links {
-    display: none;
-  }
-}
-.ve-navbar-link {
-  position: relative;
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: 0.9rem;
-  color: currentColor;
-  opacity: 0.7;
-  transition: opacity 220ms, color 220ms;
-}
-.ve-navbar-link:hover {
-  opacity: 1;
-}
-.ve-navbar-link-active {
-  opacity: 1;
-}
-.ve-navbar-link-active::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -6px;
-  height: 3px;
-  border-radius: 2px;
-  background: currentColor;
-}
-.ve-navbar-link-wrap {
-  position: relative;
-}
-.ve-navbar-submenu {
-  position: absolute;
-  top: calc(100% + 0.75rem);
-  left: 50%;
-  transform: translateX(-50%) translateY(6px) scale(0.97);
-  transform-origin: top center;
-  background: var(--white);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  box-shadow: 0 24px 50px rgba(29, 29, 27, 0.16);
-  padding: 0.5rem;
-  min-width: 210px;
-  opacity: 0;
-  visibility: hidden;
-  transition:
-    opacity 260ms var(--ease-slow),
-    transform 260ms var(--ease-slow),
-    visibility 260ms;
-}
-.ve-navbar-link-wrap:hover .ve-navbar-submenu,
-.ve-navbar-link-wrap:focus-within .ve-navbar-submenu {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(-50%) translateY(0) scale(1);
-}
-.ve-navbar-submenu a {
-  display: block;
-  padding: 0.6rem 0.85rem;
-  border-radius: 8px;
-  font-family: var(--font-body);
-  font-size: 0.88rem;
-  color: var(--ink-soft);
-  transition: background-color 180ms, color 180ms, padding-left 220ms var(--ease-slow);
-}
-.ve-navbar-submenu a:hover,
-.ve-navbar-submenu a:focus-visible {
-  background: var(--silver);
-  color: var(--ink);
-  padding-left: 1.05rem;
-}
-.ve-navbar-submenu-active {
-  background: var(--silver);
-  color: var(--ink);
-  font-weight: 500;
-}
-.ve-navbar-burger {
-  display: none;
-  width: 40px;
-  height: 40px;
-  align-items: center;
-  justify-content: center;
-  color: inherit;
-}
-@media (max-width: 860px) {
-  .ve-navbar-burger {
-    display: flex;
-  }
 }
 
 /* ── Nav cursor-follow preview panel ─────────────────────────────── */
@@ -875,36 +440,6 @@ body.on-light .ve-cursor-dot.swollen {
     display: none;
   }
 }
-.ve-navbar-mobile {
-  position: fixed;
-  inset: 0;
-  z-index: 99;
-  background: var(--white);
-  padding: clamp(5rem, 15vh, 7rem) var(--pad-x) 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  transform: translateY(-100%);
-  transition: transform 420ms var(--ease-slow);
-}
-.ve-navbar-mobile.open {
-  transform: translateY(0);
-}
-.ve-navbar-mobile a {
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  color: var(--ink);
-}
-.ve-navbar-mobile-item {
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 380ms var(--ease-slow), transform 380ms var(--ease-slow);
-}
-.ve-navbar-mobile.open .ve-navbar-mobile-item {
-  opacity: 1;
-  transform: translateY(0);
-}
-
 /* ── Page-switch aperture transition ───────────────────────── */
 
 .ve-page-transition-svg {

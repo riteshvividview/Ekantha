@@ -1,0 +1,264 @@
+.events {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(6rem, 12vw, 10rem) var(--pad-x) clamp(5rem, 10vw, 9rem);
+  color: var(--ink);
+}
+
+.top {
+  display: grid;
+  /* The image column gets noticeably more room than the old two-column
+     split — the photo is the whole point now that no text sits on it. */
+  grid-template-columns: minmax(0, 0.58fr) minmax(0, 1.42fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+}
+@media (max-width: 900px) {
+  .top {
+    grid-template-columns: 1fr;
+  }
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: clamp(0.72rem, 1.5vw, 0.8rem);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
+}
+.eyebrowDash {
+  width: 2.5rem;
+  height: 1px;
+  background: currentColor;
+}
+
+/* Scroll-parallax lives here (Events.tsx drifts this on scroll); the swap
+   animation on slide change lives one level deeper, on .copyAnim — kept
+   separate so the two transforms never have to compose on one element. */
+.copyTextWrap {
+  will-change: transform;
+}
+/* Keyed by the active slide in Events.tsx, so React remounts this on every
+   switch — a plain CSS "enter" animation, not GSAP, since it doesn't need
+   to track scroll at all. */
+.copyAnim {
+  animation: eventsRiseIn 550ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+@keyframes eventsRiseIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.headline {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(2.6rem, 5.4vw, 4.6rem);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-bottom: clamp(1.1rem, 2.4vw, 1.6rem);
+}
+.line {
+  display: block;
+}
+.gold {
+  width: max-content;
+  background: linear-gradient(100deg, #a9793a 0%, #d3a566 50%, #a9793a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.sub {
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: clamp(0.92rem, 1.4vw, 1.05rem);
+  line-height: 1.75;
+  color: var(--ink-soft);
+  max-width: 30em;
+}
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: clamp(1rem, 2vw, 1.4rem);
+  list-style: none;
+}
+.meta li {
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: 0.86rem;
+  letter-spacing: normal;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+.meta li:not(:last-child)::after {
+  content: '·';
+  margin: 0 0.7rem;
+  color: var(--line-strong);
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: clamp(2rem, 4vw, 2.75rem);
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: clamp(0.76rem, 1.5vw, 0.84rem);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink);
+  /* The magnetic cursor-pull (Events.tsx) sets x/y here directly via GSAP —
+     no CSS transition on transform, so it isn't fighting one the way the
+     scroll-scrub bugs elsewhere in this codebase did. */
+  will-change: transform;
+}
+.linkCircle {
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  transition:
+    background-color 300ms var(--ease-slow),
+    color 300ms var(--ease-slow),
+    border-color 300ms var(--ease-slow),
+    transform 400ms var(--ease-slow);
+}
+.link:hover .linkCircle {
+  background: var(--ink);
+  color: var(--white);
+  border-color: var(--ink);
+  transform: translateX(6px);
+}
+
+.cardCol {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.9rem, 2vw, 1.25rem);
+}
+
+/* The image card — nothing but the photo now (no overlay text). Contained,
+   not full-bleed, so the section's own cream background (var(--white),
+   #FAF0E6) stays visible around it. 16:9 on purpose: the source photos are
+   ~1.79:1 already, so cover-fit inside a 16:9 (1.778:1) box crops almost
+   nothing. */
+.card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 32px;
+  box-shadow: 0 40px 80px -36px rgba(29, 29, 27, 0.5);
+  will-change: transform, clip-path;
+}
+
+.bgStack {
+  position: absolute;
+  inset: 0;
+}
+.bgSlide {
+  position: absolute;
+  inset: 0;
+  transition: opacity 900ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.bgSlide img {
+  object-fit: cover;
+}
+/* A very soft colour wash per slide (mix-blend-mode, not a flat overlay),
+   kept subtle on purpose — this card's whole job now is to show the photo
+   clearly, not set a mood that competes with it. */
+.bgTint {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: multiply;
+  transition: opacity 900ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* Outside the image, not over it — filmstrip on the left, progress on the
+   right, sharing one row rather than the progress sitting elsewhere. */
+.filmstripRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+.filmstrip {
+  display: flex;
+  gap: 0.6rem;
+}
+.thumb {
+  position: relative;
+  width: 64px;
+  aspect-ratio: 1;
+  flex-shrink: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  opacity: 0.5;
+  transition:
+    opacity 300ms var(--ease-slow),
+    transform 300ms var(--ease-slow),
+    border-color 300ms var(--ease-slow);
+}
+.thumb img {
+  object-fit: cover;
+}
+.thumb:hover {
+  opacity: 0.8;
+}
+.thumbOn {
+  opacity: 1;
+  border-color: var(--ink);
+  transform: translateY(-4px);
+}
+@media (max-width: 500px) {
+  .thumb {
+    width: 48px;
+  }
+}
+
+/* Floats at the right edge of the same row as the filmstrip, not
+   positioned off the section. */
+.progress {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 0.7rem;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+}
+.progressTrack {
+  position: relative;
+  width: 64px;
+  height: 1px;
+  background: var(--line-strong);
+}
+.progressFill {
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  transition: width 500ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+@media (max-width: 500px) {
+  .progressTrack {
+    display: none;
+  }
+}

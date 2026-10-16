@@ -1,23 +1,85 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import type { FarmDining } from '@/payload-types'
 import { resolveMedia } from '@/lib/media'
+import { gsap } from '@/lib/animations/gsap'
 import styles from './farm-dining.module.css'
 
+/** The closing beat of the evening: the photo settles into a slow,
+ *  near-imperceptible zoom (the fire burning low rather than a hard pan),
+ *  a soft ember glow breathes behind the form, and the fields rise in one
+ *  unhurried stagger — the same quiet pace as sitting down to the table
+ *  itself, not a typical punchy CTA entrance. */
 export function Reserve({ data }: { data: FarmDining['reserve'] }) {
   const image = resolveMedia(data.image)
+  const sectionRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return undefined
+
+    const ctx = gsap.context(() => {
+      gsap.from(section.querySelectorAll(`.${styles.reserveFormWrap} > :not(.${styles.reserveEmber})`), {
+        opacity: 0,
+        y: 22,
+        duration: 0.9,
+        ease: 'power3.out',
+        stagger: 0.1,
+        scrollTrigger: { trigger: section, start: 'top 75%', once: true },
+      })
+
+      gsap.from(section.querySelectorAll(`.${styles.reserveVisual}`), {
+        opacity: 0,
+        scale: 0.97,
+        duration: 1,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: section, start: 'top 75%', once: true },
+      })
+
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const img = section.querySelector(`.${styles.reserveVisual} img`)
+        if (img) {
+          gsap.fromTo(
+            img,
+            { scale: 1.04 },
+            {
+              scale: 1.12,
+              ease: 'none',
+              scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom top', scrub: true },
+            },
+          )
+        }
+
+        const ember = section.querySelector(`.${styles.reserveEmber}`)
+        if (ember) {
+          gsap.to(ember, {
+            opacity: 0.8,
+            scale: 1.15,
+            duration: 5,
+            ease: 'sine.inOut',
+            repeat: -1,
+            yoyo: true,
+          })
+        }
+      }
+    }, section)
+
+    return () => ctx.revert()
+  }, [])
 
   return (
-    <section className={`bg-black ${styles.reserveCta}`} id="reserve">
+    <section className={`bg-black ${styles.reserveCta}`} id="reserve" ref={sectionRef}>
       <div className={styles.reserveGrid}>
         <div className={styles.reserveFormWrap}>
-          <span className="eyebrow reveal">{data.eyebrow}</span>
-          <h2 className="section-title reveal" style={{ color: 'var(--white)', marginTop: '1rem' }}>
+          <div className={styles.reserveEmber} aria-hidden="true" />
+          <span className="eyebrow">{data.eyebrow}</span>
+          <h2 className={`section-title ${styles.sectionTitle}`} style={{ color: 'var(--white)', marginTop: '1rem' }}>
             {renderHeading(data.heading)}
           </h2>
 
           <form
-            className={`${styles.reserveForm} reveal`}
+            className={styles.reserveForm}
             onSubmit={(e) => {
               e.preventDefault()
             }}
@@ -39,10 +101,10 @@ export function Reserve({ data }: { data: FarmDining['reserve'] }) {
             </button>
           </form>
 
-          {data.note && <p className={`${styles.reserveNote} reveal`}>{data.note}</p>}
+          {data.note && <p className={styles.reserveNote}>{data.note}</p>}
         </div>
 
-        <div className={`${styles.reserveVisual} reveal`}>{image.url && <img src={image.url} alt={image.alt} loading="lazy" />}</div>
+        <div className={styles.reserveVisual}>{image.url && <img src={image.url} alt={image.alt} loading="lazy" />}</div>
       </div>
     </section>
   )

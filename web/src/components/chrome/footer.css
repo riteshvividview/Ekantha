@@ -1,0 +1,524 @@
+/* ── Footer ───────────────────────────────────────────────────────────
+   Cream body (5 columns) with a wave into the dusk-valley sign-off band, then
+   a dark bar. The cream follows the page palette (--white / --ink); the
+   photo bands and bar are always dark cinematic frames. */
+
+.ve-foot {
+  --foot-cream: #f6ecdc;
+  --foot-gold: #e3c48c;
+  position: relative;
+  overflow: hidden;
+  background: var(--white);
+  color: var(--ink);
+}
+
+/* ── Cream body ───────────────────────────────────────────────────── */
+.ve-foot-body {
+  position: relative;
+  padding: clamp(4.5rem, 7vw, 6.5rem) var(--pad-x) clamp(3.5rem, 6vw, 5.5rem);
+  background: var(--white);
+}
+.ve-foot-cols {
+  display: grid;
+  grid-template-columns: 1.15fr 0.7fr 1.35fr 0.95fr 1.25fr;
+  gap: clamp(1.5rem, 3vw, 3rem);
+}
+.ve-foot-head {
+  position: relative;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.ve-foot-head::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 1.6rem;
+  height: 1px;
+  background: #a9793a;
+  transition: width 500ms var(--ease-slow);
+}
+.ve-foot-col:hover .ve-foot-head::after {
+  width: 3.2rem;
+}
+
+.ve-foot-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-size: clamp(1.7rem, 2.6vw, 2.2rem);
+  line-height: 1;
+  color: var(--ink);
+}
+.ve-foot-logo img {
+  width: clamp(2.6rem, 3.6vw, 3.2rem);
+  height: auto;
+}
+.ve-foot-logo em {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-style: normal;
+  background: linear-gradient(100deg, #a9793a, #c99450);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.ve-foot-tagline {
+  margin-top: 1.25rem;
+  max-width: 17rem;
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: 0.9rem;
+  line-height: 1.75;
+  color: var(--ink-soft);
+}
+.ve-foot-note {
+  margin-top: 0.6rem;
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+}
+.ve-foot-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+}
+.ve-foot-social a {
+  width: 2.7rem;
+  height: 2.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  font-size: 0.95rem;
+  color: var(--ink);
+  transition:
+    background-color 350ms var(--ease-slow),
+    color 350ms var(--ease-slow),
+    border-color 350ms var(--ease-slow),
+    transform 500ms var(--ease-slow);
+}
+.ve-foot-social a:hover {
+  background: #a9793a;
+  border-color: #a9793a;
+  color: #fff;
+  transform: translateY(-4px) rotate(-8deg);
+}
+
+.ve-foot-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+.ve-foot-list a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid transparent;
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+  transition:
+    color 300ms,
+    padding-left 500ms var(--ease-slow),
+    border-color 300ms;
+}
+.ve-foot-list a i {
+  font-size: 0.68rem;
+  opacity: 0.55;
+  transition:
+    transform 500ms var(--ease-slow),
+    opacity 300ms;
+}
+.ve-foot-list a:hover {
+  color: var(--ink);
+  padding-left: 0.45rem;
+  border-bottom-color: var(--line);
+}
+.ve-foot-list a:hover i {
+  transform: translateX(4px);
+  opacity: 1;
+  color: #a9793a;
+}
+
+.ve-foot-stays {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.ve-foot-stays a {
+  display: flex;
+  align-items: center;
+  gap: 0.95rem;
+}
+.ve-foot-thumb {
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  width: 4.4rem;
+  height: 3.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 12px 22px -12px rgba(29, 29, 27, 0.55);
+  transition: transform 600ms var(--ease-slow);
+}
+.ve-foot-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ve-foot-stays a:hover .ve-foot-thumb {
+  transform: scale(1.07) rotate(-3deg);
+}
+.ve-foot-stays strong {
+  display: block;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--ink);
+  transition: color 300ms;
+}
+.ve-foot-stays a:hover strong {
+  color: #a9793a;
+}
+.ve-foot-stays small {
+  display: block;
+  margin-top: 0.1rem;
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+.ve-foot-tone-0 {
+  background: linear-gradient(150deg, #7a5a3a, #2a3a2c);
+}
+.ve-foot-tone-1 {
+  background: linear-gradient(150deg, #6a5a4a, #262a2c);
+}
+.ve-foot-tone-2 {
+  background: linear-gradient(150deg, #8a6a3a, #3a2a1c);
+}
+
+.ve-foot-contact {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+.ve-foot-contact li {
+  display: grid;
+  grid-template-columns: 1.4rem 1fr;
+  gap: 0.9rem;
+  align-items: start;
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.ve-foot-contact li > i {
+  margin-top: 0.2rem;
+  font-size: 1rem;
+  color: #a9793a;
+}
+.ve-foot-contact a {
+  color: var(--ink);
+  transition: color 300ms;
+}
+.ve-foot-contact a:hover {
+  color: #a9793a;
+}
+
+/* ── Wave: the cream body dissolves into the sign-off scene ─────────── */
+.ve-foot-wave {
+  position: absolute;
+  left: 0;
+  bottom: clamp(-7rem, -8vw, -3rem);
+  z-index: 3;
+  width: 200%;
+  max-width: none; /* the global svg reset would cap this at 100% */
+  height: clamp(4rem, 8vw, 8rem);
+  pointer-events: none;
+  animation: veFootWave 40s linear infinite;
+}
+.ve-foot-wave path {
+  fill: var(--white);
+}
+@keyframes veFootWave {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ── Sign-off band: solid dark, with photo frames ─────────────────── */
+.ve-foot-bottom {
+  position: relative;
+  min-height: clamp(30rem, 46vw, 40rem);
+  padding: clamp(6rem, 10vw, 9rem) var(--pad-x) clamp(3.5rem, 6vw, 5.5rem);
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  background: linear-gradient(180deg, #1b1612 0%, #120f0c 100%);
+  color: var(--foot-cream);
+}
+/* One faint gold light behind the frames, nothing more. */
+.ve-foot-glow {
+  position: absolute;
+  right: 6%;
+  top: 10%;
+  width: 46vw;
+  height: 46vw;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(227, 196, 140, 0.09) 0%, transparent 62%);
+  pointer-events: none;
+}
+
+/* Giant outlined wordmark drifting behind the copy. */
+.ve-foot-ghost {
+  position: absolute;
+  z-index: 1;
+  left: -1%;
+  bottom: -6%;
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-size: clamp(9rem, 26vw, 26rem);
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(246, 236, 220, 0.09);
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  will-change: transform;
+}
+.ve-foot-outro {
+  position: relative;
+  z-index: 3;
+  max-width: 44rem;
+}
+.ve-foot-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: clamp(0.72rem, 1.2vw, 0.78rem);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(246, 236, 220, 0.85);
+}
+.ve-foot-eyebrow span {
+  width: 2.4rem;
+  height: 1px;
+  background: linear-gradient(90deg, var(--foot-gold), rgba(227, 196, 140, 0));
+}
+.ve-foot-see {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(3.2rem, 8.6vw, 8rem);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  color: #f8f0e2;
+  text-shadow: 0 8px 50px rgba(0, 0, 0, 0.55);
+  margin-bottom: clamp(1.4rem, 2.6vw, 2.2rem);
+}
+.ve-foot-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.16em;
+  margin-bottom: -0.16em;
+}
+.ve-foot-line > span {
+  display: block;
+  will-change: transform;
+}
+.ve-foot-see em {
+  font-style: normal;
+  white-space: nowrap;
+  background: linear-gradient(100deg, #f2d9a8 0%, #d3a566 55%, #f0cf95 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.ve-foot-cta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.25rem 2rem;
+}
+.ve-foot-cta p {
+  max-width: 17rem;
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: clamp(0.88rem, 1.2vw, 0.98rem);
+  line-height: 1.7;
+  color: rgba(246, 236, 220, 0.85);
+}
+.ve-foot-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.1rem;
+  padding: 0.4rem 0.4rem 0.4rem 1.6rem;
+  border-radius: 999px;
+  background: var(--foot-cream);
+  color: #1d1d1b;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.76rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  box-shadow: 0 20px 40px -16px rgba(0, 0, 0, 0.75);
+  transition: transform 450ms var(--ease-slow);
+}
+.ve-foot-cta-btn:hover {
+  transform: translateY(-3px);
+}
+.ve-foot-cta-btn span {
+  width: 2.7rem;
+  height: 2.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #1d1d1b;
+  color: var(--foot-cream);
+  font-size: 0.8rem;
+  transition:
+    transform 450ms var(--ease-slow),
+    background-color 300ms;
+}
+.ve-foot-cta-btn:hover span {
+  transform: translateX(3px) rotate(-35deg);
+  background: #a9793a;
+}
+
+
+/* Hosts the PolaroidLineCarousel (see Footer.tsx) in the same slot the old
+   three static photo frames occupied — right side, bounded box. */
+.ve-foot-frames {
+  position: absolute;
+  z-index: 2;
+  right: var(--pad-x);
+  top: clamp(5rem, 8vw, 7rem);
+  bottom: clamp(3rem, 5vw, 4.5rem);
+  width: min(52%, 46rem);
+}
+
+/* ── Bar ──────────────────────────────────────────────────────────── */
+.ve-foot-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.9rem 2rem;
+  padding: 1.3rem var(--pad-x);
+  background: #0d0b09;
+  border-top: 1px solid rgba(246, 236, 220, 0.1);
+  color: rgba(246, 236, 220, 0.75);
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: 0.78rem;
+}
+.ve-foot-bar-right {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.9rem 2rem;
+}
+.ve-foot-bar-tag {
+  color: rgba(246, 236, 220, 0.6);
+}
+.ve-foot-top-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  color: var(--foot-cream);
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+}
+.ve-foot-top-btn span {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(246, 236, 220, 0.4);
+  transition:
+    transform 500ms var(--ease-slow),
+    background-color 300ms,
+    color 300ms;
+}
+.ve-foot-top-btn:hover span {
+  transform: translateY(-4px);
+  background: var(--foot-gold);
+  border-color: var(--foot-gold);
+  color: #1d1d1b;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────── */
+@media (max-width: 1180px) {
+  .ve-foot-cols {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: 2.5rem;
+  }
+  .ve-foot-brand {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 860px) {
+  .ve-foot-cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ve-foot-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2.5rem;
+    min-height: 0;
+  }
+  .ve-foot-ghost {
+    font-size: 34vw;
+    bottom: 2%;
+  }
+  .ve-foot-frames {
+    position: relative;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    width: 100%;
+    height: clamp(17rem, 78vw, 26rem);
+    align-self: stretch;
+  }
+}
+@media (max-width: 560px) {
+  .ve-foot-cols {
+    grid-template-columns: 1fr;
+  }
+  .ve-foot-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ve-foot-wave {
+    animation: none;
+  }
+}

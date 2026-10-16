@@ -1,9 +1,19 @@
+/* The page heading's utility class (`display-lg`) renders in the old
+   Clash Display font — this override switches it to Qalisten, same as
+   every other already-redesigned page's `.sectionTitle` pattern. */
+.sectionTitle {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+}
+
 /* FAQs.html defines its own smaller `.section-title` (category headings,
    not full section titles) — scoped locally as `.categoryTitle` so it
-   doesn't collide with the shared, larger globals.css `.section-title`. */
+   doesn't collide with the shared, larger globals.css `.section-title`.
+   Qalisten here too, per the site-wide convention that page/section
+   titles use the display serif rather than Clash Display. */
 .categoryTitle {
-  font-family: var(--font-display);
-  font-weight: 500;
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
   font-size: clamp(1.3rem, 2.8vw, 1.8rem);
   line-height: 1.2;
   letter-spacing: -0.015em;
@@ -165,7 +175,7 @@
   border-bottom: 1px solid var(--line-strong);
 }
 .faqCategoryNum {
-  font-family: var(--font-accent);
+  font-family: var(--font-qalisten), Georgia, serif;
   font-style: italic;
   font-size: clamp(1.1rem, 2.4vw, 1.4rem);
   color: var(--ink-faint);
@@ -217,6 +227,7 @@
   line-height: 1.75;
   color: var(--ink-soft);
   max-width: 62ch;
+  overflow: hidden;
 }
 .faqItem.hidden {
   display: none;

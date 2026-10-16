@@ -1,5 +1,12 @@
 /* ── 01. Contact Information — info column + map card ─────────── */
 
+/* Page/section titles use the display serif (Qalisten) rather than the
+   shared display-lg/section-title utility's Clash Display default. */
+.sectionTitle {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+}
+
 .contactHead {
   margin-bottom: clamp(2.5rem, 6vw, 4rem);
   max-width: 640px;
@@ -60,6 +67,15 @@
   stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
+  transition: transform 300ms var(--ease-slow);
+}
+.infoRow:hover .infoIcon svg {
+  transform: scale(1.12);
+}
+@media (prefers-reduced-motion: reduce) {
+  .infoIcon svg {
+    transition: none;
+  }
 }
 
 .infoLabel {
@@ -203,7 +219,38 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ink-faint);
+  transition: color 250ms var(--ease-slow);
 }
+.cfField:focus-within .cfLabel {
+  color: var(--ink);
+}
+
+/* Wraps each input/textarea so a focus underline can grow in from the
+   left, independent of the element's own static baseline rule. */
+.cfInputWrap {
+  position: relative;
+}
+.cfInputWrap::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1.5px;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 420ms var(--ease-slow);
+}
+.cfInputWrap:focus-within::after {
+  transform: scaleX(1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .cfInputWrap::after {
+    transition: none;
+  }
+}
+
 .cfField input,
 .cfField textarea {
   font-family: var(--font-display);
@@ -217,16 +264,11 @@
   padding: 0.4rem 0 0.6rem;
   outline: none;
   width: 100%;
-  transition: border-color 300ms var(--ease-slow);
   resize: none;
 }
 .cfField input::placeholder,
 .cfField textarea::placeholder {
   color: var(--ink-faint);
-}
-.cfField input:focus,
-.cfField textarea:focus {
-  border-color: var(--ink);
 }
 .cfField textarea {
   min-height: 100px;

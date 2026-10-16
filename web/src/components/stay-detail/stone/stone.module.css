@@ -1,3 +1,15 @@
+/* ── Stone House: shared page accents ─────────────────────────────
+   Qalisten override for every section title on this page (the shared
+   `.section-title` utility sets Clash Display; this swaps it in, same
+   as the Stay overview and Mango House's own `.sectionTitle`). Also the
+   small Qalisten-italic roman-numeral marks used across Gallery,
+   Highlights and Amenities instead of plain index numbers — a quiet
+   "margin note" motif that fits the writer's-house character. */
+.sectionTitle {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+}
+
 /* ── Highlights: big hero photo + stacked rows, no borders ──────── */
 
 .hlLayout {
@@ -81,11 +93,13 @@
   display: flex;
   flex-direction: column;
   gap: clamp(1.5rem, 3vw, 2rem);
+  counter-reset: hlIdx;
 }
 .hlRow {
   display: flex;
   align-items: center;
   gap: clamp(1.1rem, 2.5vw, 1.5rem);
+  counter-increment: hlIdx;
 }
 .hlRowMedia {
   width: clamp(110px, 16vw, 150px);
@@ -104,6 +118,16 @@
 .hlRow:hover .hlRowMedia img {
   transform: scale(1.1);
 }
+.hlRowNumeral {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-style: italic;
+  font-size: clamp(0.78rem, 1.6vw, 0.86rem);
+  color: var(--accent-deep);
+  margin-right: 0.5rem;
+}
+.hlRowNumeral::before {
+  content: counter(hlIdx, upper-roman) '.';
+}
 .hlRowBadge {
   font-family: var(--font-body);
   font-weight: 600;
@@ -112,7 +136,7 @@
   text-transform: uppercase;
   color: var(--ink-faint);
   margin-bottom: 0.35rem;
-  display: block;
+  display: inline-block;
 }
 .hlRowTitle {
   font-family: var(--font-display);
@@ -135,6 +159,7 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 3px;
+  counter-reset: amIdx;
 }
 @media (max-width: 700px) {
   .amMosaic {
@@ -147,16 +172,49 @@
   overflow: hidden;
   isolation: isolate;
   cursor: pointer;
+  counter-increment: amIdx;
 }
 .amCell img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 900ms var(--ease-slow);
+  filter: grayscale(0.85) brightness(0.92) contrast(0.98);
+  transition:
+    transform 900ms var(--ease-slow),
+    filter 700ms var(--ease-slow);
 }
 .amCell:hover img {
   transform: scale(1.08);
+  filter: grayscale(0) brightness(1) contrast(1);
+}
+/* A faint ember wash that only shows once the stone-grey filter above
+   has mostly lifted — "a fireplace catching in a cold room" rather than
+   a flat color swap. */
+.amCellEmber {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(120% 120% at 50% 100%, rgba(157, 92, 38, 0.38) 0%, rgba(157, 92, 38, 0) 62%);
+  opacity: 0;
+  transition: opacity 700ms var(--ease-slow);
+  mix-blend-mode: multiply;
+}
+.amCell:hover .amCellEmber {
+  opacity: 1;
+}
+.amCellNumeral {
+  position: absolute;
+  z-index: 2;
+  top: clamp(0.7rem, 1.6vw, 1rem);
+  right: clamp(0.7rem, 1.6vw, 1rem);
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-style: italic;
+  font-size: clamp(0.78rem, 1.5vw, 0.88rem);
+  color: rgba(255, 255, 255, 0.75);
+}
+.amCellNumeral::before {
+  content: counter(amIdx, upper-roman);
 }
 .amCellScrim {
   position: absolute;
@@ -167,6 +225,13 @@
 }
 .amCell:hover .amCellScrim {
   background: linear-gradient(180deg, rgba(29, 29, 27, 0.05) 0%, rgba(29, 29, 27, 0.85) 100%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .amCell img,
+  .amCellEmber,
+  .amCellScrim {
+    transition: none;
+  }
 }
 .amCellContent {
   position: absolute;
@@ -209,6 +274,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: clamp(0.75rem, 2vw, 1.25rem);
+  counter-reset: brickIdx;
 }
 @media (max-width: 700px) {
   .brickGrid {
@@ -224,6 +290,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
+  counter-increment: brickIdx;
 }
 .brickItem:nth-child(2),
 .brickItem:nth-child(5) {
@@ -244,19 +311,44 @@
   }
 }
 .brickPlate {
+  position: relative;
   aspect-ratio: 4 / 3;
   overflow: hidden;
   border: 1px solid var(--line);
+  isolation: isolate;
 }
 .brickPlate img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 700ms var(--ease-slow);
+  filter: grayscale(0.8) brightness(0.95);
+  transition:
+    transform 700ms var(--ease-slow),
+    filter 700ms var(--ease-slow);
 }
 .brickPlate:hover img {
   transform: scale(1.08);
+  filter: grayscale(0) brightness(1);
+}
+.brickNumeral {
+  position: absolute;
+  z-index: 1;
+  top: 0.65rem;
+  left: 0.75rem;
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-style: italic;
+  font-size: clamp(0.78rem, 1.5vw, 0.86rem);
+  color: rgba(255, 255, 255, 0.82);
+  text-shadow: 0 1px 6px rgba(29, 29, 27, 0.5);
+}
+.brickNumeral::before {
+  content: counter(brickIdx, upper-roman);
+}
+@media (prefers-reduced-motion: reduce) {
+  .brickPlate img {
+    transition: none;
+  }
 }
 .brickCaption {
   font-family: var(--font-body);
@@ -310,14 +402,57 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 700ms var(--ease-slow);
+  filter: grayscale(0.75) brightness(0.95);
+  transition:
+    transform 700ms var(--ease-slow),
+    filter 700ms var(--ease-slow);
 }
 .indexCard:hover .indexPhoto img {
   transform: scale(1.06);
+  filter: grayscale(0) brightness(1);
 }
 .indexContent {
+  position: relative;
   flex: 1;
   min-width: 0;
+  padding-left: clamp(1rem, 2vw, 1.4rem);
+}
+.indexCard:nth-child(even) .indexContent {
+  padding-left: 0;
+  padding-right: clamp(1rem, 2vw, 1.4rem);
+}
+/* The margin rule — drawn in via Stone House's own gsap.context scroll
+   trigger (IdealFor.tsx), not pre-drawn; scaleY starts at 0. */
+.indexRule {
+  position: absolute;
+  left: 0;
+  top: 0.2em;
+  bottom: 0.3em;
+  width: 2px;
+  background: var(--line-strong);
+  transform-origin: top;
+}
+.indexCard:nth-child(even) .indexRule {
+  left: auto;
+  right: 0;
+  transform-origin: bottom;
+}
+@media (max-width: 560px) {
+  .indexContent,
+  .indexCard:nth-child(even) .indexContent {
+    padding-left: clamp(1rem, 2vw, 1.4rem);
+    padding-right: 0;
+  }
+  .indexCard:nth-child(even) .indexRule {
+    left: 0;
+    right: auto;
+    transform-origin: top;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .indexPhoto img {
+    transition: none;
+  }
 }
 .indexTitle {
   font-family: var(--font-display);

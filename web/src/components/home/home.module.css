@@ -71,7 +71,7 @@
      framed with its own built-in shadow on the left; every frame of the
      scroll-scrubbed entrance (Hero.tsx) needs this to carry that on its
      own instead, since brightness varies frame to frame. */
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.42) 32%, rgba(0, 0, 0, 0) 68%);
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.26) 22%, rgba(0, 0, 0, 0) 42%);
   pointer-events: none;
 }
 
@@ -111,6 +111,11 @@
   line-height: 0.98;
   letter-spacing: -0.01em;
   color: var(--white);
+  /* Hero.tsx scales + translates this on scroll, anchored from the
+     bottom-left so the docked corner stays put as it shrinks into place
+     rather than drifting. */
+  transform-origin: left bottom;
+  will-change: transform;
   margin-bottom: clamp(1.5rem, 4vw, 2.25rem);
   max-width: 100%;
 }
@@ -190,6 +195,189 @@
   opacity: 0;
 }
 
+/* Fades in (via Hero.tsx's `scene` timeline) once the title has docked at
+   the bottom, filling the space it vacates — not part of .heroContent's
+   own flex flow (which the title's transform doesn't affect, so its
+   siblings would otherwise just sit at their original spots) — absolutely
+   positioned instead, over the same left inset .hero itself pads by. */
+.heroExpanded {
+  position: absolute;
+  z-index: 2;
+  left: var(--pad-x);
+  right: var(--pad-x);
+  top: 14%;
+  max-width: 640px;
+  pointer-events: none;
+}
+.heroExpanded [data-expand] {
+  /* Hero.tsx's `scene` timeline owns the reveal (opacity + y) — hidden by
+     default so there's no flash of this content before that JS runs. */
+  opacity: 0;
+}
+.heroExpandedEyebrow {
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: clamp(0.66rem, 1.4vw, 0.76rem);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+  margin-bottom: clamp(0.75rem, 2vw, 1.1rem);
+}
+.heroExpandedHeading {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-style: normal;
+  font-weight: 400;
+  /* Big by default — the same scale read as .heroTitle, not a scaled-up
+     trick — since it fades in at full size with no entry shrink (see the
+     `scene` timeline in Hero.tsx). `scene2` later shrinks it down to
+     HEADING_SCALE_DOCKED while docking it at the bottom. */
+  font-size: clamp(2.2rem, 5.6vw, 4.4rem);
+  line-height: 1.04;
+  color: var(--white);
+  margin-bottom: clamp(0.9rem, 2.2vw, 1.4rem);
+  max-width: 100%;
+  /* Anchored bottom-left, same reasoning as .heroTitle, so the docked
+     corner stays put as `scene2` shrinks it into place instead of drifting. */
+  transform-origin: left bottom;
+}
+.heroExpandedHook {
+  font-family: var(--font-accent-italic);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1.05rem, 2.2vw, 1.3rem);
+  line-height: 1.4;
+  color: var(--white);
+  margin-bottom: clamp(1rem, 2.4vw, 1.5rem);
+  max-width: 26ch;
+}
+
+.heroExpandedPointers {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.55rem, 1.5vw, 0.85rem);
+  margin-bottom: clamp(1.5rem, 3.2vw, 2.2rem);
+  max-width: 44ch;
+}
+.heroExpandedPointers li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  font-family: var(--font-body);
+  font-size: clamp(0.84rem, 1.6vw, 0.96rem);
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.82);
+}
+.heroExpandedPointers i {
+  margin-top: 0.3em;
+  font-size: 0.72em;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+/* Stage 2 — "The Experience". Sits in the same spot .heroExpanded does;
+   only one of the two is ever visible (opacity-gated via [data-expand2]),
+   so there's no need to offset them from each other. */
+.heroExpanded2 {
+  position: absolute;
+  z-index: 2;
+  left: var(--pad-x);
+  right: var(--pad-x);
+  top: 14%;
+  max-width: 680px;
+  pointer-events: none;
+}
+.heroExpanded2 [data-expand2] {
+  /* Hero.tsx's `scene2` timeline owns the reveal (opacity + y) — hidden by
+     default so there's no flash of this content before that JS runs. */
+  opacity: 0;
+}
+.heroExpanded2Tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: clamp(0.9rem, 2.2vw, 1.3rem);
+}
+.heroExpanded2Tag .heroExpandedEyebrow {
+  margin-bottom: 0;
+}
+/* A small, slowly-spinning ring beside the eyebrow — the one bit of
+   always-on motion-graphic polish the brief asked for, kept subtle (a
+   partial border so the rotation actually reads) rather than a literal
+   spinner. */
+.heroExpanded2Ring {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent);
+  border-top-color: transparent;
+  border-right-color: transparent;
+  animation: heroRingSpin 4.5s linear infinite;
+}
+.heroExpanded2Heading {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-style: normal;
+  font-weight: 400;
+  /* Big by default, same reasoning as .heroExpandedHeading — this is the
+     last stage, so there's nothing further for it to dock/shrink into. */
+  font-size: clamp(2.2rem, 5.6vw, 4.4rem);
+  line-height: 1.06;
+  color: var(--white);
+  margin-bottom: clamp(1.6rem, 3.6vw, 2.4rem);
+  max-width: 100%;
+}
+.heroExperienceIcons {
+  display: flex;
+  gap: clamp(1.4rem, 3.4vw, 2.4rem);
+}
+.heroExperienceIcon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.72);
+}
+.heroExperienceIcon i {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: var(--white);
+  font-size: 1.05rem;
+  animation: heroIconFloat 3.6s ease-in-out infinite;
+}
+.heroExperienceIcon:nth-child(2) i {
+  animation-delay: 0.4s;
+}
+.heroExperienceIcon:nth-child(3) i {
+  animation-delay: 0.8s;
+}
+
+@keyframes heroRingSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes heroIconFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
 /* ── Ticker ─────────────────────────────────────────────────── */
 
 .ticker {
@@ -263,7 +451,7 @@
   margin-top: 1.25rem;
 }
 .introPull em {
-  font-family: var(--font-accent);
+  font-family: var(--font-qalisten), Georgia, serif;
   font-style: italic;
   font-weight: 400;
 }
@@ -287,7 +475,7 @@
   margin: 0.25rem 0;
 }
 .introContrasts li {
-  font-family: var(--font-accent);
+  font-family: var(--font-qalisten), Georgia, serif;
   font-style: italic;
   font-weight: 400;
   font-size: clamp(0.95rem, 2.2vw, 1.15rem);
@@ -548,6 +736,7 @@
   box-shadow: 0 22px 44px rgba(29, 29, 27, 0.1);
 }
 .hCardMedia {
+  position: relative;
   width: 100%;
   aspect-ratio: 4/3;
   overflow: hidden;
@@ -623,7 +812,7 @@
   fill: none;
   stroke: var(--ink);
   stroke-opacity: 0.16;
-  stroke-width: 1.5;
+  stroke-width: 3;
 }
 
 .experienceGlow {
@@ -663,6 +852,7 @@
   letter-spacing: -0.02em;
   color: var(--ink);
   margin-top: 0.75rem;
+  text-transform: capitalize;
 }
 .scatterHeadingTitle em {
   font-family: var(--font-qalisten), Georgia, serif;
@@ -702,6 +892,7 @@
   margin-bottom: 0.6rem;
 }
 .scatterPhotoMedia {
+  position: relative;
   aspect-ratio: 4/5;
   border-radius: 4px;
   overflow: hidden;
@@ -887,7 +1078,7 @@
   will-change: transform, width, height;
 }
 .bambooDineCursorLabelText {
-  font-family: var(--font-accent);
+  font-family: var(--font-qalisten), Georgia, serif;
   font-size: 0.8rem;
   font-weight: 500;
   line-height: 1.35;
@@ -1032,7 +1223,7 @@
 }
 
 .bambooDineAudioTooltip {
-  font-family: var(--font-accent);
+  font-family: var(--font-qalisten), Georgia, serif;
   font-size: 0.82rem;
   letter-spacing: 0.01em;
   color: #f6ecdc;
@@ -1165,7 +1356,7 @@
   letter-spacing: 0.15em;
 }
 .testiQuote {
-  font-family: var(--font-accent);
+  font-family: var(--font-qalisten), Georgia, serif;
   font-style: italic;
   font-weight: 400;
   font-size: clamp(0.95rem, 2.1vw, 1.1rem);

@@ -14,16 +14,18 @@
 }
 
 .manifestoStatement {
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: clamp(1.8rem, 5.6vw, 3.8rem);
-  line-height: 1.18;
-  letter-spacing: -0.025em;
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(1.9rem, 6vw, 4rem);
+  line-height: 1.22;
+  letter-spacing: -0.01em;
   color: var(--ink);
-  max-width: 16ch;
+  max-width: 17ch;
+}
+.manifestoStatement > span {
+  display: block;
 }
 .manifestoStatement em {
-  font-family: var(--font-accent);
   font-style: italic;
   font-weight: 400;
 }
@@ -74,12 +76,24 @@
 }
 
 .storyWord {
-  font-family: var(--font-accent);
+  position: relative;
+  display: inline-block;
+  font-family: var(--font-qalisten), Georgia, serif;
   font-style: italic;
   font-size: clamp(2rem, 5vw, 3.4rem);
   color: var(--ink);
   line-height: 1.1;
   margin-top: 1rem;
+}
+.storyUnderline {
+  position: absolute;
+  left: 0;
+  bottom: -0.05em;
+  width: 100%;
+  height: 2px;
+  background: var(--accent);
+  transform-origin: left center;
+  transform: scaleX(0);
 }
 .storyWord span {
   display: block;
@@ -90,7 +104,7 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink-faint);
-  margin-top: 0.75rem;
+  margin-top: 0.9rem;
 }
 
 .storyBody {
@@ -153,7 +167,7 @@
   max-width: 52ch;
 }
 .philoBody em {
-  font-family: var(--font-accent);
+  font-family: var(--font-qalisten), Georgia, serif;
   font-style: italic;
   color: var(--ink);
 }
@@ -168,7 +182,7 @@
   margin: 0 auto;
 }
 .founderQuote {
-  font-family: var(--font-accent);
+  font-family: var(--font-qalisten), Georgia, serif;
   font-style: italic;
   font-weight: 400;
   font-size: clamp(1.3rem, 3.6vw, 2.1rem);
@@ -201,6 +215,15 @@
   font-size: 0.8rem;
   color: var(--ink-faint);
   margin-top: 0.25rem;
+}
+
+/* Qalisten override for the shared `.section-title` utility class (which
+   renders in Clash Display by default) — applied alongside it on every
+   h2 in this page so section titles use the editorial display serif
+   consistent with the rest of the redesigned site. */
+.sectionTitle {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
 }
 
 /* ── 05. What Makes Us Different — contrast comparison rows ───── */
@@ -242,7 +265,7 @@
 }
 
 .contrastArrow {
-  font-family: var(--font-accent);
+  font-family: var(--font-qalisten), Georgia, serif;
   font-style: italic;
   font-size: clamp(1.2rem, 2.5vw, 1.6rem);
   color: var(--ink-faint);

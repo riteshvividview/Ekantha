@@ -1,20 +1,66 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import type { Event } from '@/payload-types'
+import { gsap } from '@/lib/animations/gsap'
 import styles from './events.module.css'
 
+/**
+ * Closing section: the planning conversation starts here, so the form
+ * rows cascade in one at a time — like a planning checklist being filled
+ * out line by line — instead of the whole form fading in as one block.
+ */
 export function Enquiry({ data }: { data: Event['enquiry'] }) {
+  const sectionRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return undefined
+
+    const ctx = gsap.context(() => {
+      gsap.from(section.querySelectorAll(`.${styles.sectionHead}`), {
+        opacity: 0,
+        y: 24,
+        duration: 0.9,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: section, start: 'top 80%', once: true },
+      })
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+      gsap.from(section.querySelectorAll(`.${styles.eqRow}`), {
+        opacity: 0,
+        y: 18,
+        duration: 0.6,
+        ease: 'power3.out',
+        stagger: 0.08,
+        scrollTrigger: { trigger: `.${styles.enquiryForm}`, start: 'top 85%', once: true },
+      })
+
+      gsap.from(section.querySelectorAll(`.${styles.enquirySubmitRow}`), {
+        opacity: 0,
+        y: 16,
+        duration: 0.6,
+        ease: 'power3.out',
+        delay: 0.3,
+        scrollTrigger: { trigger: `.${styles.enquiryForm}`, start: 'top 85%', once: true },
+      })
+    }, section)
+
+    return () => ctx.revert()
+  }, [])
+
   return (
-    <section id="enquiry">
+    <section id="enquiry" ref={sectionRef}>
       <div className={styles.enquiryInner}>
-        <div className={`${styles.sectionHead} reveal`} style={{ marginBottom: 0 }}>
+        <div className={styles.sectionHead} style={{ marginBottom: 0 }}>
           <span className="eyebrow">{data.eyebrow}</span>
-          <h2 className="section-title">{renderHeading(data.heading)}</h2>
+          <h2 className={`section-title ${styles.sectionTitle}`}>{renderHeading(data.heading)}</h2>
           {data.sub && <p>{data.sub}</p>}
         </div>
 
         <form
-          className={`${styles.enquiryForm} reveal`}
+          className={styles.enquiryForm}
           onSubmit={(e) => {
             e.preventDefault()
           }}

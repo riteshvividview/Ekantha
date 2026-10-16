@@ -1,17 +1,20 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Image from 'next/image'
 import { gsap } from '@/lib/animations/gsap'
 import styles from './Story.module.css'
 
-// Static uploads, not CMS fields — drop files into
-// web/public/images/home/02-story/ and set the paths here. While null, the
-// frames render as soft placeholder panels.
-const IMAGES: { main: string | null; side: string | null } = {
-  main: null, // e.g. '/images/home/02-story/main.jpg'
-  side: null, // e.g. '/images/home/02-story/side.jpg'
-}
-
+// Static uploads, not CMS fields — dropped into web/public/images/home/
+// 02-story/. Both source clips were huge HEVC phone/camera captures (94MB
+// and 171MB respectively, 65-90Mbps — not web-safe: HEVC isn't reliably
+// supported in <video> outside Safari, and those bitrates are absurd for a
+// background loop); card2-footage-web.mp4 is an ffmpeg re-encode (H.264,
+// 1280×720, ~2.3MB) of Second-section-card2-footage.MP4, the clip actually
+// used in the front card. The still image is served through next/image
+// instead, which handles down-sampling the 8000×5300 source on its own.
+const BIG_FRAME_VIDEO = '/images/home/02-story/card-footage-web.mp4'
+const SMALL_FRAME_IMAGE = '/images/home/02-story/card-image-web.JPG'
 const HEADLINE = ['A quiet corner', 'of the countryside,', 'made for you.']
 
 const BODY =
@@ -66,10 +69,11 @@ export function Story() {
         scrollTrigger: { trigger: q('[data-headline]')[0], start: 'top 82%', once: true },
       })
       // …and the lines themselves drift at different speeds while scrolling.
-      q('[data-line]').forEach((line, i) => {
+      const headlineLines = q<HTMLElement>('[data-line]')
+      headlineLines.forEach((line, index) => {
         gsap.to(line, {
-          y: (i - 1) * -26,
-          x: (i - 1) * 18,
+          y: (index - 1) * -26,
+          x: (index - 1) * 18,
           ease: 'none',
           scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom top', scrub: true },
         })
@@ -156,47 +160,46 @@ export function Story() {
 
       <div className={styles.grid}>
         <div className={styles.copy}>
-          <p className={styles.eyebrow} data-eyebrow>
-            <span className={styles.eyebrowDash} />
-            The Story
-          </p>
-
-          <h2 className={styles.headline} data-headline>
-            {HEADLINE.map((line) => (
-              <span className={styles.line} data-line key={line}>
-                <span className={styles.lineInner} data-line-inner>
-                  {line}
-                </span>
-              </span>
-            ))}
-          </h2>
-
-          <p className={styles.body} data-body>
-            {BODY.split(' ').map((word, i) => (
-              <span className={styles.word} data-word key={i}>
-                {word}{' '}
-              </span>
-            ))}
-          </p>
-
-          <a href="/stay" className={styles.link}>
-            <span className={styles.linkCircle} aria-hidden="true">
-              <i className="fa-solid fa-arrow-right" />
-            </span>
-            Discover the Stay
-          </a>
+          <StoryCopy />
         </div>
 
         <div className={styles.frames} aria-hidden="true">
+          {/* .frameMedia is a nested child of the GSAP-owned .frameInner
+              (which already carries the scroll-scrubbed scale/yPercent
+              parallax — see the effect above), not the same element, so the
+              hover zoom/desaturation below is a plain CSS transition that
+              never fights that inline-styled transform. */}
+          {/* .frameSide sits in front of (overlaps) .frameMain — see
+              Story.module.css — so the video goes there per the "video at
+              the front, image behind" brief; .frameMain carries the still. */}
           <div className={`${styles.frame} ${styles.frameMain}`} data-frame="7">
             <div className={styles.frameInner} data-frame-inner>
-              {IMAGES.main ? <img src={IMAGES.main} alt="" /> : <span className={styles.placeholder}>Image</span>}
+              <div className={styles.frameMedia}>
+                <video
+                  className={styles.frameVideo}
+                  src={BIG_FRAME_VIDEO}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="auto"
+                />
+              </div>
             </div>
+            <div className={styles.frameOverlay} />
           </div>
           <div className={`${styles.frame} ${styles.frameSide}`} data-frame="-12">
             <div className={styles.frameInner} data-frame-inner>
-              {IMAGES.side ? <img src={IMAGES.side} alt="" /> : <span className={styles.placeholder}>Image</span>}
+              <div className={styles.frameMedia}>
+                <Image
+                  src={SMALL_FRAME_IMAGE}
+                  alt="Vana Ekantha"
+                  fill
+                  sizes="(max-width: 900px) 46vw, 24vw"
+                />
+              </div>
             </div>
+            <div className={styles.frameOverlay} />
           </div>
         </div>
       </div>
@@ -213,5 +216,41 @@ export function Story() {
         ))}
       </ul>
     </section>
+  )
+}
+
+function StoryCopy() {
+  return (
+    <div className={styles.copyContent}>
+      <p className={styles.eyebrow} data-eyebrow>
+        <span className={styles.eyebrowDash} />
+        The Story
+      </p>
+
+      <h2 className={styles.headline} data-headline>
+        {HEADLINE.map((line, i) => (
+          <span className={styles.line} data-line key={line}>
+            <span className={styles.lineInner} data-line-inner>
+              {line}
+            </span>
+          </span>
+        ))}
+      </h2>
+
+      <p className={styles.body} data-body>
+        {BODY.split(' ').map((word, i) => (
+          <span className={styles.word} data-word key={i}>
+            {word}{' '}
+          </span>
+        ))}
+      </p>
+
+      <a href="/stay" className={styles.link}>
+        <span className={styles.linkCircle} aria-hidden="true">
+          <i className="fa-solid fa-arrow-right" />
+        </span>
+        Discover the Stay
+      </a>
+    </div>
   )
 }

@@ -13,8 +13,7 @@
   position: relative;
   overflow: hidden;
 }
-.hero::before {
-  content: '';
+.heroBg {
   position: absolute;
   inset: 0;
   z-index: 0;
@@ -25,7 +24,44 @@
   opacity: 0.8;
   -webkit-mask-image: linear-gradient(to right, transparent 0%, transparent 8%, rgba(0, 0, 0, 0.55) 45%, black 100%);
   mask-image: linear-gradient(to right, transparent 0%, transparent 8%, rgba(0, 0, 0, 0.55) 45%, black 100%);
+  will-change: transform;
 }
+
+/* Three soft drifting orbs — the hero's own motif, unique to this
+   section. Pure CSS radial gradients (no image assets), parallaxed at
+   different depths + a slow continuous idle float via GSAP. */
+.heroOrb {
+  position: absolute;
+  z-index: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform;
+  top: 8%;
+  right: 6%;
+  width: min(32vw, 420px);
+  height: min(32vw, 420px);
+  background: radial-gradient(circle, rgba(29, 29, 27, 0.07) 0%, rgba(29, 29, 27, 0) 72%);
+  filter: blur(2px);
+}
+.heroOrbB {
+  top: auto;
+  right: auto;
+  bottom: 4%;
+  left: 2%;
+  width: min(24vw, 320px);
+  height: min(24vw, 320px);
+  background: radial-gradient(circle, rgba(29, 29, 27, 0.06) 0%, rgba(29, 29, 27, 0) 70%);
+}
+.heroOrbC {
+  top: 46%;
+  right: 22%;
+  bottom: auto;
+  left: auto;
+  width: min(14vw, 180px);
+  height: min(14vw, 180px);
+  background: radial-gradient(circle, rgba(29, 29, 27, 0.08) 0%, rgba(29, 29, 27, 0) 70%);
+}
+
 .heroBadge,
 .heroHeadline,
 .heroSub,
@@ -33,6 +69,13 @@
 .heroCtas {
   position: relative;
   z-index: 1;
+}
+.heroLine {
+  display: block;
+  overflow: hidden;
+}
+.heroLineInner {
+  display: block;
 }
 .heroBadge {
   display: inline-flex;
@@ -61,6 +104,11 @@
   font-size: 0.85rem;
 }
 .heroHeadline {
+  /* Overrides the shared .display-xl utility's Clash Display — Qalisten
+     (self-hosted, --font-qalisten on <body> via the root layout) is the
+     one deliberately shared element with the homepage's titles. */
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
   max-width: 20ch;
   margin-bottom: clamp(1.25rem, 3vw, 2rem);
 }
@@ -103,6 +151,14 @@
 
 /* ── 02. Accommodation Cards ────────────────────────────────────── */
 
+/* Applied alongside the shared `section-title` class on every <h2> in this
+   page (StaysSection/Amenities/WhyStay) — overrides its Clash Display with
+   Qalisten, same as .heroHeadline/.stayBlockTitle above. */
+.sectionTitle {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+}
+
 .staysSection {
   padding-top: var(--pad-y);
   padding-bottom: var(--pad-y);
@@ -129,6 +185,9 @@
   }
 }
 .stayBlockNum {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   font-family: var(--font-body);
   font-weight: 600;
   font-size: clamp(0.68rem, 1.5vw, 0.78rem);
@@ -137,9 +196,26 @@
   padding-top: 0.5rem;
   white-space: nowrap;
 }
+/* Reading-progress rail: fills as its stay block scrolls through. */
+.stayRailTrack {
+  display: inline-block;
+  width: 2px;
+  height: 2.4em;
+  background: var(--line);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.stayRailFill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--stay-accent, var(--ink));
+  transform-origin: top;
+  transform: scaleY(0);
+}
 .stayBlockTitle {
-  font-family: var(--font-display);
-  font-weight: 500;
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
   font-size: clamp(1.7rem, 4.6vw, 3.2rem);
   letter-spacing: -0.02em;
   line-height: 1.05;
@@ -147,7 +223,7 @@
   color: var(--ink);
 }
 .stayBlockTitle em {
-  font-family: var(--font-accent);
+  font-family: var(--font-qalisten), Georgia, serif;
   font-style: italic;
   font-weight: 400;
 }
@@ -177,6 +253,11 @@
   order: -1;
   position: sticky;
   top: clamp(1.5rem, 4vw, 3rem);
+  box-shadow: 0 0 0 0 var(--stay-accent, transparent);
+  transition: box-shadow 500ms var(--ease-slow);
+}
+.stayPlate:hover {
+  box-shadow: 0 0 0 2px var(--stay-accent, transparent);
 }
 @media (min-width: 761px) {
   .stayPlate {
@@ -199,13 +280,13 @@
   transform: scale(1.06);
 }
 .stayQuote {
-  font-family: var(--font-accent);
+  font-family: var(--font-qalisten), Georgia, serif;
   font-style: italic;
   font-weight: 400;
   font-size: clamp(1rem, 2.4vw, 1.3rem);
   line-height: 1.55;
   color: var(--ink);
-  border-left: 2px solid var(--line-strong);
+  border-left: 2px solid var(--stay-accent, var(--line-strong));
   padding-left: clamp(1rem, 2.5vw, 1.5rem);
   margin-bottom: clamp(1.5rem, 3.5vw, 2.25rem);
 }
@@ -319,13 +400,30 @@
   scroll-snap-align: start;
   display: flex;
   flex-direction: column;
+  will-change: transform;
   transition:
     transform 500ms var(--ease-slow),
     border-color 300ms;
 }
 .hCard:hover {
-  transform: translateY(-6px);
   border-color: var(--line-strong);
+}
+
+/* Drag-progress bar beneath the amenities rail — mirrors scrollLeft. */
+.dragProgress {
+  max-width: clamp(200px, 40vw, 360px);
+  height: 3px;
+  margin: clamp(1.5rem, 4vw, 2.5rem) auto 0;
+  background: var(--line);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.dragProgressFill {
+  width: 100%;
+  height: 100%;
+  background: var(--ink);
+  transform-origin: left;
+  transform: scaleX(0);
 }
 .hCardMedia {
   width: 100%;
@@ -448,7 +546,7 @@
   }
 }
 .accNum {
-  font-family: var(--font-accent);
+  font-family: var(--font-qalisten), Georgia, serif;
   font-style: italic;
   font-weight: 400;
   font-size: clamp(1.6rem, 3.2vw, 2.1rem);

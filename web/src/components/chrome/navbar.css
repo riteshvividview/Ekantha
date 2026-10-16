@@ -1,0 +1,886 @@
+/* ── Navbar: floating glass pill + morphing mega dropdown ───────────────
+   Two looks share one element:
+     .ve-nav-glass  dark translucent pill, cream text  (resting state, and
+                    whenever a dark hero / a dropdown is open)
+     .ve-nav-solid  solid pill in the page palette      (scrolled, on light
+                    content) — uses the page variables so it follows the
+                    scroll-driven light/dark theme.
+   Dropdown surfaces are always cream, like the design reference. */
+
+/* The mobile panel is portaled to <body>, so the tokens are shared by both. */
+.ve-nav,
+.ve-mnav {
+  --nav-cream: #f6ecdc;
+  --nav-gold: #e3c48c;
+}
+.ve-nav {
+  position: fixed;
+  z-index: 100;
+  top: clamp(0.55rem, 1.3vw, 1rem);
+  left: clamp(0.6rem, 2.6vw, 2.25rem);
+  right: clamp(0.6rem, 2.6vw, 2.25rem);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  column-gap: clamp(0.75rem, 2vw, 2rem);
+  padding: 0.5rem 0.55rem 0.5rem clamp(1rem, 2vw, 1.6rem);
+  border-radius: 999px;
+  border: 1px solid transparent;
+  opacity: 0;
+  transform: translateY(-14px);
+  transition:
+    opacity 620ms var(--ease-slow),
+    transform 520ms var(--ease-slow),
+    background-color 420ms var(--ease-slow),
+    border-color 420ms var(--ease-slow),
+    box-shadow 420ms var(--ease-slow),
+    color 320ms var(--ease-slow);
+}
+.ve-nav-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+.ve-nav-hidden {
+  transform: translateY(calc(-100% - 1.5rem));
+}
+
+.ve-nav-glass {
+  color: var(--nav-cream);
+  background: rgba(24, 20, 17, 0.62);
+  border-color: rgba(246, 236, 220, 0.14);
+  box-shadow:
+    0 24px 60px -30px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  backdrop-filter: blur(20px) saturate(1.3);
+}
+.ve-nav-solid {
+  color: var(--ink);
+  background: var(--white);
+  border-color: var(--line);
+  box-shadow: 0 22px 50px -26px rgba(29, 29, 27, 0.35);
+}
+
+/* ── Logo ─────────────────────────────────────────────────────────── */
+.ve-nav .ve-nav-logo {
+  gap: 0.7rem;
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+  line-height: 1;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+.ve-nav .ve-nav-logo img {
+  width: clamp(28px, 3vw, 36px);
+  height: clamp(28px, 3vw, 36px);
+}
+/* The mark is dark artwork: on the dark glass it is shown as a cream silhouette. */
+.ve-nav-glass .ve-nav-logo img {
+  filter: brightness(0) invert(0.93) sepia(0.15);
+}
+.ve-nav .ve-nav-logo em {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-style: normal;
+  background: linear-gradient(100deg, var(--nav-gold), #cfa15c);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.ve-nav.ve-nav-solid .ve-nav-logo em {
+  background: linear-gradient(100deg, #a9793a, #c99450);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* ── Desktop links ────────────────────────────────────────────────── */
+.ve-nav-links {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1rem;
+}
+.ve-nav-indicator {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 2.5rem;
+  margin-top: -1.25rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 11%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 480ms var(--ease-slow),
+    width 480ms var(--ease-slow),
+    opacity 260ms var(--ease-soft);
+}
+.ve-nav-item {
+  position: relative;
+  z-index: 1;
+}
+.ve-nav-link,
+.ve-nav-trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.05rem;
+  border-radius: 999px;
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: 0.88rem;
+  letter-spacing: 0.01em;
+  color: currentColor;
+  opacity: 0.86;
+  white-space: nowrap;
+  transition: opacity 240ms var(--ease-soft);
+}
+.ve-nav-link:hover,
+.ve-nav-trigger:hover,
+.ve-nav-trigger-open,
+.ve-nav-active {
+  opacity: 1;
+}
+.ve-nav-active::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0.28rem;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  border-radius: 50%;
+  background: var(--nav-gold);
+}
+.ve-nav-solid .ve-nav-active::after {
+  background: #a9793a;
+}
+.ve-nav-caret {
+  font-size: 0.6rem;
+  opacity: 0.8;
+  transition: transform 460ms var(--ease-slow);
+}
+.ve-nav-trigger-open .ve-nav-caret {
+  transform: rotate(180deg);
+}
+
+/* ── CTA ──────────────────────────────────────────────────────────── */
+.ve-nav-cta,
+.ve-mnav-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.35rem 0.4rem 0.35rem 1.25rem;
+  border-radius: 999px;
+  background: var(--nav-cream);
+  color: #1d1d1b;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.84rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  transition:
+    transform 450ms var(--ease-slow),
+    background-color 350ms var(--ease-slow),
+    box-shadow 450ms var(--ease-slow);
+}
+.ve-nav-solid .ve-nav-cta {
+  background: var(--ink);
+  color: var(--white);
+}
+.ve-nav-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 30px -14px rgba(0, 0, 0, 0.55);
+}
+.ve-nav-cta-icon {
+  width: 2.3rem;
+  height: 2.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #1d1d1b;
+  color: var(--nav-cream);
+  font-size: 0.8rem;
+  transition:
+    transform 450ms var(--ease-slow),
+    background-color 350ms var(--ease-slow),
+    color 350ms var(--ease-slow);
+}
+.ve-nav-solid .ve-nav-cta-icon {
+  background: var(--white);
+  color: var(--ink);
+}
+.ve-nav-cta:hover .ve-nav-cta-icon,
+.ve-mnav-cta:hover .ve-nav-cta-icon {
+  transform: translateX(3px) rotate(-35deg);
+  background: #a9793a;
+  color: #fff;
+}
+
+/* ── Burger (tablet / phone) ──────────────────────────────────────── */
+.ve-nav-burger {
+  display: none;
+  position: relative;
+  width: 2.9rem;
+  height: 2.9rem;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+  color: inherit;
+  transition: background-color 300ms var(--ease-slow);
+}
+.ve-nav-burger span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1.15rem;
+  height: 1.5px;
+  margin-left: -0.575rem;
+  border-radius: 2px;
+  background: currentColor;
+  transition:
+    transform 520ms var(--ease-slow),
+    opacity 240ms;
+}
+.ve-nav-burger span:nth-child(1) {
+  transform: translateY(-5px);
+}
+.ve-nav-burger span:nth-child(3) {
+  transform: translateY(5px);
+}
+.ve-nav-burger[data-open='true'] span:nth-child(1) {
+  transform: rotate(45deg);
+}
+.ve-nav-burger[data-open='true'] span:nth-child(2) {
+  opacity: 0;
+}
+.ve-nav-burger[data-open='true'] span:nth-child(3) {
+  transform: rotate(-45deg);
+}
+/* The menu panel is dark, so while it is open the burger must read on dark. */
+.ve-nav:has(.ve-nav-burger[data-open='true']) {
+  color: var(--nav-cream);
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  z-index: 102;
+}
+
+/* ── Mega dropdown ────────────────────────────────────────────────── */
+.ve-nav-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: radial-gradient(120% 80% at 50% 0%, rgba(12, 9, 6, 0.5), rgba(12, 9, 6, 0.28));
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 480ms var(--ease-soft),
+    visibility 0s 480ms;
+}
+.ve-nav-veil[data-open='true'] {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+.ve-mega {
+  position: absolute;
+  z-index: 3;
+  top: calc(100% + 14px);
+  left: var(--mx, 0);
+  width: var(--mw, 0);
+  height: var(--mh, 0);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px) scale(0.965);
+  transform-origin: var(--notch, 50%) 0;
+  transition:
+    opacity 320ms var(--ease-soft),
+    transform 560ms var(--ease-slow),
+    visibility 0s 320ms;
+}
+/* Only slide + resize while moving between two open menus; the first open
+   snaps into place and just fades/scales in. */
+.ve-mega[data-morph='true'] {
+  transition:
+    opacity 320ms var(--ease-soft),
+    transform 560ms var(--ease-slow),
+    left 560ms var(--ease-slow),
+    width 560ms var(--ease-slow),
+    height 560ms var(--ease-slow),
+    visibility 0s 320ms;
+}
+.ve-mega[data-open='true'] {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+.ve-mega[data-open='true'],
+.ve-mega[data-open='true'][data-morph='true'] {
+  transition-delay: 0s;
+}
+/* Invisible bridge across the gap so the pointer can travel bar → panel. */
+.ve-mega::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -18px;
+  height: 18px;
+}
+.ve-mega-notch {
+  position: absolute;
+  top: -7px;
+  left: var(--notch, 50%);
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  border-radius: 4px 0 0 0;
+  transform: rotate(45deg);
+  background: #f8f1e4;
+}
+.ve-mega[data-morph='true'] .ve-mega-notch {
+  transition: left 560ms var(--ease-slow);
+}
+.ve-mega-body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 28px;
+  background: #f8f1e4;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow:
+    0 50px 100px -40px rgba(12, 9, 6, 0.65),
+    0 0 0 1px rgba(29, 29, 27, 0.05);
+  color: #1d1d1b;
+}
+
+.ve-mega-panel {
+  --row: 4.3rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: min(45rem, calc(100vw - 1rem));
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 0.9rem;
+  padding: 0.9rem;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(var(--shift, 0));
+  transition:
+    opacity 300ms var(--ease-soft),
+    transform 560ms var(--ease-slow),
+    visibility 0s 300ms;
+}
+.ve-mega-panel[data-active='true'] {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 120ms, 120ms, 0s;
+}
+
+.ve-mega-list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 0.3rem 0.2rem 0.2rem;
+}
+.ve-mega-heading {
+  height: 2.2rem;
+  padding: 0.3rem 0.85rem 0;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.68rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(29, 29, 27, 0.6);
+}
+/* Slides to whichever row is hovered. */
+.ve-mega-hilite {
+  position: absolute;
+  left: 0.2rem;
+  right: 0.2rem;
+  top: 2.5rem;
+  height: var(--row);
+  border-radius: 18px;
+  background: linear-gradient(90deg, rgba(29, 29, 27, 0.075), rgba(29, 29, 27, 0.04));
+  transform: translateY(calc(var(--hi, 0) * var(--row)));
+  transition: transform 460ms var(--ease-slow);
+}
+.ve-mega-link {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.9rem;
+  height: var(--row);
+  padding: 0 0.85rem 0 0.75rem;
+  border-radius: 18px;
+  opacity: 0;
+  transform: translateX(-16px);
+  transition:
+    opacity 420ms var(--ease-soft),
+    transform 560ms var(--ease-slow);
+}
+.ve-mega-panel[data-active='true'] .ve-mega-link,
+.ve-mega-panel[data-active='true'] .ve-mega-all {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(170ms + var(--i, 0) * 60ms);
+}
+.ve-mega-thumb {
+  position: relative;
+  overflow: hidden;
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1rem;
+  transition: transform 500ms var(--ease-slow);
+}
+.ve-mega-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ve-mega-link:hover .ve-mega-thumb {
+  transform: scale(1.08) rotate(-3deg);
+}
+.ve-mega-text strong {
+  display: block;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.25;
+  color: #1d1d1b;
+}
+.ve-mega-text small {
+  display: block;
+  margin-top: 0.15rem;
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: 0.74rem;
+  color: rgba(29, 29, 27, 0.6);
+}
+.ve-mega-chev {
+  font-size: 0.7rem;
+  color: rgba(29, 29, 27, 0.4);
+  transition:
+    transform 420ms var(--ease-slow),
+    color 300ms;
+}
+.ve-mega-link:hover .ve-mega-chev {
+  transform: translateX(4px);
+  color: #a9793a;
+}
+.ve-mega-link-current .ve-mega-text strong {
+  color: #a9793a;
+}
+.ve-mega-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.55rem 0 0 0.85rem;
+  align-self: flex-start;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #a9793a;
+  opacity: 0;
+  transform: translateX(-16px);
+  transition:
+    opacity 420ms var(--ease-soft),
+    transform 560ms var(--ease-slow);
+}
+.ve-mega-all i {
+  transition: transform 420ms var(--ease-slow);
+}
+.ve-mega-all:hover i {
+  transform: translateX(5px);
+}
+
+/* Feature card: image crossfades as the hovered row changes. */
+.ve-mega-feature {
+  position: relative;
+  overflow: hidden;
+  min-height: 17.5rem;
+  border-radius: 22px;
+  color: var(--nav-cream);
+  isolation: isolate;
+  clip-path: inset(10% 8% 10% 8% round 22px);
+  transition: clip-path 800ms var(--ease-slow);
+}
+.ve-mega-panel[data-active='true'] .ve-mega-feature {
+  clip-path: inset(0 0 0 0 round 22px);
+  transition-delay: 160ms;
+}
+.ve-mega-fimg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(1.14);
+  transition:
+    opacity 600ms var(--ease-soft),
+    transform 1400ms var(--ease-slow);
+}
+.ve-mega-fimg[data-on='true'] {
+  opacity: 1;
+  transform: scale(1);
+}
+.ve-mega-fimg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ve-mega-fimg i {
+  font-size: 6.5rem;
+  color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1.5rem);
+}
+.ve-mega-feature:hover .ve-mega-fimg[data-on='true'] {
+  transform: scale(1.06);
+}
+.ve-mega-fshade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(0deg, rgba(10, 8, 5, 0.82) 0%, rgba(10, 8, 5, 0.2) 55%, rgba(10, 8, 5, 0.05) 100%);
+}
+.ve-mega-ftext {
+  position: absolute;
+  left: 1.25rem;
+  right: 4.2rem;
+  bottom: 1.2rem;
+  z-index: 2;
+  animation: veMegaText 640ms var(--ease-slow) both;
+}
+@keyframes veMegaText {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.ve-mega-ftext strong {
+  display: block;
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+  font-size: 1.75rem;
+  line-height: 1.05;
+}
+.ve-mega-ftext small {
+  display: block;
+  margin-top: 0.4rem;
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: 0.78rem;
+  color: rgba(246, 236, 220, 0.82);
+}
+.ve-mega-fgo {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 2;
+  width: 2.6rem;
+  height: 2.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--nav-cream);
+  color: #1d1d1b;
+  font-size: 0.8rem;
+  transition:
+    transform 500ms var(--ease-slow),
+    background-color 300ms;
+}
+.ve-mega-feature:hover .ve-mega-fgo {
+  transform: rotate(-40deg) scale(1.1);
+  background: var(--nav-gold);
+}
+
+/* Placeholder scenes until real photos are uploaded in the CMS. */
+.ve-tone-0 {
+  background:
+    radial-gradient(90% 70% at 72% 18%, rgba(255, 190, 120, 0.7), transparent 60%),
+    linear-gradient(160deg, #7a5a3a 0%, #2a3a2c 100%);
+}
+.ve-tone-1 {
+  background:
+    radial-gradient(90% 70% at 30% 18%, rgba(255, 220, 170, 0.6), transparent 60%),
+    linear-gradient(160deg, #6a5a4a 0%, #262a2c 100%);
+}
+.ve-tone-2 {
+  background:
+    radial-gradient(90% 70% at 70% 18%, rgba(255, 170, 110, 0.65), transparent 60%),
+    linear-gradient(160deg, #5a4a2a 0%, #1c2a20 100%);
+}
+.ve-tone-3 {
+  background:
+    radial-gradient(90% 70% at 28% 18%, rgba(170, 210, 200, 0.5), transparent 60%),
+    linear-gradient(160deg, #3a6a6a 0%, #16292c 100%);
+}
+
+/* ── Mobile / tablet menu ─────────────────────────────────────────── */
+.ve-mnav {
+  position: fixed;
+  inset: 0;
+  z-index: 101;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: #181411;
+  color: #f6ecdc;
+  padding: clamp(5.5rem, 16vh, 7.5rem) clamp(1.25rem, 6vw, 3rem) 2rem;
+  /* Grows out of the burger (top-right). */
+  clip-path: circle(0px at calc(100% - 2.3rem) 2.3rem);
+  visibility: hidden;
+  transition:
+    clip-path 850ms var(--ease-slow),
+    visibility 0s 850ms;
+}
+.ve-mnav[data-open='true'] {
+  clip-path: circle(150% at calc(100% - 2.3rem) 2.3rem);
+  visibility: visible;
+  transition-delay: 0s;
+}
+.ve-mnav-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 45% at 85% 8%, rgba(227, 196, 140, 0.22), transparent 70%),
+    radial-gradient(50% 40% at 5% 95%, rgba(120, 150, 100, 0.16), transparent 70%);
+}
+.ve-mnav-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 34rem;
+  margin: 0 auto;
+}
+.ve-mnav-list {
+  list-style: none;
+  border-top: 1px solid rgba(246, 236, 220, 0.14);
+}
+.ve-mnav-item {
+  border-bottom: 1px solid rgba(246, 236, 220, 0.14);
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 500ms var(--ease-soft),
+    transform 700ms var(--ease-slow);
+}
+.ve-mnav[data-open='true'] .ve-mnav-item,
+.ve-mnav[data-open='true'] .ve-mnav-cta {
+  opacity: 1;
+  transform: none;
+  transition-delay: var(--d, 0ms);
+}
+.ve-mnav-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 2.4rem 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.05rem 0;
+  text-align: left;
+  color: inherit;
+}
+.ve-mnav-num {
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: rgba(246, 236, 220, 0.5);
+}
+.ve-mnav-label {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-size: clamp(2.1rem, 9vw, 3rem);
+  line-height: 1.05;
+}
+.ve-mnav-active .ve-mnav-label,
+.ve-mnav-active .ve-mnav-num {
+  color: #e3c48c;
+}
+.ve-mnav-plus {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(246, 236, 220, 0.3);
+  font-size: 0.8rem;
+  transition:
+    transform 500ms var(--ease-slow),
+    background-color 300ms,
+    color 300ms;
+}
+.ve-mnav-row[aria-expanded='true'] .ve-mnav-plus {
+  transform: rotate(135deg);
+  background: #e3c48c;
+  color: #181411;
+  border-color: #e3c48c;
+}
+.ve-mnav-go i {
+  transition: transform 400ms var(--ease-slow);
+}
+.ve-mnav-row:hover .ve-mnav-go i {
+  transform: translateX(3px);
+}
+.ve-mnav-sub {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 620ms var(--ease-slow);
+}
+.ve-mnav-sub[data-open='true'] {
+  grid-template-rows: 1fr;
+}
+.ve-mnav-sub-inner {
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0 0 0 2.9rem;
+}
+.ve-mnav-sub[data-open='true'] .ve-mnav-sub-inner {
+  padding-bottom: 1.2rem;
+}
+.ve-mnav-child {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.6rem 0.75rem 0.6rem 0.6rem;
+  border-radius: 18px;
+  background: rgba(246, 236, 220, 0.05);
+}
+.ve-mnav-child strong {
+  display: block;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.ve-mnav-child small {
+  display: block;
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: 0.74rem;
+  color: rgba(246, 236, 220, 0.6);
+}
+.ve-mnav-child > i {
+  font-size: 0.75rem;
+  color: rgba(246, 236, 220, 0.5);
+}
+.ve-mnav-thumb {
+  width: 3rem;
+  height: 3rem;
+  overflow: hidden;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(150deg, #7a5a3a, #2a3a2c);
+  color: rgba(255, 255, 255, 0.85);
+}
+.ve-mnav-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ve-mnav-all {
+  align-self: flex-start;
+  margin: 0.4rem 0 0 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #e3c48c;
+}
+.ve-mnav-cta {
+  margin-top: 1.75rem;
+  width: 100%;
+  justify-content: space-between;
+  padding: 0.5rem 0.5rem 0.5rem 1.6rem;
+  font-size: 0.9rem;
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 500ms var(--ease-soft),
+    transform 700ms var(--ease-slow);
+}
+
+/* ── Responsive switch ────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .ve-nav {
+    grid-template-columns: 1fr auto;
+    padding: 0.45rem 0.5rem 0.45rem clamp(0.9rem, 3vw, 1.4rem);
+  }
+  .ve-nav-links,
+  .ve-nav-cta,
+  .ve-mega {
+    display: none;
+  }
+  .ve-nav-burger {
+    display: block;
+  }
+}
+@media (min-width: 1101px) {
+  .ve-mnav {
+    display: none;
+  }
+}
+@media (max-width: 380px) {
+  .ve-nav .ve-nav-logo em {
+    display: none;
+  }
+}
+@media (hover: none) {
+  .ve-nav-indicator {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ve-nav,
+  .ve-mega,
+  .ve-mega-panel,
+  .ve-mega-link,
+  .ve-mega-feature,
+  .ve-mnav,
+  .ve-mnav-item,
+  .ve-mnav-cta {
+    transition-duration: 1ms !important;
+    transition-delay: 0s !important;
+  }
+  .ve-mega-ftext {
+    animation: none;
+  }
+}

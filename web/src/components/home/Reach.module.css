@@ -1,0 +1,562 @@
+/* NOTE: no overflow: hidden on .reach — it wraps a pinned element.
+   Full-bleed dark map. Colors are hard-coded light-on-dark: the page is
+   already dark here (see Gallery.tsx / Reach.tsx theme tweens). */
+.reach {
+  position: relative;
+  padding: 0; /* overrides the global section padding */
+  color: #f6ecdc;
+}
+
+.stage {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  min-height: 34rem;
+  overflow: hidden;
+  background: #14110e;
+  isolation: isolate;
+}
+
+.map {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.map :global(.maplibregl-canvas) {
+  outline: none;
+}
+.mapNote {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-mont);
+  font-size: 0.85rem;
+  color: rgba(246, 236, 220, 0.7);
+}
+
+/* Keeps captions legible over any part of the map. */
+.vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(14, 11, 8, 0.85) 0%, rgba(14, 11, 8, 0.45) 32%, rgba(14, 11, 8, 0) 60%),
+    linear-gradient(0deg, rgba(14, 11, 8, 0.78) 0%, rgba(14, 11, 8, 0) 32%),
+    linear-gradient(180deg, rgba(14, 11, 8, 0.65) 0%, rgba(14, 11, 8, 0) 22%);
+}
+@media (max-width: 900px) {
+  .vignette {
+    background:
+      linear-gradient(0deg, rgba(14, 11, 8, 0.92) 0%, rgba(14, 11, 8, 0.6) 38%, rgba(14, 11, 8, 0) 66%),
+      linear-gradient(180deg, rgba(14, 11, 8, 0.65) 0%, rgba(14, 11, 8, 0) 22%);
+  }
+}
+
+/* ── Top bar ─────────────────────────────────────────────────────── */
+.top {
+  position: absolute;
+  z-index: 4;
+  left: var(--pad-x);
+  right: var(--pad-x);
+  top: clamp(6rem, 9vw, 7.5rem);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  pointer-events: none;
+}
+.top > * {
+  pointer-events: auto;
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: clamp(0.72rem, 1.3vw, 0.8rem);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(246, 236, 220, 0.8);
+}
+.eyebrowDash {
+  width: 2.5rem;
+  height: 1px;
+  background: linear-gradient(90deg, #e3c48c, rgba(227, 196, 140, 0));
+}
+.locateWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.6rem;
+}
+.locate {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.75rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid rgba(227, 196, 140, 0.45);
+  background: rgba(20, 16, 12, 0.65);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  color: #f6ecdc;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition:
+    background-color 350ms var(--ease-slow),
+    border-color 350ms var(--ease-slow),
+    transform 450ms var(--ease-slow);
+}
+.locate:hover:not(:disabled) {
+  background: #e3c48c;
+  border-color: #e3c48c;
+  color: #1d1d1b;
+  transform: translateY(-2px);
+}
+.locate i {
+  color: #e3c48c;
+}
+.locate:hover:not(:disabled) i {
+  color: #1d1d1b;
+}
+.geoNote {
+  max-width: 17rem;
+  text-align: right;
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: rgba(246, 236, 220, 0.75);
+}
+
+/* ── Opening title + captions ────────────────────────────────────── */
+.hero,
+.beat,
+.arrival {
+  position: absolute;
+  z-index: 3;
+  left: var(--pad-x);
+  will-change: transform, opacity;
+}
+.hero {
+  top: 50%;
+  transform: translateY(-46%);
+  max-width: min(46rem, 90vw);
+}
+.headline {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(3.2rem, 8.4vw, 8rem);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  color: #f8f0e2;
+  text-shadow: 0 8px 50px rgba(0, 0, 0, 0.7);
+  margin-bottom: clamp(1.1rem, 2.2vw, 1.75rem);
+}
+.gold {
+  background: linear-gradient(100deg, #f2d9a8 0%, #d3a566 55%, #f0cf95 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.tag {
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: clamp(0.74rem, 1.3vw, 0.86rem);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  line-height: 1.9;
+  color: rgba(246, 236, 220, 0.85);
+  max-width: 24em;
+  margin-bottom: clamp(1.4rem, 2.6vw, 2rem);
+}
+.cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  color: rgba(246, 236, 220, 0.65);
+}
+.cue i {
+  animation: reachBob 2s ease-in-out infinite;
+}
+@keyframes reachBob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+}
+
+.beat {
+  bottom: clamp(7rem, 12vh, 9rem);
+  max-width: min(40rem, 88vw);
+  opacity: 0;
+  visibility: hidden;
+}
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.74rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: #e3c48c;
+}
+.line {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(2.2rem, 5.4vw, 4.8rem);
+  line-height: 1.06;
+  color: #f8f0e2;
+  text-shadow: 0 6px 40px rgba(0, 0, 0, 0.7);
+}
+
+/* ── Arrival ─────────────────────────────────────────────────────── */
+.arrival {
+  bottom: clamp(6.5rem, 11vh, 8.5rem);
+  max-width: min(46rem, 90vw);
+  opacity: 0;
+  visibility: hidden;
+}
+.arrivalTitle {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(2.6rem, 6vw, 5.4rem);
+  line-height: 1.02;
+  color: #f8f0e2;
+  text-shadow: 0 6px 40px rgba(0, 0, 0, 0.7);
+  margin-bottom: clamp(1.2rem, 2.4vw, 1.75rem);
+}
+.stats {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 2rem;
+  margin-bottom: clamp(1.2rem, 2.4vw, 1.75rem);
+}
+.stats li {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+.stats li > i {
+  font-size: 1.4rem;
+  color: #e3c48c;
+}
+.stats strong {
+  display: block;
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  line-height: 1.1;
+  color: #f8f0e2;
+}
+.stats small {
+  display: block;
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: 0.72rem;
+  color: rgba(246, 236, 220, 0.7);
+}
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem 1.75rem;
+}
+.directions {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.1rem;
+  padding: 0.45rem 0.45rem 0.45rem 1.6rem;
+  border-radius: 999px;
+  background: #f6ecdc;
+  color: #1d1d1b;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.74rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.8);
+  transition: transform 450ms var(--ease-slow);
+}
+.directions:hover {
+  transform: translateY(-2px);
+}
+.directionsIcon {
+  width: 2.6rem;
+  height: 2.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #1d1d1b;
+  color: #f6ecdc;
+  font-size: 0.8rem;
+  transition:
+    transform 450ms var(--ease-slow),
+    background-color 350ms;
+}
+.directions:hover .directionsIcon {
+  transform: translateX(3px) rotate(-35deg);
+  background: #a9793a;
+}
+.maps {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: 0.82rem;
+  color: rgba(246, 236, 220, 0.9);
+}
+.maps i:first-child {
+  color: #e3c48c;
+}
+.maps i:last-child {
+  font-size: 0.65rem;
+}
+.privacy {
+  margin-top: 1rem;
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  color: rgba(246, 236, 220, 0.6);
+}
+
+/* ── Live trip progress ──────────────────────────────────────────── */
+.hud {
+  position: absolute;
+  z-index: 4;
+  left: var(--pad-x);
+  right: var(--pad-x);
+  bottom: clamp(1.4rem, 3vh, 2.25rem);
+}
+.hudTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.7rem;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(246, 236, 220, 0.8);
+}
+.hudLive {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  color: #f6ecdc;
+}
+.hudLive i {
+  color: #e3c48c;
+}
+.hudLive i:nth-of-type(2) {
+  margin-left: 0.9rem;
+}
+@media (max-width: 560px) {
+  .hudPlace {
+    display: none;
+  }
+  .hudTop {
+    justify-content: center;
+  }
+}
+.bar {
+  display: block;
+  height: 2px;
+  background: rgba(246, 236, 220, 0.2);
+  overflow: hidden;
+}
+.barFill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #d3a566, #f0d49a);
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+/* ── Map markers (generated DOM, so :global) ──────────────────────── */
+.map :global(.maplibregl-ctrl-attrib) {
+  background: rgba(20, 16, 12, 0.6);
+  color: rgba(246, 236, 220, 0.7);
+  font-size: 10px;
+}
+.map :global(.maplibregl-ctrl-attrib a) {
+  color: rgba(246, 236, 220, 0.85);
+}
+.map :global(.vk-start),
+.map :global(.vk-end),
+.map :global(.vk-head),
+.map :global(.vk-place) {
+  background: none;
+  border: 0;
+}
+.map :global(.vk-dot) {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #f6ecdc;
+  box-shadow: 0 0 0 5px rgba(246, 236, 220, 0.25);
+}
+.map :global(.vk-label) {
+  position: absolute;
+  white-space: nowrap;
+  font-family: var(--font-mont);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #f6ecdc;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.95);
+}
+.map :global(.vk-start .vk-label) {
+  left: 20px;
+  top: -1px;
+}
+.map :global(.vk-end) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.map :global(.vk-end .vk-label) {
+  position: static;
+  margin-top: 0.5rem;
+}
+.map :global(.vk-house) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50% 50% 50% 4px;
+  transform: rotate(-45deg);
+  background: linear-gradient(140deg, #f2d9a8, #b9873f);
+  border: 3px solid #f6ecdc;
+  box-shadow: 0 12px 26px -6px rgba(0, 0, 0, 0.8);
+}
+.map :global(.vk-house i) {
+  transform: rotate(45deg);
+  color: #2a1d10;
+  font-size: 16px;
+}
+.map :global(.vk-head) {
+  width: 36px;
+  height: 36px;
+}
+.map :global(.vk-car) {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #f6ecdc;
+  color: #1d1d1b;
+  font-size: 14px;
+  border: 2px solid #e3c48c;
+  box-shadow: 0 10px 20px -6px rgba(0, 0, 0, 0.8);
+}
+.map :global(.vk-pulse) {
+  position: absolute;
+  inset: -9px;
+  border-radius: 50%;
+  border: 2px solid rgba(240, 212, 154, 0.7);
+  animation: reachPulse 1.8s ease-out infinite;
+}
+@keyframes reachPulse {
+  0% {
+    transform: scale(0.6);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+.map :global(.vk-chip) {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  white-space: nowrap;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(20, 16, 12, 0.85);
+  border: 1px solid rgba(227, 196, 140, 0.4);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 22px -10px rgba(0, 0, 0, 0.8);
+  font-family: var(--font-mont);
+  font-weight: 700;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #f6ecdc;
+  animation: reachChip 520ms var(--ease-slow) both;
+}
+.map :global(.vk-chip i) {
+  color: #e3c48c;
+}
+@keyframes reachChip {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .map :global(.vk-pulse),
+  .cue i {
+    animation: none;
+  }
+}
+
+/* Phones: captions sit at the bottom, above the progress line. */
+@media (max-width: 900px) {
+  .hero {
+    top: auto;
+    bottom: clamp(6rem, 14vh, 8rem);
+    transform: none;
+  }
+  .beat,
+  .arrival {
+    bottom: clamp(5.5rem, 12vh, 7.5rem);
+  }
+  .top {
+    top: clamp(5.5rem, 12vw, 6.5rem);
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .locateWrap {
+    align-items: flex-start;
+  }
+  .geoNote {
+    text-align: left;
+  }
+}

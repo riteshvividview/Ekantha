@@ -1,0 +1,270 @@
+.why {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(4rem, 8vw, 7rem) var(--pad-x) clamp(6rem, 12vw, 11rem);
+  color: var(--ink);
+}
+
+/* Drifting outlined word strip. */
+.marquee {
+  overflow: hidden;
+  margin: 0 calc(var(--pad-x) * -1) clamp(4rem, 9vw, 8rem);
+  pointer-events: none;
+  user-select: none;
+}
+.marqueeTrack {
+  display: flex;
+  align-items: center;
+  gap: clamp(2rem, 4vw, 4rem);
+  width: max-content;
+  will-change: transform;
+}
+.marqueeItem {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(2rem, 4vw, 4rem);
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-size: clamp(3.5rem, 10vw, 9rem);
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--line-strong);
+}
+.marqueeIcon {
+  font-size: 0.32em;
+  color: var(--ink-faint);
+  -webkit-text-stroke: 0;
+}
+
+.head {
+  max-width: 60rem;
+  margin-bottom: clamp(3rem, 7vw, 6rem);
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: clamp(0.72rem, 1.5vw, 0.8rem);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
+}
+.eyebrowDash {
+  width: 2.5rem;
+  height: 1px;
+  background: currentColor;
+}
+.headline {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(3rem, 8vw, 7.4rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
+}
+.line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+.lineInner {
+  display: block;
+  will-change: transform;
+}
+.sub {
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: clamp(0.95rem, 1.6vw, 1.15rem);
+  line-height: 1.7;
+  color: var(--ink-soft);
+  max-width: 28em;
+}
+
+/* Bento grid of image-led reason cards. */
+.grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(1rem, 2vw, 1.75rem);
+}
+.card {
+  position: relative;
+  overflow: hidden;
+  min-height: clamp(22rem, 38vw, 34rem);
+  border-radius: 24px;
+  border: 1px solid var(--line);
+  color: #f6ecdc;
+  isolation: isolate;
+  box-shadow: 0 40px 70px -40px rgba(0, 0, 0, 0.55);
+  will-change: transform, clip-path;
+}
+.wide {
+  grid-column: span 7;
+}
+.narrow {
+  grid-column: span 5;
+}
+@media (max-width: 860px) {
+  .wide,
+  .narrow {
+    grid-column: 1 / -1;
+    min-height: clamp(20rem, 80vw, 28rem);
+  }
+}
+
+.media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+.mediaInner {
+  position: absolute;
+  inset: -8% 0;
+  will-change: transform;
+}
+/* The hover zoom lives on its own nested child, not .mediaInner itself —
+   .mediaInner's own transform is owned by Why.tsx's per-frame GSAP scroll
+   scrub (data-inner). A `transition: transform` declared directly on it
+   would intercept every one of those scrubbed updates too (CSS transitions
+   fire on any change to the property, GSAP-driven or not), so the parallax
+   kept getting reset mid-scroll and only visibly caught up once scrolling
+   stopped and the transition finally got a clear run at the last value —
+   exactly the "only moves after you stop scrolling" bug this fixes. */
+.mediaZoom {
+  position: absolute;
+  inset: 0;
+  transition: transform 1200ms var(--ease-slow);
+  will-change: transform;
+}
+.card:hover .mediaZoom {
+  transform: scale(1.06);
+}
+.mediaZoom img {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+
+/* Per-card placeholder scenery until real photos are dropped in. */
+.tone_land .mediaInner {
+  background:
+    radial-gradient(120% 70% at 75% 8%, rgba(255, 196, 120, 0.55), transparent 60%),
+    linear-gradient(170deg, #5d7a4a 0%, #2f4a35 55%, #1c2c22 100%);
+}
+.tone_private .mediaInner {
+  background:
+    radial-gradient(90% 60% at 20% 15%, rgba(255, 170, 110, 0.5), transparent 60%),
+    linear-gradient(160deg, #b8703a 0%, #6b3b25 60%, #35201a 100%);
+}
+.tone_planned .mediaInner {
+  background:
+    radial-gradient(90% 60% at 80% 12%, rgba(190, 220, 215, 0.4), transparent 60%),
+    linear-gradient(165deg, #3f6a6a 0%, #244548 60%, #16292c 100%);
+}
+.tone_away .mediaInner {
+  background:
+    radial-gradient(110% 70% at 30% 10%, rgba(255, 210, 150, 0.5), transparent 60%),
+    linear-gradient(170deg, #8a6a4a 0%, #4d3a2c 60%, #251c16 100%);
+}
+.watermark {
+  position: absolute;
+  right: 8%;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: clamp(9rem, 22vw, 18rem);
+  color: rgba(255, 255, 255, 0.08);
+}
+
+.shade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.22) 0%, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.72) 100%);
+  pointer-events: none;
+}
+
+.num {
+  position: absolute;
+  top: clamp(1.25rem, 2.4vw, 2rem);
+  left: clamp(1.25rem, 2.4vw, 2rem);
+  z-index: 2;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.24em;
+  color: rgba(246, 236, 220, 0.85);
+}
+.icon {
+  position: absolute;
+  top: clamp(1rem, 2vw, 1.6rem);
+  right: clamp(1rem, 2vw, 1.6rem);
+  z-index: 2;
+  width: 3.2rem;
+  height: 3.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(246, 236, 220, 0.45);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-size: 1rem;
+  transition:
+    background-color 350ms var(--ease-slow),
+    color 350ms var(--ease-slow),
+    transform 500ms var(--ease-slow);
+}
+.card:hover .icon {
+  background: #f6ecdc;
+  color: #1c1815;
+  transform: rotate(-12deg) scale(1.08);
+}
+
+.info {
+  position: absolute;
+  left: clamp(1.25rem, 2.4vw, 2rem);
+  right: clamp(1.25rem, 2.4vw, 2rem);
+  bottom: clamp(1.25rem, 2.4vw, 2rem);
+  z-index: 2;
+}
+.title {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1.02;
+  margin-bottom: 0.6rem;
+}
+.text {
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: clamp(0.82rem, 1.3vw, 0.95rem);
+  line-height: 1.6;
+  color: rgba(246, 236, 220, 0.82);
+  max-width: 26em;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    max-height 600ms var(--ease-slow),
+    opacity 500ms var(--ease-slow),
+    transform 600ms var(--ease-slow);
+}
+.card:hover .text {
+  max-height: 6em;
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (hover: none) {
+  .text {
+    max-height: 6em;
+    opacity: 1;
+    transform: none;
+  }
+}

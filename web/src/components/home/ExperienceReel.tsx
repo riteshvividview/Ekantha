@@ -1,14 +1,36 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Image from 'next/image'
 import type { Home } from '@/payload-types'
 import { DragScrollTrack } from '@/components/shared/DragScrollTrack'
 import { resolveMediaSize } from '@/lib/media'
 import { gsap, ScrollTrigger } from '@/lib/animations/gsap'
 import { experienceGlow } from '@/lib/animations/theatre/project'
+import { PAGE_DARK, PAGE_LIGHT } from '@/lib/pageTheme'
 import styles from './home.module.css'
 
 const MOBILE_BREAKPOINT = '(min-width: 861px)'
+
+const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v))
+
+// LOCAL EXPERIENCE IMAGE OVERRIDE — BEGIN (set the flag to false to restore CMS images)
+const USE_LOCAL_EXPERIENCE_IMAGES = true
+const LOCAL_EXPERIENCE_IMAGES = [
+  '/images/home/04-experience-reel/experience-the-estate-img1.JPG',
+  '/images/home/04-experience-reel/experience-the-estate-img2.JPG',
+  '/images/home/04-experience-reel/experience-the-estate-img3.JPG',
+  '/images/home/04-experience-reel/experience-the-estate-img4.JPG',
+  '/images/home/04-experience-reel/experience-the-estate-img5.png',
+  '/images/home/04-experience-reel/experience-the-estate-img6.png',
+  '/images/home/04-experience-reel/experience-the-estate-img7.png',
+]
+// LOCAL EXPERIENCE IMAGE OVERRIDE — END
+
+function localExperienceImage(index: number) {
+  if (!USE_LOCAL_EXPERIENCE_IMAGES || LOCAL_EXPERIENCE_IMAGES.length === 0) return null
+  return LOCAL_EXPERIENCE_IMAGES[index % LOCAL_EXPERIENCE_IMAGES.length]
+}
 
 // Scattered positions within the oversized, pannable field canvas
 // (percentages of the field's own box, not the viewport) — ordered so
@@ -63,6 +85,30 @@ export function ExperienceReel({ data }: { data: Home['experience'] }) {
   const bgTintRef = useRef<HTMLDivElement>(null)
   const glowRef = useRef<HTMLDivElement>(null)
   const counterRef = useRef<HTMLSpanElement>(null)
+  const linesRef = useRef<SVGSVGElement>(null)
+
+  // Play a fixed-duration palette transition when the section reaches its
+  // trigger, then reverse that same transition when scrolling back above it.
+  // Keeping this time-based avoids tying the visible fade to scroll speed.
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return undefined
+    const ctx = gsap.context(() => {
+      gsap.fromTo(document.body, PAGE_DARK, {
+        ...PAGE_LIGHT,
+        duration: 0.8,
+        ease: 'power2.inOut',
+        immediateRender: false,
+        scrollTrigger: {
+          trigger: section,
+          start: 'top 85%',
+          toggleActions: 'play none none reverse',
+          invalidateOnRefresh: true,
+        },
+      })
+    }, section)
+    return () => ctx.revert()
+  }, [])
 
   useEffect(() => {
     const glow = glowRef.current
@@ -88,6 +134,27 @@ export function ExperienceReel({ data }: { data: Home['experience'] }) {
         xTo: gsap.quickTo(el, 'x', { duration: 0.3, ease: 'power2.out' }),
         yTo: gsap.quickTo(el, 'y', { duration: 0.3, ease: 'power2.out' }),
       }))
+
+      // The three background line-art paths draw themselves in as the
+      // section scrolls, instead of just sitting there faintly visible the
+      // whole time. Each gets its own finish point (not drawn in lockstep)
+      // so it reads as three hand-drawn strokes rather than one mechanical
+      // sweep, and `getTotalLength()` means this works regardless of each
+      // path's actual curve length. DRAW_DIR alternates which END of the
+      // path (both defined left-to-right in the `d` data below) each one
+      // visibly draws from — 1 keeps the natural start→end (left→right)
+      // direction, -1 reverses it (the offset runs -length→0 instead of
+      // length→0, which reveals the path from its END backward) — so they
+      // don't all sweep the same way.
+      const lines = linesRef.current ? Array.from(linesRef.current.querySelectorAll('path')) : []
+      const DRAW_FINISH = [0.55, 0.8, 1]
+      const DRAW_DIR = [1, -1, 1]
+      const lineLengths = lines.map((path, i) => {
+        const length = path.getTotalLength()
+        const dir = DRAW_DIR[i % DRAW_DIR.length]
+        gsap.set(path, { strokeDasharray: length, strokeDashoffset: dir * length })
+        return length
+      })
 
       const maxPan = () => ({
         x: field.offsetWidth - pinWrap.clientWidth,
@@ -117,6 +184,11 @@ export function ExperienceReel({ data }: { data: Home['experience'] }) {
           // handing off a fully-tinted surface straight into a flat-color
           // section below with no blend, which read as a hard block seam.
           if (bgTint) bgTint.style.opacity = String(Math.sin(p * Math.PI))
+          lines.forEach((path, i) => {
+            const drawn = clamp(p / DRAW_FINISH[i % DRAW_FINISH.length], 0, 1)
+            const dir = DRAW_DIR[i % DRAW_DIR.length]
+            path.style.strokeDashoffset = String(dir * lineLengths[i] * (1 - drawn))
+          })
           if (counterRef.current && items.length) {
             const idx = Math.min(items.length, Math.max(1, Math.round(p * items.length)))
             counterRef.current.textContent = `${String(idx).padStart(2, '0')} / ${String(items.length).padStart(2, '0')}`
@@ -156,7 +228,7 @@ export function ExperienceReel({ data }: { data: Home['experience'] }) {
       <div className={styles.scatterPinWrap} ref={pinWrapRef}>
         <div className={styles.scatterBgTint} ref={bgTintRef} aria-hidden="true" />
 
-        <svg className={styles.scatterLines} viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">
+        <svg className={styles.scatterLines} viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" ref={linesRef}>
           <path d="M-50,150 C150,60 300,260 500,160 C700,60 850,240 1050,150" />
           <path d="M-50,480 C120,390 320,590 520,480 C720,370 880,550 1050,480" />
           <path d="M-50,800 C180,710 340,910 540,800 C740,690 900,870 1050,800" />
@@ -177,7 +249,7 @@ export function ExperienceReel({ data }: { data: Home['experience'] }) {
           )}
 
           {items.map((item, i) => (
-            <ScatterPhoto item={item} slot={SLOTS[i % SLOTS.length]} key={item.id ?? i} />
+            <ScatterPhoto item={item} index={i} slot={SLOTS[i % SLOTS.length]} key={item.id ?? i} />
           ))}
         </div>
 
@@ -197,10 +269,17 @@ export function ExperienceReel({ data }: { data: Home['experience'] }) {
       <div className={styles.experienceMobile}>
         <DragScrollTrack>
           {items.map((item, i) => {
-            const media = resolveMediaSize(item.image, 'card')
+            const localImage = localExperienceImage(i)
+            const media = localImage ? null : resolveMediaSize(item.image, 'card')
             return (
               <div className={styles.hCard} key={item.id ?? i}>
-                <div className={styles.hCardMedia}>{media.url && <img src={media.url} alt={media.alt} loading="lazy" />}</div>
+                <div className={styles.hCardMedia}>
+                  {localImage ? (
+                    <Image src={localImage} alt={item.title} fill sizes="85vw" />
+                  ) : (
+                    media?.url && <img src={media.url} alt={media.alt} loading="lazy" />
+                  )}
+                </div>
                 <div className={styles.hCardBody}>
                   <div className={styles.hCardTitle}>{item.title}</div>
                   <p className={styles.hCardDesc}>{item.description}</p>
@@ -214,12 +293,27 @@ export function ExperienceReel({ data }: { data: Home['experience'] }) {
   )
 }
 
-function ScatterPhoto({ item, slot }: { item: NonNullable<Home['experience']['items']>[number]; slot: (typeof SLOTS)[number] }) {
-  const media = resolveMediaSize(item.image, 'card')
+function ScatterPhoto({
+  item,
+  index,
+  slot,
+}: {
+  item: NonNullable<Home['experience']['items']>[number]
+  index: number
+  slot: (typeof SLOTS)[number]
+}) {
+  const localImage = localExperienceImage(index)
+  const media = localImage ? null : resolveMediaSize(item.image, 'card')
   return (
     <figure className={styles.scatterPhoto} style={{ top: slot.top, left: slot.left, width: slot.width }}>
       <figcaption>{item.title}</figcaption>
-      <div className={styles.scatterPhotoMedia}>{media.url && <img src={media.url} alt={media.alt} loading="lazy" />}</div>
+      <div className={styles.scatterPhotoMedia}>
+        {localImage ? (
+          <Image src={localImage} alt={item.title} fill sizes="(max-width: 860px) 85vw, 30vw" />
+        ) : (
+          media?.url && <img src={media.url} alt={media.alt} loading="lazy" />
+        )}
+      </div>
     </figure>
   )
 }

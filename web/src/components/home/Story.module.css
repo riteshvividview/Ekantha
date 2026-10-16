@@ -78,6 +78,9 @@
   gap: clamp(2.5rem, 7vw, 8rem);
   align-items: start;
 }
+.copyContent {
+  position: relative;
+}
 @media (max-width: 900px) {
   .grid {
     grid-template-columns: 1fr;
@@ -187,6 +190,10 @@
   background: linear-gradient(160deg, #e6d3bd 0%, #cdb08d 100%);
   box-shadow: 0 30px 60px -25px rgba(0, 0, 0, 0.55);
   will-change: transform, clip-path;
+  transition: box-shadow 450ms var(--ease-slow);
+}
+.frame:hover {
+  box-shadow: 0 40px 70px -22px rgba(0, 0, 0, 0.65);
 }
 .frameMain {
   top: 0;
@@ -209,19 +216,39 @@
   justify-content: center;
   will-change: transform;
 }
-.frameInner img {
+/* The actual hover-interactive layer — nested inside .frameInner rather
+   than replacing it, since .frameInner's own transform is already owned
+   by the scroll-scrubbed GSAP parallax tween (see Story.tsx). A plain CSS
+   transition here composes with that instead of fighting it. */
+.frameMedia {
+  position: absolute;
+  inset: 0;
+  transform: scale(1.001); /* avoids a blurry sub-pixel snap on the first hover transition */
+  filter: saturate(0.85) brightness(0.92);
+  transition:
+    transform 550ms var(--ease-slow),
+    filter 550ms var(--ease-slow);
+}
+.frame:hover .frameMedia {
+  transform: scale(1.055);
+  filter: saturate(1) brightness(1.03);
+}
+.frameMedia img,
+.frameVideo {
   width: 100%;
   height: 100%;
   max-width: none;
   object-fit: cover;
+  display: block;
 }
-.placeholder {
-  font-family: var(--font-mont);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: rgba(29, 29, 27, 0.35);
+/* A soft bottom-up gradient, independent of the hover zoom/desaturation —
+   keeps each card reading as a considered frame rather than a flat crop,
+   at rest as much as on hover. */
+.frameOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(190deg, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.35) 100%);
+  pointer-events: none;
 }
 
 .highlights {

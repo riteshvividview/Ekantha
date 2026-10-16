@@ -1,12 +1,41 @@
 'use client'
 
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import type { FarmDining } from '@/payload-types'
+import { gsap } from '@/lib/animations/gsap'
 import styles from './farm-dining.module.css'
 
 export function Faq({ data }: { data: FarmDining['faq'] }) {
   const items = data.items ?? []
   const listRef = useRef<HTMLDivElement>(null)
+  const sectionRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return undefined
+
+    const ctx = gsap.context(() => {
+      gsap.from(section.querySelectorAll(`.${styles.sectionHead}`), {
+        opacity: 0,
+        y: 24,
+        duration: 0.9,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: section, start: 'top 80%', once: true },
+      })
+
+      const rows = section.querySelectorAll(`.${styles.faqItem}`)
+      gsap.from(rows, {
+        opacity: 0,
+        y: 18,
+        duration: 0.7,
+        ease: 'power3.out',
+        stagger: 0.08,
+        scrollTrigger: { trigger: rows[0] ?? section, start: 'top 88%', once: true },
+      })
+    }, section)
+
+    return () => ctx.revert()
+  }, [])
 
   // Accordion behavior: opening one item closes every other open item.
   function handleToggle(e: React.SyntheticEvent<HTMLDetailsElement>) {
@@ -19,15 +48,15 @@ export function Faq({ data }: { data: FarmDining['faq'] }) {
   }
 
   return (
-    <section id="faq">
-      <div className={`${styles.sectionHead} reveal`}>
+    <section id="faq" ref={sectionRef}>
+      <div className={`${styles.sectionHead}`}>
         <span className="eyebrow">{data.eyebrow}</span>
-        <h2 className="section-title">{renderHeading(data.heading)}</h2>
+        <h2 className={`section-title ${styles.sectionTitle}`}>{renderHeading(data.heading)}</h2>
       </div>
 
       <div className={styles.faqList} ref={listRef}>
         {items.map((item, i) => (
-          <details className={`${styles.faqItem} reveal`} onToggle={handleToggle} key={item.id ?? i}>
+          <details className={`${styles.faqItem}`} onToggle={handleToggle} key={item.id ?? i}>
             <summary>
               {item.question}
               <span className={styles.faqPlus}>+</span>

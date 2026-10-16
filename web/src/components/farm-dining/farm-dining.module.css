@@ -1,11 +1,13 @@
 /* ── 01. Banner — split screen ─────────────────────────────────── */
 
 .fdHero {
+  position: relative;
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
   min-height: 86vh;
   min-height: 86svh;
   background: var(--silver);
+  overflow: hidden;
 }
 @media (max-width: 860px) {
   .fdHero {
@@ -14,7 +16,34 @@
   }
 }
 
+/* Two slow, breathing amber glows behind the hero copy — firelight
+   catching at the edge of vision rather than a decorative blob. */
+.fdHeroEmberA,
+.fdHeroEmberB {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(40px);
+}
+.fdHeroEmberA {
+  width: 360px;
+  height: 360px;
+  left: -90px;
+  top: 10%;
+  background: radial-gradient(circle, rgba(201, 124, 44, 0.3), transparent 70%);
+}
+.fdHeroEmberB {
+  width: 300px;
+  height: 300px;
+  left: 20%;
+  bottom: -60px;
+  background: radial-gradient(circle, rgba(157, 92, 38, 0.22), transparent 70%);
+}
+
 .fdHeroText {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -49,9 +78,21 @@
 }
 
 .fdHeroHeadline {
+  /* Overrides the shared .display-xl utility's Clash Display — Qalisten
+     is the one deliberately shared title element across every page. */
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
   font-size: clamp(2rem, 5.6vw, 4rem);
   max-width: 13ch;
   margin-bottom: clamp(1.25rem, 3vw, 2rem);
+}
+
+/* Applied alongside the shared `section-title` class on every <h2> on this
+   page — overrides its Clash Display with Qalisten, matching every other
+   redesigned page's convention. */
+.sectionTitle {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
 }
 
 .fdHeroSub {
@@ -146,7 +187,7 @@
 }
 
 .uniqueNum {
-  font-family: var(--font-accent);
+  font-family: var(--font-qalisten), Georgia, serif;
   font-style: italic;
   font-size: clamp(2rem, 5vw, 3.2rem);
   color: var(--ink-faint);
@@ -224,7 +265,7 @@
   margin-bottom: 0.85rem;
 }
 .expTitle em {
-  font-family: var(--font-accent);
+  font-family: var(--font-qalisten), Georgia, serif;
   font-style: italic;
   font-weight: 400;
 }
@@ -360,6 +401,23 @@
   background: linear-gradient(180deg, rgba(29, 29, 27, 0.15) 0%, rgba(29, 29, 27, 0.55) 60%, rgba(29, 29, 27, 0.88) 100%);
 }
 
+/* Slow looping ember glow, only on the featured (night) card — the one
+   card lit after dark gets a small ambient life the daylight cards don't. */
+.suitEmber {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  bottom: 20%;
+  width: 220px;
+  height: 220px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(224, 142, 62, 0.4), transparent 70%);
+  filter: blur(30px);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .suitIcon,
 .suitTitle,
 .suitBody {
@@ -484,10 +542,32 @@
 }
 
 .reserveFormWrap {
+  position: relative;
   padding: clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 5vw, 4rem);
   display: flex;
   flex-direction: column;
   justify-content: center;
+  overflow: hidden;
+}
+
+/* Low, slow ember glow behind the final form — the fire burning low at
+   the close of the evening. */
+.reserveEmber {
+  position: absolute;
+  z-index: 0;
+  left: -60px;
+  bottom: -80px;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201, 124, 44, 0.3), transparent 70%);
+  filter: blur(45px);
+  opacity: 0.5;
+  pointer-events: none;
+}
+.reserveFormWrap > *:not(.reserveEmber) {
+  position: relative;
+  z-index: 1;
 }
 
 .reserveForm {

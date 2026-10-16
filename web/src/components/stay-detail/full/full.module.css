@@ -1,6 +1,51 @@
 /* Full House's own visual treatment — bento highlight grid, alternating
    amenity rows, hero+strip gallery, numbered ideal-for cards. Ported from
-   FullHouse.html's `.hl-*`, `.am-*`, `.gallery-*`, `.ideal-*` rules. */
+   FullHouse.html's `.hl-*`, `.am-*`, `.gallery-*`, `.ideal-*` rules, then
+   carried up to the site's current premium bar: Qalisten section titles
+   (matching every other redesigned page), GSAP entrance motion on every
+   section, and one new signature element — the "estate at a glance" stat
+   strip below — that gives Full House its own grand/communal/celebratory
+   identity instead of reskinning Mango House's intimate-cottage mood or
+   Stone House's quiet-writer's-retreat mood. */
+
+/* Qalisten override for every section title on this page — same pattern
+   as the Stay overview, Mango House and Stone House's own `.sectionTitle`. */
+.sectionTitle {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+}
+
+/* ── "Estate at a glance" stat strip — Full House's signature element ──
+   Three big Qalisten-italic numbers (guests / houses / nights) laid out
+   like a banquet seating card. Nothing comparable exists on Mango House
+   or Stone House — it's the one place on the site that states this stay's
+   scale as a fact rather than a feeling, which is exactly what makes a
+   16-guest, two-house estate feel different from a 2-guest cottage. */
+.hlStats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1.75rem, 5vw, 4rem);
+  padding: clamp(1.4rem, 3vw, 2rem) 0 clamp(2rem, 4.5vw, 3rem);
+  margin-bottom: clamp(0.5rem, 1.5vw, 1rem);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.hlStat { display: flex; flex-direction: column; gap: 0.3rem; }
+.hlStatNum {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(2.1rem, 5vw, 3.1rem);
+  line-height: 1;
+  color: var(--accent);
+}
+.hlStatLabel {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(0.72rem, 1.5vw, 0.82rem);
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+}
 
 /* ── Highlight cards (photo-backed bento) ─────────────────────── */
 
@@ -126,7 +171,7 @@
 .amRow:hover .amMedia img { transform: scale(1.06); }
 
 .amIndex {
-  font-family: var(--font-accent);
+  font-family: var(--font-qalisten), Georgia, serif;
   font-style: italic;
   font-weight: 400;
   font-size: clamp(1.1rem, 2.8vw, 1.5rem);

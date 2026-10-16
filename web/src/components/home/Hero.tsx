@@ -17,17 +17,38 @@ const framePath = (i: number) => `/hero-entrance/frame-${String(i + 1).padStart(
 const PX_PER_FRAME = 8
 const MIN_SCROLL_VH = 1.4
 
-// The eyebrow/sub/CTA all disappear fast, right as scrolling begins — the
-// title stays put (static — no cycling, growing, or moving) for the whole
-// pinned entrance.
-const INTRO_FADE_START = 0
-const INTRO_FADE_END = 0.08
+// The background frame-sequence still scrubs continuously with scroll —
+// this is the one thing that stays scroll-position-tied, since it's a
+// literal video being scrubbed through, not a UI transition. It gets a
+// slow, continuous zoom across the same span, the "something's always
+// quietly moving" touch — layered on the canvas itself (not
+// .heroMediaTrack, which the cursor-parallax quickTo already owns), so the
+// two transforms never fight over the same element.
+const CANVAS_ZOOM_END = 1.14
 
-const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v))
-const smoothstep = (edge0: number, edge1: number, x: number) => {
-  const t = clamp((x - edge0) / (edge1 - edge0 || 1), 0, 1)
-  return t * t * (3 - 2 * t)
-}
+// Everything else plays out as TWO one-shot SCENE TRANSITIONS, chained
+// one after another — neither tied to how far you've scrolled, just to
+// *whether* you've scrolled past each one's own trigger point:
+//   scene  (stage 0 → 1): intro copy out, title docks at the bottom
+//           (same big→small-and-moved read as the title itself always had —
+//           no entry animation, it's just big by default), "The Land" copy
+//           (including its own big-by-default heading) fades in above it.
+//   scene2 (stage 1 → 2): "The Land" copy's supporting content fades out,
+//           its own big heading docks where the title just was — shrinking
+//           down exactly the way the title did a moment ago (the now-
+//           redundant docked title fades out to make room) — and "The
+//           Experience" copy (with its own big-by-default heading) fades in.
+// Both play/reverse off the pin trigger's own progress (see
+// SCENE1_OPEN_P/SCENE2_OPEN_P below) rather than scrub, so each always
+// plays out over its own fixed duration regardless of scroll speed.
+const TITLE_DOCK_PADDING = 48
+const TITLE_SCALE_DOCKED = 0.62
+const SCENE1_OPEN_P = 0.02
+const SCENE2_OPEN_P = 0.42
+// "Five Acres…" is big by default (see .heroExpandedHeading's font-size) —
+// same as the hero title — and only shrinks down to this scale once scene2
+// docks it at the bottom in the title's old spot.
+const HEADING_SCALE_DOCKED = 0.6
 
 export function Hero({ data }: { data: Home['hero'] }) {
   const heroRef = useRef<HTMLElement>(null)
@@ -43,6 +64,10 @@ export function Hero({ data }: { data: Home['hero'] }) {
   const subRef = useRef<HTMLParagraphElement>(null)
   const exploreRef = useRef<HTMLAnchorElement>(null)
   const leavesRef = useRef<HTMLSpanElement>(null)
+  const expandedRef = useRef<HTMLDivElement>(null)
+  const headingRef = useRef<HTMLHeadingElement>(null)
+  const expanded2Ref = useRef<HTMLDivElement>(null)
+  const heading2Ref = useRef<HTMLHeadingElement>(null)
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
@@ -52,7 +77,24 @@ export function Hero({ data }: { data: Home['hero'] }) {
     const title = titleRef.current
     const sub = subRef.current
     const explore = exploreRef.current
-    if (!hero || !canvas || !eyebrow || !title || !sub || !explore) return undefined
+    const expanded = expandedRef.current
+    const heading = headingRef.current
+    const expanded2 = expanded2Ref.current
+    const heading2 = heading2Ref.current
+    if (
+      !hero ||
+      !canvas ||
+      !eyebrow ||
+      !title ||
+      !sub ||
+      !explore ||
+      !expanded ||
+      !heading ||
+      !expanded2 ||
+      !heading2
+    ) {
+      return undefined
+    }
 
     const ctx2d = canvas.getContext('2d')
     if (!ctx2d) return undefined
@@ -62,6 +104,32 @@ export function Hero({ data }: { data: Home['hero'] }) {
     const frames: Array<HTMLImageElement | null> = new Array(FRAME_COUNT).fill(null)
     let currentFrame = 0
     let cancelled = false
+
+    // How far the title needs to travel to dock at the bottom of the hero
+    // (with TITLE_DOCK_PADDING below it) — measured against its natural,
+    // untransformed rest position so this stays correct across resizes,
+    // not baked in once at an arbitrary viewport size. Re-measured and
+    // pushed into the scene timeline's title tween on every resize (see
+    // onResize below), even mid-transition, so a window resize never
+    // leaves it docked at a stale, wrong distance.
+    // Shared by both dock transitions — stage 1 docks the title, stage 2
+    // docks the "Five Acres…" heading in that same spot once the title has
+    // faded out of it. Same technique either time: measure against the
+    // element's natural, untransformed rest position (not a value baked in
+    // once at an arbitrary viewport size) so it stays correct across
+    // resizes, including mid-transition — see resyncDockMoves below.
+    function measureDockDistance(el: HTMLElement) {
+      if (!hero) return 0
+      const prevTransform = el.style.transform
+      el.style.transform = 'none'
+      const heroRect = hero.getBoundingClientRect()
+      const elRect = el.getBoundingClientRect()
+      const distance = heroRect.bottom - TITLE_DOCK_PADDING - elRect.bottom
+      el.style.transform = prevTransform
+      return distance
+    }
+    let titleMoveDistance = measureDockDistance(title)
+    let headingMoveDistance = measureDockDistance(heading)
 
     // -- canvas sizing / drawing (same cover-fit technique as BambooDine) --
 
@@ -141,6 +209,11 @@ export function Hero({ data }: { data: Home['hero'] }) {
     preload()
 
     if (reduced) {
+      // The expanded copy is deliberately left out here — it's a product
+      // of the scene transition (which doesn't run under reduced motion),
+      // not a thing that should just appear statically alongside the
+      // full-size title; the original intro content stays as the resting
+      // state instead.
       gsap.set([eyebrow, sub, explore], { autoAlpha: 1, y: 0 })
       return () => {
         cancelled = true
@@ -148,9 +221,75 @@ export function Hero({ data }: { data: Home['hero'] }) {
       }
     }
 
+    // Stage 0 → 1: intro copy out, title down-and-small, "The Land" copy in.
+    // `heading` fades in at its own (big, by CSS font-size) resting size,
+    // right alongside the rest of this group — no shrink-to-reveal here,
+    // same as the title itself never had one on page load.
+    const expandedBits = expanded.querySelectorAll<HTMLElement>('[data-expand]')
+    const scene = gsap.timeline({ paused: true, defaults: { ease: 'power3.inOut' } })
+    scene.to([eyebrow, sub, explore], { opacity: 0, y: -14, duration: 0.38 }, 0)
+    // NOT created with `paused: true` — a paused tween keeps respecting its
+    // own pause state even once nested into a timeline via .add(), so the
+    // parent's own play()/progress() calls silently skip rendering it (only
+    // a direct .progress()/.seek() call on the tween itself bypasses that).
+    // Safe to leave unpaused here: .add() reparents it off the root timeline
+    // synchronously, before the next tick, so it never gets a chance to
+    // autoplay on its own. Same reasoning applies to headingTween below.
+    const titleTween = gsap.to(title, { y: titleMoveDistance, scale: TITLE_SCALE_DOCKED, duration: 0.72 })
+    scene.add(titleTween, 0.08)
+    scene.fromTo(expandedBits, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.06 }, 0.5)
+
+    // Stage 1 → 2: "The Land" copy's supporting content (everything except
+    // its heading) fades out, the heading itself docks in the exact spot
+    // the title just vacated AND shrinks down to HEADING_SCALE_DOCKED while
+    // doing it — the same big→small-and-moved transition the title itself
+    // just played a moment ago — the now-redundant docked title fades out
+    // to clear that spot, and "The Experience" copy (heading2 big by
+    // default, same as heading/title) fades in.
+    const expandedFadeBits = expanded.querySelectorAll<HTMLElement>('[data-expand-fade]')
+    const expanded2Bits = expanded2.querySelectorAll<HTMLElement>('[data-expand2]')
+    const scene2 = gsap.timeline({ paused: true, defaults: { ease: 'power3.inOut' } })
+    scene2.to(expandedFadeBits, { opacity: 0, y: -14, duration: 0.3, stagger: 0.04 }, 0)
+    scene2.to(title, { opacity: 0, duration: 0.28 }, 0)
+    const headingTween = gsap.to(heading, { y: headingMoveDistance, scale: HEADING_SCALE_DOCKED, duration: 0.6 })
+    scene2.add(headingTween, 0.06)
+    scene2.fromTo(expanded2Bits, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.42, stagger: 0.06 }, 0.42)
+
+    const resyncDockMoves = () => {
+      titleMoveDistance = measureDockDistance(title)
+      titleTween.vars.y = titleMoveDistance
+      titleTween.invalidate()
+      scene.progress(scene.progress())
+
+      headingMoveDistance = measureDockDistance(heading)
+      headingTween.vars.y = headingMoveDistance
+      headingTween.invalidate()
+      scene2.progress(scene2.progress())
+    }
+    window.addEventListener('resize', resyncDockMoves)
+    // The very first measurement (above, at mount) can land before the
+    // Qalisten webfont has swapped in — the fallback serif has different
+    // metrics, so the measured rects (and therefore both move distances)
+    // are briefly wrong. Re-measure once the real font is actually active.
+    document.fonts.ready.then(() => {
+      if (!cancelled) resyncDockMoves()
+    })
+
     const scrollDistance = Math.max(FRAME_COUNT * PX_PER_FRAME, window.innerHeight * MIN_SCROLL_VH)
 
-    const trigger = ScrollTrigger.create({
+    // Drives both one-shot scenes' play/reverse off the SAME pin trigger's
+    // own progress, rather than separate ScrollTriggers on `hero` — a
+    // standalone trigger sharing a pinned element's geometry computes its
+    // `start` against the pinned (frozen-in-place) position, not hero's
+    // natural document-flow position, so it fires far too late (near the
+    // END of the pin, not where it's meant to). Progress thresholds
+    // sidestep that entirely: each scene still plays out over its own fixed
+    // duration, independent of scroll speed — only the trigger POINT comes
+    // from scroll.
+    let sceneOpen = false
+    let scene2Open = false
+
+    const pinTrigger = ScrollTrigger.create({
       trigger: hero,
       start: 'top top',
       end: () => `+=${scrollDistance}`,
@@ -163,26 +302,40 @@ export function Hero({ data }: { data: Home['hero'] }) {
         const nearest = nearestLoadedFrame(currentFrame)
         if (nearest >= 0) drawFrame(nearest)
 
-        // Eyebrow + sub + CTA: all gone almost as soon as scrolling starts.
-        // The title is deliberately left out of this — it stays put,
-        // static, for the entire pinned scroll.
-        const introFade = smoothstep(INTRO_FADE_START, INTRO_FADE_END, p)
-        const introStyle = { opacity: String(1 - introFade), transform: `translateY(${-10 * introFade}%)` }
-        Object.assign(eyebrow.style, introStyle)
-        Object.assign(sub.style, introStyle)
-        // explore (the CTA) gets opacity only, no transform — its transform
-        // is already owned by the cursor-parallax quickTo(x/y) below, and a
-        // second, independent writer of the same CSS property would fight it.
-        explore.style.opacity = String(1 - introFade)
+        // Background: a slow continuous zoom across the whole pin — layered
+        // on the canvas itself (not .heroMediaTrack, which the cursor-
+        // parallax quickTo already owns), composed with the centering
+        // translate .heroCanvas sets in CSS so it isn't clobbered.
+        const zoom = 1 + (CANVAS_ZOOM_END - 1) * p
+        canvas.style.transform = `translate(-50%, -50%) scale(${zoom})`
+
+        if (!sceneOpen && p > SCENE1_OPEN_P) {
+          sceneOpen = true
+          scene.play()
+        } else if (sceneOpen && p <= SCENE1_OPEN_P) {
+          sceneOpen = false
+          scene.reverse()
+        }
+
+        if (!scene2Open && p > SCENE2_OPEN_P) {
+          scene2Open = true
+          scene2.play()
+        } else if (scene2Open && p <= SCENE2_OPEN_P) {
+          scene2Open = false
+          scene2.reverse()
+        }
       },
     })
 
     return () => {
       cancelled = true
       resizeObserver.disconnect()
+      window.removeEventListener('resize', resyncDockMoves)
+      scene.kill()
+      scene2.kill()
       // .kill(true) reverts the pin-spacer before React's own cleanup —
       // see the identical note in BambooDine.tsx for why that matters.
-      trigger.kill(true)
+      pinTrigger.kill(true)
     }
   }, [])
 
@@ -315,6 +468,64 @@ export function Hero({ data }: { data: Home['hero'] }) {
             </span>
           </span>
         </a>
+      </div>
+
+      {/* Stage 1 — fades in once the title has docked at the bottom (see
+          the `scene` timeline), filling the space the big title vacates.
+          The heading alone carries through to stage 2 (see headingRef/
+          `scene2`); everything else here is tagged data-expand-fade so it
+          can fade out on its own when that happens. */}
+      <div className={styles.heroExpanded} ref={expandedRef}>
+        <p className={styles.heroExpandedEyebrow} data-expand data-expand-fade>
+          The Land
+        </p>
+        <h2 className={styles.heroExpandedHeading} data-expand ref={headingRef}>
+          Five Acres. Two Houses.
+          <br />
+          No Interruptions.
+        </h2>
+        <ul className={styles.heroExpandedPointers}>
+          <li data-expand data-expand-fade>
+            <i className="fa-solid fa-seedling" aria-hidden="true" />
+            Two independent homes across five acres of working farmland
+          </li>
+          <li data-expand data-expand-fade>
+            <i className="fa-solid fa-house" aria-hidden="true" />
+            Mango House &amp; Stone House never share a wall, a view, or a moment
+          </li>
+          <li data-expand data-expand-fade>
+            <i className="fa-solid fa-leaf" aria-hidden="true" />
+            Close enough that it still feels like one quiet estate
+          </li>
+        </ul>
+      </div>
+
+      {/* Stage 2 — fades in once the "Five Acres…" heading has docked at
+          the bottom in the title's old spot (see `scene2`). Title only,
+          no body copy, by design — the estate's already made its case by
+          this point; this is a mood, not another paragraph to read. */}
+      <div className={styles.heroExpanded2} ref={expanded2Ref}>
+        <div className={styles.heroExpanded2Tag} data-expand2>
+          <span className={styles.heroExpanded2Ring} aria-hidden="true" />
+          <p className={styles.heroExpandedEyebrow}>The Experience</p>
+        </div>
+        <h2 className={styles.heroExpanded2Heading} data-expand2 ref={heading2Ref}>
+          Mornings Without An Agenda.
+        </h2>
+        <div className={styles.heroExperienceIcons} data-expand2>
+          <span className={styles.heroExperienceIcon}>
+            <i className="fa-solid fa-fire" aria-hidden="true" />
+            Bonfire Nights
+          </span>
+          <span className={styles.heroExperienceIcon}>
+            <i className="fa-solid fa-star" aria-hidden="true" />
+            Stargazing
+          </span>
+          <span className={styles.heroExperienceIcon}>
+            <i className="fa-solid fa-seedling" aria-hidden="true" />
+            Farm To Table
+          </span>
+        </div>
       </div>
     </section>
   )

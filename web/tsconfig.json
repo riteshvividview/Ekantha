@@ -20,7 +20,9 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@payload-config": ["./payload.config.ts"]
+      "@payload-config": ["./payload.config.ts"],
+      "@designcodeio/threeui": ["./src/shaders/landing-pages/LandingPages.tsx"],
+      "@designcodeio/threeui/*": ["./src/shaders/*"]
     }
   },
   "include": [

@@ -1,0 +1,236 @@
+'use client'
+
+import { useEffect, useRef } from 'react'
+import Image from 'next/image'
+import { gsap } from '@/lib/animations/gsap'
+import { THEME_SECONDS } from '@/lib/pageTheme'
+import styles from './Why.module.css'
+
+// WHY LOCAL IMAGES — BEGIN (set entries to null to restore gradient placeholders)
+const IMAGES: Record<string, string | null> = {
+  land: '/images/home/03-why-us/Untouched-Land-img.png',
+  private: '/images/home/03-why-us/Just-For-You-img.png',
+  planned: '/images/home/03-why-us/Throughtfully-planned-img.png',
+  away: '/images/home/03-why-us/Hrs-away-img-two.png',
+}
+// WHY LOCAL IMAGES — END
+
+const REASONS = [
+  {
+    key: 'land',
+    num: '01',
+    icon: 'fa-seedling',
+    title: 'Untouched Land',
+    text: 'Open fields and old trees, exactly as they were.',
+    span: 'wide',
+  },
+  {
+    key: 'private',
+    num: '02',
+    icon: 'fa-lock',
+    title: 'Just For You',
+    text: 'The whole estate, held for your group alone.',
+    span: 'narrow',
+  },
+  {
+    key: 'planned',
+    num: '03',
+    icon: 'fa-compass',
+    title: 'Thoughtfully Planned',
+    text: 'Every detail settled before you arrive.',
+    span: 'narrow',
+  },
+  {
+    key: 'away',
+    num: '04',
+    icon: 'fa-road',
+    title: '2.5 Hrs Away',
+    text: 'Far enough to forget, near enough to reach.',
+    span: 'wide',
+  },
+] as const
+
+const MARQUEE = ['Untouched', 'Private', 'Unhurried', 'Yours']
+
+// The page's light → dark shift. The site's palette lives in CSS custom
+// properties on :root, so tweening those same properties on <body> (scrubbed
+// to scroll) repaints every section at once as one continuous fade — no
+// hard block edges. Values mirror the :root tokens in globals.css.
+const LIGHT = {
+  '--white': 'rgb(250, 240, 230)',
+  '--silver': 'rgb(254, 248, 248)',
+  '--ink': 'rgb(29, 29, 27)',
+  '--ink-soft': 'rgba(29, 29, 27, 0.62)',
+  '--ink-faint': 'rgba(29, 29, 27, 0.42)',
+  '--line': 'rgba(29, 29, 27, 0.12)',
+  '--line-strong': 'rgba(29, 29, 27, 0.22)',
+}
+const DARK = {
+  '--white': 'rgb(24, 20, 17)',
+  '--silver': 'rgb(34, 28, 23)',
+  '--ink': 'rgb(244, 234, 217)',
+  '--ink-soft': 'rgba(244, 234, 217, 0.66)',
+  '--ink-faint': 'rgba(244, 234, 217, 0.44)',
+  '--line': 'rgba(244, 234, 217, 0.14)',
+  '--line-strong': 'rgba(244, 234, 217, 0.26)',
+}
+
+export function Why() {
+  const sectionRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return undefined
+
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const q = <T extends Element = HTMLElement>(sel: string) => Array.from(section.querySelectorAll<T>(sel))
+
+    const ctx = gsap.context(() => {
+      // One continuous light → dark fade across the gap above this section.
+      gsap.fromTo(document.body, LIGHT, {
+        ...DARK,
+        duration: THEME_SECONDS,
+        ease: 'power2.out',
+        scrollTrigger: { trigger: section, start: 'top 82%', toggleActions: 'play none none reverse' },
+      })
+
+      if (reduced) return
+
+      gsap.fromTo(
+        q('[data-marquee]'),
+        { xPercent: 4 },
+        {
+          xPercent: -30,
+          ease: 'none',
+          scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom top', scrub: true },
+        },
+      )
+
+      gsap.from(q('[data-line-inner]'), {
+        yPercent: 115,
+        duration: 1.1,
+        ease: 'power4.out',
+        stagger: 0.14,
+        scrollTrigger: { trigger: q('[data-headline]')[0], start: 'top 82%', once: true },
+      })
+      gsap.from(q('[data-fade]'), {
+        opacity: 0,
+        y: 20,
+        duration: 0.9,
+        ease: 'power3.out',
+        stagger: 0.12,
+        scrollTrigger: { trigger: q('[data-headline]')[0], start: 'top 86%', once: true },
+      })
+
+      q('[data-card]').forEach((card) => {
+        const speed = Number(card.dataset.speed ?? 0)
+        gsap.fromTo(
+          card,
+          { y: speed },
+          {
+            y: -speed,
+            ease: 'none',
+            scrollTrigger: { trigger: card, start: 'top bottom', end: 'bottom top', scrub: true },
+          },
+        )
+        gsap.from(card, {
+          clipPath: 'inset(14% 10% 14% 10% round 24px)',
+          opacity: 0,
+          duration: 1.3,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: card, start: 'top 88%', once: true },
+        })
+        const inner = card.querySelector('[data-inner]')
+        if (inner) {
+          gsap.fromTo(
+            inner,
+            { yPercent: -7 },
+            {
+              yPercent: 7,
+              ease: 'none',
+              scrollTrigger: { trigger: card, start: 'top bottom', end: 'bottom top', scrub: true },
+            },
+          )
+        }
+      })
+    }, section)
+
+    return () => ctx.revert()
+  }, [])
+
+  return (
+    <section className={styles.why} id="why" ref={sectionRef}>
+      <div className={styles.marquee} aria-hidden="true">
+        <div className={styles.marqueeTrack} data-marquee>
+          {[...MARQUEE, ...MARQUEE, ...MARQUEE].map((w, i) => (
+            <span className={styles.marqueeItem} key={i}>
+              {w}
+              <i className={`fa-solid fa-leaf ${styles.marqueeIcon}`} />
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <header className={styles.head}>
+        <p className={styles.eyebrow} data-fade>
+          <span className={styles.eyebrowDash} />
+          Why Vana Ekantha
+        </p>
+        <h2 className={styles.headline} data-headline>
+          {['Why guests', 'come back.'].map((line) => (
+            <span className={styles.line} key={line}>
+              <span className={styles.lineInner} data-line-inner>
+                {line}
+              </span>
+            </span>
+          ))}
+        </h2>
+        <p className={styles.sub} data-fade>
+          Four reasons, none of them printed on a brochure.
+        </p>
+      </header>
+
+      <ul className={styles.grid}>
+        {REASONS.map((r, i) => {
+          const src = IMAGES[r.key]
+          return (
+            <li
+              className={`${styles.card} ${styles[r.span]} ${styles[`tone_${r.key}`]}`}
+              data-card
+              data-speed={i % 2 === 0 ? 26 : -26}
+              key={r.key}
+            >
+              <div className={styles.media}>
+                {/* data-inner (GSAP's continuous scroll-scrub target) and
+                    the hover-zoom (.mediaZoom, a plain CSS transition) are
+                    deliberately two separate elements — see the note on
+                    .mediaZoom in Why.module.css for why combining them
+                    broke the scroll parallax. */}
+                <div className={styles.mediaInner} data-inner>
+                  <div className={styles.mediaZoom}>
+                    {src ? (
+                      <Image src={src} alt="" fill sizes="(max-width: 860px) 100vw, 58vw" />
+                    ) : (
+                      <i className={`fa-solid ${r.icon} ${styles.watermark}`} aria-hidden="true" />
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className={styles.shade} aria-hidden="true" />
+
+              <span className={styles.num}>{r.num}</span>
+              <span className={styles.icon} aria-hidden="true">
+                <i className={`fa-solid ${r.icon}`} />
+              </span>
+
+              <div className={styles.info}>
+                <h3 className={styles.title}>{r.title}</h3>
+                <p className={styles.text}>{r.text}</p>
+              </div>
+            </li>
+          )
+        })}
+      </ul>
+    </section>
+  )
+}

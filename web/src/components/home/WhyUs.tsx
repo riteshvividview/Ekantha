@@ -1,9 +1,4 @@
-'use client'
-
-import { useEffect, useRef, useState } from 'react'
 import type { Home } from '@/payload-types'
-import { SectionHead } from '@/components/shared/SectionHead'
-import { resolveMediaSize } from '@/lib/media'
 import styles from './home.module.css'
 
 const BADGE_CLASSES = [styles.badgeGreen, styles.badgeAmber, styles.badgePurple, styles.badgeBlue]
@@ -32,111 +27,37 @@ const ICON_PATHS = [
   </>,
 ]
 
-/**
- * "Why Vana Ekantha" — a big sticky mood photo on the left, a stack of cards
- * on the right. Each card is `position: sticky` at the same `top` offset,
- * wrapped in a taller spacer (.whyStackCardWrap) that gives it real scroll
- * distance to hold that position before the next card's wrap arrives and
- * covers it — plain CSS, no scroll-linked JS for the stacking itself. Every
- * card carries its own image at the bottom.
- *
- * The showcase photo is a separate crossfading stack of layers (one per
- * item's `spotlightImage`, distinct from the card's own bottom image) —
- * which layer is visible is driven by a lightweight IntersectionObserver
- * watching each card wrap against the viewport's vertical center: whichever
- * wrap currently straddles that line is "active," matching whichever card
- * is the dominant one on screen at that moment (a standard scrollspy
- * pattern, independent of the exact sticky pixel offset).
- */
+/** "Why Vana Ekantha" — a plain static grid of the four reasons. */
 export function WhyUs({ data }: { data: Home['whyUs'] }) {
   const items = data.items ?? []
-  const [activeIndex, setActiveIndex] = useState(0)
-  const wrapRefs = useRef<(HTMLDivElement | null)[]>([])
-
-  // The sticky showcase photo must sit below the sticky navbar, not
-  // behind it — measure the navbar's real rendered height and expose it
-  // as a CSS var the showcase's `top` / `height` read from, kept in sync
-  // on resize since the navbar's own height is responsive.
-  useEffect(() => {
-    const navbar = document.querySelector<HTMLElement>('.ve-navbar')
-    if (!navbar) return undefined
-
-    const setVar = () => {
-      document.documentElement.style.setProperty('--why-navbar-h', `${navbar.offsetHeight}px`)
-    }
-    setVar()
-
-    const resizeObserver = new ResizeObserver(setVar)
-    resizeObserver.observe(navbar)
-    return () => resizeObserver.disconnect()
-  }, [])
-
-  useEffect(() => {
-    const wraps = wrapRefs.current.filter((el): el is HTMLDivElement => !!el)
-    if (wraps.length < 2) return
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return
-          const index = wraps.indexOf(entry.target as HTMLDivElement)
-          if (index !== -1) setActiveIndex(index)
-        })
-      },
-      { rootMargin: '-50% 0px -50% 0px', threshold: 0 },
-    )
-    wraps.forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
-  }, [items.length])
-
-  const defaultShowcase = resolveMediaSize(data.showcaseImage, 'card')
 
   return (
-    <section id="why">
-      <SectionHead title={renderTitle(data.heading)} sub={data.sub} />
+    <section id="why" className={styles.whySection}>
+      <div className={styles.whyAurora} aria-hidden="true">
+        <span />
+        <span />
+        <span />
+      </div>
 
-      <div className={styles.whyShowcase}>
-        <div className={styles.whyShowcaseSticky}>
-          <div className={styles.whyShowcaseImage}>
-            {items.map((item, i) => {
-              const spotlight = resolveMediaSize(item.spotlightImage, 'card')
-              const media = spotlight.url ? spotlight : defaultShowcase
-              return (
-                <div className={`${styles.whyShowcaseLayer}${i === activeIndex ? ` ${styles.whyShowcaseLayerActive}` : ''}`} key={item.id ?? i}>
-                  {media.url && <img src={media.url} alt={media.alt} loading={i === 0 ? 'eager' : 'lazy'} />}
-                </div>
-              )
-            })}
-          </div>
+      <div className={styles.whyStage}>
+        <div className={styles.whyHeadline}>
+          <h2 className={styles.whyTitle}>{renderTitle(data.heading)}</h2>
+          {data.sub && <p className={styles.whySub}>{data.sub}</p>}
         </div>
 
-        <div className={styles.whyCardStack}>
-          {items.map((item, i) => {
-            const media = resolveMediaSize(item.image, 'card')
-            return (
-              <div
-                className={`${styles.whyStackCardWrap} reveal`}
-                key={item.id ?? i}
-                ref={(el) => {
-                  wrapRefs.current[i] = el
-                }}
-              >
-                <div className={styles.whyStackCard}>
-                  <div className={styles.whyStackCardContent}>
-                    <span className={`${styles.cellBadge} ${BADGE_CLASSES[i % 4]}`}>{item.badgeLabel}</span>
-                    <div className={styles.whyFlatIcon}>
-                      <svg viewBox="0 0 48 48" stroke="currentColor" fill="none" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        {ICON_PATHS[i % ICON_PATHS.length]}
-                      </svg>
-                    </div>
-                    <div className={styles.cellTitle}>{item.title}</div>
-                    <div className={styles.cellBody}>{item.body}</div>
-                  </div>
-                  <div className={styles.whyStackCardImage}>{media.url && <img src={media.url} alt={media.alt} loading="lazy" />}</div>
-                </div>
+        <div className={styles.whyGrid}>
+          {items.map((item, i) => (
+            <div className={`${styles.whyFlatCard} reveal`} key={item.id ?? i}>
+              <span className={`${styles.cellBadge} ${BADGE_CLASSES[i % BADGE_CLASSES.length]}`}>{item.badgeLabel}</span>
+              <div className={styles.whyFlatIcon}>
+                <svg viewBox="0 0 48 48" stroke="currentColor" fill="none" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  {ICON_PATHS[i % ICON_PATHS.length]}
+                </svg>
               </div>
-            )
-          })}
+              <div className={styles.cellTitle}>{item.title}</div>
+              <div className={styles.cellBody}>{item.body}</div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

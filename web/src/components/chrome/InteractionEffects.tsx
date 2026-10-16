@@ -30,7 +30,7 @@ const BUTTON_HOVER_LIFT = 2
 /**
  * A subtle 3D tilt on card-like elements (galleries, highlight/ideal/
  * amenity cards across every stay-detail page style), applied site-wide
- * via event delegation (mounted once in the root layout, like CursorDot)
+ * via event delegation (mounted once in the root layout)
  * rather than wired into every page individually.
  *
  * An earlier magnetic-pull attempt on buttons here was pulled — a full-

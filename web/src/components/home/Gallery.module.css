@@ -1,0 +1,596 @@
+/* Dark cinematic gallery. The section itself has no background: the page
+   turns dark on scroll (see lib/pageTheme.ts + Gallery.tsx), so this simply
+   sits on the page, with no block edges and no fade bands. Text colors are
+   hard-coded light since the page is dark by the time it is on screen. */
+.gallery {
+  position: relative;
+  padding: 0; /* overrides the global section padding */
+  color: #f4ead9;
+  isolation: isolate;
+}
+
+.stage {
+  position: relative;
+  min-height: clamp(50rem, 60vw, 62rem);
+  overflow: hidden;
+  padding: clamp(5.5rem, 7vw, 7rem) var(--pad-x) clamp(4.5rem, 6vw, 6rem);
+}
+
+/* ── Hero scene ─────────────────────────────────────────────────── */
+.hero {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 78%;
+  z-index: 0;
+  overflow: hidden;
+  /* Soft top edge so the scene emerges from the page as it darkens. */
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 22%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 22%);
+}
+.heroMove,
+.heroDrift {
+  position: absolute;
+  inset: -4%;
+  will-change: transform;
+}
+.heroLayer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: scale(1.12);
+  transition:
+    opacity 1200ms var(--ease-slow),
+    transform 9s ease-out;
+}
+.heroLayerOn {
+  opacity: 1;
+  transform: scale(1);
+}
+.heroLayer img {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+.heroIcon {
+  position: absolute;
+  right: 12%;
+  top: 26%;
+  font-size: clamp(12rem, 26vw, 23rem);
+  color: rgba(246, 236, 220, 0.07);
+}
+.tone_mango {
+  background:
+    radial-gradient(70% 60% at 74% 18%, rgba(246, 236, 220, 0.1), transparent 62%),
+    linear-gradient(160deg, #2c2723 0%, #15120f 100%);
+}
+.tone_stone {
+  background:
+    radial-gradient(70% 60% at 70% 18%, rgba(246, 236, 220, 0.09), transparent 62%),
+    linear-gradient(160deg, #2a2826 0%, #141311 100%);
+}
+.tone_bamboo {
+  background:
+    radial-gradient(70% 60% at 72% 18%, rgba(246, 236, 220, 0.09), transparent 62%),
+    linear-gradient(160deg, #282420 0%, #13110f 100%);
+}
+/* Melts the scene's left and bottom edges into the dark stage. */
+.heroFade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, var(--white) 0%, var(--white) 12%, color-mix(in srgb, var(--white) 78%, transparent) 26%, transparent 56%),
+    linear-gradient(0deg, var(--white) 0%, var(--white) 24%, transparent 50%);
+}
+
+/* ── Left column ────────────────────────────────────────────────── */
+.left {
+  position: relative;
+  z-index: 3;
+  width: clamp(16rem, 28%, 26rem);
+}
+.eyebrow,
+.infoEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: clamp(0.7rem, 1.2vw, 0.76rem);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(244, 234, 217, 0.72);
+}
+.eyebrow {
+  margin-bottom: clamp(0.9rem, 1.8vw, 1.25rem);
+}
+.eyebrowDash {
+  width: 2.4rem;
+  height: 1px;
+  background: linear-gradient(90deg, #e3c48c, rgba(227, 196, 140, 0));
+}
+.headline {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(3rem, 5.6vw, 5.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  color: #f8f0e2;
+  margin-bottom: clamp(0.8rem, 1.5vw, 1.1rem);
+}
+.line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+.lineInner {
+  display: block;
+  will-change: transform;
+}
+.gold {
+  background: linear-gradient(100deg, #f2d9a8 0%, #d3a566 55%, #f0cf95 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.sub {
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: clamp(0.7rem, 1.15vw, 0.8rem);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  line-height: 1.9;
+  color: rgba(244, 234, 217, 0.78);
+  margin-bottom: clamp(1.1rem, 2vw, 1.6rem);
+}
+
+/* Arch thumbnails. */
+.thumbs {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.8rem, 1.3vw, 1.2rem);
+}
+.thumb {
+  position: relative;
+  display: grid;
+  grid-template-columns: clamp(4.4rem, 7.4vw, 7.4rem) auto;
+  grid-template-areas:
+    'arch arrow'
+    'name name';
+  align-items: center;
+  justify-items: start;
+  column-gap: clamp(1rem, 2.4vw, 2.4rem);
+  row-gap: 0.55rem;
+  color: inherit;
+  text-align: left;
+}
+.arch {
+  grid-area: arch;
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1.05;
+  overflow: hidden;
+  border-radius: 999px 999px 18px 18px;
+  border: 1px solid rgba(244, 234, 217, 0.2);
+  opacity: 0.6;
+  filter: saturate(0.7);
+  transition:
+    opacity 500ms var(--ease-slow),
+    filter 500ms var(--ease-slow),
+    border-color 500ms var(--ease-slow),
+    box-shadow 500ms var(--ease-slow),
+    transform 600ms var(--ease-slow);
+}
+.arch img {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+.arch i {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  color: rgba(255, 255, 255, 0.45);
+}
+.thumbOn .arch,
+.thumb:hover .arch {
+  opacity: 1;
+  filter: none;
+  transform: translateY(-3px);
+}
+.thumbOn .arch {
+  border-color: #e3c48c;
+  box-shadow:
+    0 0 0 3px rgba(227, 196, 140, 0.25),
+    0 20px 40px -18px rgba(0, 0, 0, 0.8);
+}
+.thumbArrow {
+  grid-area: arrow;
+  width: clamp(3rem, 4.2vw, 4rem);
+  height: clamp(3rem, 4.2vw, 4rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(244, 234, 217, 0.22);
+  color: rgba(244, 234, 217, 0.5);
+  font-size: 0.85rem;
+  transition:
+    border-color 500ms var(--ease-slow),
+    color 500ms var(--ease-slow),
+    background-color 500ms var(--ease-slow),
+    transform 500ms var(--ease-slow);
+}
+.thumbOn .thumbArrow {
+  border-color: #e3c48c;
+  color: #f8f0e2;
+  transform: translateX(4px);
+}
+.thumb:hover .thumbArrow {
+  background: rgba(227, 196, 140, 0.16);
+}
+.thumbName {
+  grid-area: name;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: clamp(0.72rem, 0.95vw, 0.82rem);
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(244, 234, 217, 0.55);
+  transition: color 500ms var(--ease-slow);
+}
+.thumbOn .thumbName {
+  color: #f8f0e2;
+}
+.thumbUnderline {
+  position: absolute;
+  left: 0;
+  bottom: -0.5rem;
+  width: 0;
+  height: 1px;
+  background: #e3c48c;
+  transition: width 600ms var(--ease-slow);
+}
+.thumbOn .thumbUnderline {
+  width: 1.8rem;
+}
+
+/* ── Currently exploring ────────────────────────────────────────── */
+.info {
+  position: absolute;
+  z-index: 3;
+  left: max(33%, 24rem);
+  top: clamp(7rem, 12vw, 11.5rem);
+  max-width: 34rem;
+}
+.infoEyebrow {
+  font-size: clamp(0.66rem, 1.05vw, 0.72rem);
+  margin-bottom: clamp(0.7rem, 1.4vw, 1rem);
+}
+.name {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(3.2rem, 6.6vw, 6.4rem);
+  line-height: 1.02;
+  color: #f8f0e2;
+  text-shadow: 0 6px 40px rgba(0, 0, 0, 0.5);
+}
+.nameMask {
+  display: block;
+  overflow: hidden;
+  padding: 0.04em 0.06em 0.16em;
+  margin: 0 -0.06em -0.16em;
+}
+.nameInner {
+  display: block;
+  will-change: transform;
+}
+.nameRule {
+  display: block;
+  width: 3rem;
+  height: 1px;
+  background: #e3c48c;
+  margin: clamp(0.9rem, 1.6vw, 1.2rem) 0;
+}
+.tagline {
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: clamp(0.7rem, 1.15vw, 0.8rem);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  line-height: 1.9;
+  color: rgba(244, 234, 217, 0.85);
+  max-width: 24em;
+}
+
+/* ── Film strip ─────────────────────────────────────────────────── */
+.strip {
+  position: absolute;
+  z-index: 4;
+  left: max(27%, 21rem);
+  right: 0;
+  padding-right: var(--pad-x);
+  bottom: clamp(9rem, 11vw, 10.5rem);
+}
+/* Curved dark tray behind the frames. */
+.tray {
+  position: absolute;
+  left: -2%;
+  right: 0;
+  top: -1.4rem;
+  bottom: 2.6rem;
+  border-top: 1px solid rgba(227, 196, 140, 0.5);
+  border-radius: 55% 0 0 0 / 46px 0 0 0;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--white) 70%, transparent) 0%, var(--white) 100%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.trackWrap {
+  position: relative;
+  padding-right: 4.4rem; /* room for the arrow, so it never covers a card */
+}
+.track {
+  --gap: clamp(0.6rem, 1.1vw, 1rem);
+  position: relative;
+  display: flex;
+  column-gap: var(--gap);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding: 0.6rem 0;
+  cursor: grab;
+}
+.track::-webkit-scrollbar {
+  display: none;
+}
+.frameShell {
+  flex: none;
+  scroll-snap-align: start;
+  /* exactly four whole cards fit; the rest scroll in */
+  width: calc((100% - 3 * var(--gap)) / 4);
+  will-change: transform;
+}
+.frame {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  border-radius: 24px;
+  border: 1px solid rgba(227, 196, 140, 0.35);
+  box-shadow: 0 24px 40px -22px rgba(0, 0, 0, 0.8);
+  transition:
+    transform 700ms var(--ease-slow),
+    border-color 500ms var(--ease-slow),
+    box-shadow 700ms var(--ease-slow);
+}
+.frame:hover {
+  transform: translateY(-6px) scale(1.02);
+  border-color: rgba(227, 196, 140, 0.85);
+  box-shadow: 0 34px 50px -22px rgba(0, 0, 0, 0.9);
+}
+.frame img {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  user-select: none;
+  pointer-events: none;
+}
+.frame > i {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  color: rgba(246, 236, 220, 0.13);
+}
+.frameNum {
+  position: absolute;
+  left: 0.9rem;
+  bottom: 0.75rem;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  color: rgba(244, 234, 217, 0.85);
+}
+.ftone0 {
+  background:
+    radial-gradient(90% 70% at 70% 12%, rgba(246, 236, 220, 0.07), transparent 60%),
+    linear-gradient(150deg, #2f2924 0%, #171310 100%);
+}
+.ftone1 {
+  background:
+    radial-gradient(90% 70% at 70% 12%, rgba(246, 236, 220, 0.07), transparent 60%),
+    linear-gradient(150deg, #2b2622 0%, #171310 100%);
+}
+.ftone2 {
+  background:
+    radial-gradient(90% 70% at 70% 12%, rgba(246, 236, 220, 0.07), transparent 60%),
+    linear-gradient(150deg, #312b26 0%, #171310 100%);
+}
+.ftone3 {
+  background:
+    radial-gradient(90% 70% at 70% 12%, rgba(246, 236, 220, 0.07), transparent 60%),
+    linear-gradient(150deg, #2a2622 0%, #171310 100%);
+}
+.ftone4 {
+  background:
+    radial-gradient(90% 70% at 70% 12%, rgba(246, 236, 220, 0.07), transparent 60%),
+    linear-gradient(150deg, #2e2823 0%, #171310 100%);
+}
+.ftone5 {
+  background:
+    radial-gradient(90% 70% at 70% 12%, rgba(246, 236, 220, 0.07), transparent 60%),
+    linear-gradient(150deg, #292521 0%, #171310 100%);
+}
+.next {
+
+  position: absolute;
+  right: 0;
+  top: 50%;
+  z-index: 3;
+  width: 3.2rem;
+  height: 3.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  border: 1px solid rgba(227, 196, 140, 0.7);
+  background: var(--white);
+  color: #f8f0e2;
+  font-size: 0.9rem;
+  box-shadow: 0 14px 30px -10px rgba(0, 0, 0, 0.8);
+  transition:
+    background-color 400ms var(--ease-slow),
+    color 400ms var(--ease-slow),
+    transform 500ms var(--ease-slow);
+}
+.next:hover {
+  background: #e3c48c;
+  color: #0b100d;
+  transform: translateY(-50%) translateX(4px);
+}
+
+.stripFoot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: 0.9rem;
+}
+.viewAll {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.74rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #f0d9aa;
+}
+.viewAll > i {
+  transition: transform 500ms var(--ease-slow);
+}
+.viewAll:hover > i {
+  transform: translateX(6px);
+}
+.viewIcon {
+  width: 2.2rem;
+  height: 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid rgba(227, 196, 140, 0.6);
+  font-size: 0.85rem;
+}
+
+/* ── Tablet / mobile ────────────────────────────────────────────── */
+@media (max-width: 1000px) {
+  .stage {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding-bottom: 6.5rem;
+  }
+  .hero {
+    left: 0;
+    height: 46%;
+  }
+  .heroFade {
+    background: linear-gradient(0deg, var(--white) 0%, color-mix(in srgb, var(--white) 25%, transparent) 60%, color-mix(in srgb, var(--white) 55%, transparent) 100%);
+  }
+  .left {
+    width: 100%;
+  }
+  .thumbs {
+    flex-direction: row;
+    gap: 1rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    scrollbar-width: none;
+  }
+  .thumb {
+    grid-template-columns: 5.5rem;
+    grid-template-areas:
+      'arch'
+      'name';
+  }
+  .thumbArrow {
+    display: none;
+  }
+  .info {
+    position: relative;
+    left: auto;
+    top: auto;
+    margin-top: clamp(4rem, 22vw, 9rem);
+  }
+  .strip {
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
+  }
+  .strip {
+    padding-right: 0;
+  }
+  .trackWrap {
+    padding-right: 0;
+  }
+  .tray {
+    left: -3%;
+    right: -3%;
+    border-radius: 55% 55% 0 0 / 46px 46px 0 0;
+  }
+  .frameShell {
+    width: 70vw;
+  }
+  .next {
+    right: 0.25rem;
+  }
+}
+
+/* Amenity chips with icons. */
+.perks {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: clamp(1rem, 1.8vw, 1.5rem);
+}
+.perk {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 1rem 0.55rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(227, 196, 140, 0.4);
+  background: rgba(11, 16, 13, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(244, 234, 217, 0.9);
+}
+.perk i {
+  color: #e3c48c;
+  font-size: 0.85rem;
+}

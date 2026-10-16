@@ -1,0 +1,469 @@
+/* ── "Hold a date" console ──────────────────────────────────────────────
+   Always a dark cinematic frame (hard-coded colors, not page variables) so it
+   reads the same on every page that uses it. */
+
+.ve-hold {
+  --hold-cream: #f6ecdc;
+  --hold-gold: #e3c48c;
+  position: relative;
+  overflow: hidden;
+  padding: clamp(5rem, 9vw, 8rem) var(--pad-x) clamp(4.5rem, 8vw, 7rem);
+  background: linear-gradient(180deg, #14110e 0%, #0e0b09 100%);
+  color: var(--hold-cream);
+  isolation: isolate;
+}
+/* Drifting embers, pushed aside by the cursor (canvas, see FinalCtaBanner.tsx). */
+.ve-hold-motes {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Brand mark, barely there — forced white + near-transparent regardless of
+   the source file's own fill, so it reads as a watermark, not a logo. */
+.ve-hold-mark {
+  position: absolute;
+  z-index: 0;
+  right: clamp(-3rem, 2vw, 1rem);
+  bottom: clamp(-2rem, 4vw, 3rem);
+  width: clamp(14rem, 24vw, 26rem);
+  height: auto;
+  opacity: 0.05;
+  filter: brightness(0) invert(1);
+  pointer-events: none;
+  will-change: transform;
+  user-select: none;
+}
+
+/* Real-estate photos, scattered behind the console with their own depth —
+   each nudged opposite the cursor in FinalCtaBanner.tsx's pointer handler. */
+.ve-hold-photo {
+  position: absolute;
+  z-index: 0;
+  width: clamp(5.5rem, 8vw, 8.5rem);
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 18px;
+  border: 1px solid rgba(246, 236, 220, 0.14);
+  box-shadow: 0 30px 50px -24px rgba(0, 0, 0, 0.75);
+  opacity: 0.5;
+  pointer-events: none;
+  will-change: transform;
+  animation: holdPhotoFloat 7s ease-in-out infinite;
+}
+.ve-hold-photo-a {
+  left: clamp(1rem, 4vw, 5rem);
+  top: 6%;
+  animation-delay: 0s;
+}
+.ve-hold-photo-b {
+  right: clamp(1rem, 6vw, 7rem);
+  top: 2%;
+  animation-delay: -2.4s;
+}
+.ve-hold-photo-c {
+  left: clamp(2rem, 9vw, 11rem);
+  bottom: 4%;
+  animation-delay: -4.8s;
+}
+.ve-hold-photo-d {
+  right: clamp(2rem, 3vw, 4rem);
+  bottom: 10%;
+  animation-delay: -1.2s;
+}
+@keyframes holdPhotoFloat {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -0.7rem;
+  }
+}
+@media (max-width: 1100px) {
+  .ve-hold-photo {
+    display: none;
+  }
+}
+/* Faint vertical hairlines, like the ruled edge of a ledger. */
+.ve-hold-lines {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(90deg, rgba(246, 236, 220, 0.045) 0 1px, transparent 1px 12.5%);
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 25%, #000 75%, transparent);
+  mask-image: linear-gradient(180deg, transparent, #000 25%, #000 75%, transparent);
+}
+.ve-hold-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.ve-hold-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: clamp(0.72rem, 1.2vw, 0.78rem);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(246, 236, 220, 0.8);
+}
+.ve-hold-eyebrow span {
+  width: 2.4rem;
+  height: 1px;
+  background: linear-gradient(90deg, var(--hold-gold), rgba(227, 196, 140, 0));
+}
+.ve-hold-title {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(2.9rem, 7vw, 6.6rem);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  color: #f8f0e2;
+  margin-bottom: clamp(2rem, 4vw, 3.5rem);
+  text-transform: none;
+}
+.ve-hold-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.18em;
+  margin-bottom: -0.18em;
+}
+.ve-hold-mask > span {
+  display: block;
+  will-change: transform;
+}
+
+/* ── Console ─────────────────────────────────────────────────────── */
+.ve-hold-console {
+  position: relative;
+  padding: clamp(1.1rem, 2.2vw, 1.9rem);
+  border-radius: 36px;
+  border: 1px solid rgba(227, 196, 140, 0.32);
+  background: linear-gradient(160deg, rgba(246, 236, 220, 0.07), rgba(246, 236, 220, 0.02));
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  box-shadow:
+    0 60px 100px -50px rgba(0, 0, 0, 0.9),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  will-change: transform, clip-path;
+}
+.ve-hold-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.5rem;
+  margin-bottom: 1rem;
+}
+.ve-hold-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(246, 236, 220, 0.7);
+}
+.ve-hold-label i {
+  color: var(--hold-gold);
+  font-size: 0.85rem;
+}
+.ve-hold-summary {
+  flex: 1;
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-size: clamp(1.4rem, 2.6vw, 2.1rem);
+  line-height: 1.1;
+  color: rgba(246, 236, 220, 0.4);
+  transition: color 400ms var(--ease-slow);
+}
+.ve-hold-summary-on {
+  color: #f8f0e2;
+}
+.ve-hold-arrows {
+  display: flex;
+  gap: 0.5rem;
+}
+.ve-hold-arrows button {
+  width: 2.6rem;
+  height: 2.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(246, 236, 220, 0.3);
+  color: var(--hold-cream);
+  font-size: 0.75rem;
+  transition:
+    background-color 300ms var(--ease-slow),
+    color 300ms var(--ease-slow),
+    transform 450ms var(--ease-slow);
+}
+.ve-hold-arrows button:hover {
+  background: var(--hold-gold);
+  border-color: var(--hold-gold);
+  color: #1d1d1b;
+  transform: scale(1.08);
+}
+
+/* Date rail */
+.ve-hold-rail {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 1.6rem 0.25rem 0.9rem;
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+}
+.ve-hold-rail::-webkit-scrollbar {
+  display: none;
+}
+.ve-hold-cell {
+  position: relative;
+  flex: none;
+  scroll-snap-align: start;
+}
+.ve-hold-month {
+  position: absolute;
+  left: 0.15rem;
+  top: -1.45rem;
+  white-space: nowrap;
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.64rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--hold-gold);
+}
+.ve-hold-day {
+  width: 3.7rem;
+  height: 5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  border-radius: 22px;
+  border: 1px solid rgba(246, 236, 220, 0.16);
+  background: rgba(246, 236, 220, 0.03);
+  color: var(--hold-cream);
+  transition:
+    background-color 350ms var(--ease-slow),
+    border-color 350ms var(--ease-slow),
+    color 350ms var(--ease-slow),
+    transform 500ms var(--ease-slow);
+}
+.ve-hold-day small {
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.ve-hold-day b {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+  font-size: 1.7rem;
+  line-height: 1;
+}
+.ve-hold-day-weekend small {
+  color: var(--hold-gold);
+  opacity: 0.9;
+}
+.ve-hold-day:hover {
+  border-color: rgba(227, 196, 140, 0.7);
+  transform: translateY(-4px);
+}
+.ve-hold-day-in {
+  background: rgba(227, 196, 140, 0.14);
+  border-color: rgba(227, 196, 140, 0.4);
+}
+.ve-hold-day-start,
+.ve-hold-day-end {
+  background: linear-gradient(160deg, #f2d9a8, #cfa15c);
+  border-color: transparent;
+  color: #1d1d1b;
+  transform: translateY(-4px);
+  box-shadow: 0 18px 30px -14px rgba(227, 196, 140, 0.55);
+}
+.ve-hold-day-start small,
+.ve-hold-day-end small {
+  color: #1d1d1b;
+  opacity: 0.7;
+}
+
+/* Who / how long / submit */
+.ve-hold-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  align-items: stretch;
+  gap: 1rem;
+  margin-top: 0.6rem;
+  padding-top: 1.3rem;
+  border-top: 1px solid rgba(246, 236, 220, 0.14);
+}
+.ve-hold-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-radius: 24px;
+  background: rgba(246, 236, 220, 0.04);
+  border: 1px solid rgba(246, 236, 220, 0.1);
+}
+.ve-hold-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.ve-hold-stepper span,
+.ve-hold-nights {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  line-height: 1.1;
+  color: #f8f0e2;
+}
+.ve-hold-stepper b,
+.ve-hold-nights b {
+  font-weight: 400;
+  color: var(--hold-gold);
+}
+.ve-hold-stepper button {
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(246, 236, 220, 0.3);
+  color: var(--hold-cream);
+  font-size: 0.7rem;
+  transition:
+    background-color 300ms var(--ease-slow),
+    color 300ms var(--ease-slow),
+    transform 450ms var(--ease-slow);
+}
+.ve-hold-stepper button:hover {
+  background: var(--hold-gold);
+  border-color: var(--hold-gold);
+  color: #1d1d1b;
+  transform: scale(1.1);
+}
+.ve-hold-stepper-sub {
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(246, 236, 220, 0.1);
+}
+.ve-hold-stepper-sub span,
+.ve-hold-stepper-sub b {
+  font-size: clamp(1.1rem, 1.9vw, 1.4rem);
+}
+.ve-hold-muted {
+  color: rgba(246, 236, 220, 0.4);
+}
+
+.ve-hold-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.3rem;
+  padding: 0.5rem 0.5rem 0.5rem 2rem;
+  border-radius: 999px;
+  background: var(--hold-cream);
+  color: #1d1d1b;
+  font-family: var(--font-mont);
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  box-shadow: 0 24px 46px -18px rgba(0, 0, 0, 0.85);
+  transition: transform 450ms var(--ease-slow);
+}
+.ve-hold-submit:hover {
+  transform: translateY(-3px);
+}
+.ve-hold-submit-icon {
+  width: 3.4rem;
+  height: 3.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #1d1d1b;
+  color: var(--hold-cream);
+  font-size: 0.9rem;
+  transition:
+    transform 450ms var(--ease-slow),
+    background-color 300ms;
+}
+.ve-hold-submit:hover .ve-hold-submit-icon {
+  transform: translateX(4px) rotate(-35deg);
+  background: #a9793a;
+}
+
+.ve-hold-note {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem 2.2rem;
+  margin-top: clamp(1.5rem, 3vw, 2.25rem);
+}
+.ve-hold-note li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: 0.86rem;
+  color: rgba(246, 236, 220, 0.72);
+}
+.ve-hold-note i {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(227, 196, 140, 0.16);
+  color: var(--hold-gold);
+  font-size: 0.6rem;
+}
+
+@media (max-width: 860px) {
+  .ve-hold-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  .ve-hold-submit {
+    grid-column: 1 / -1;
+    justify-content: space-between;
+  }
+  .ve-hold-arrows {
+    display: none;
+  }
+}
+@media (max-width: 520px) {
+  .ve-hold-row {
+    grid-template-columns: 1fr;
+  }
+  .ve-hold-day {
+    width: 3.2rem;
+    height: 4.5rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ve-hold-day,
+  .ve-hold-submit,
+  .ve-hold-arrows button {
+    transition: none;
+  }
+}
