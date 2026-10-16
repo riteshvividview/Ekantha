@@ -3,7 +3,6 @@
 import { useEffect, useRef } from 'react'
 import { useLenis } from 'lenis/react'
 import type { Footer as FooterData, Navigation } from '@/payload-types'
-import { resolveMedia } from '@/lib/media'
 import { gsap } from '@/lib/animations/gsap'
 import PolaroidLineCarousel, { type Slide } from '@/components/ui/polaroid-line-carousel'
 import { buildNavModel } from './navModel'
@@ -43,7 +42,6 @@ const HELP_LINKS = [
 ]
 
 export function Footer({ data, nav }: { data: FooterData; nav?: Navigation }) {
-  const brandLogo = resolveMedia(data.brand?.logo)
   const rootRef = useRef<HTMLElement>(null)
   const lenis = useLenis()
 
@@ -108,10 +106,11 @@ export function Footer({ data, nav }: { data: FooterData; nav?: Navigation }) {
           <div className="ve-foot-col ve-foot-brand" data-col>
             {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- plain <a> on purpose, like every other link on this site (fresh server render per page). */}
             <a href="/" className="ve-foot-logo" aria-label="Vana Ekantha, home">
-              {brandLogo.url && <img src={brandLogo.url} alt="" aria-hidden="true" />}
-              <span>
-                Vana <em>Ekantha</em>
-              </span>
+              {/* The footer body is always the light/cream resting state by
+                  the time a page scrolls this far (every dark section tweens
+                  the page back to light before its own end — see Reach.tsx),
+                  so this is the one spot that never needs to swap logos. */}
+              <img src="/ekantha-logo-brown.png" alt="Vana Ekantha" />
             </a>
             <p className="ve-foot-tagline">{data.brand?.tagline}</p>
             {data.brand?.note && <p className="ve-foot-note">{data.brand.note}</p>}

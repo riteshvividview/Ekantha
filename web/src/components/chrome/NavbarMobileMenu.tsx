@@ -12,6 +12,10 @@ type Props = {
   items: NavItem[]
   cta?: Navigation['cta']
   pathname: string
+  /** Lifted to Navbar.tsx so the header logo can swap to white while the
+      panel is open, not just tracked locally. */
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
 
 /**
@@ -19,8 +23,7 @@ type Props = {
  * of the burger, then the links rise in one after another; Stay/Experiences
  * expand as accordions with the same thumbnails as the desktop dropdown.
  */
-export function NavbarMobileMenu({ items, cta, pathname }: Props) {
-  const [open, setOpen] = useState(false)
+export function NavbarMobileMenu({ items, cta, pathname, open, onOpenChange: setOpen }: Props) {
   const [mounted, setMounted] = useState(false)
   const [expanded, setExpanded] = useState<string | null>(null)
   const lenis = useLenis()
@@ -37,7 +40,7 @@ export function NavbarMobileMenu({ items, cta, pathname }: Props) {
       setExpanded(null)
     })
     return () => cancelAnimationFrame(id)
-  }, [pathname])
+  }, [pathname, setOpen])
 
   // Lock page scroll while open, Escape to close.
   useEffect(() => {
@@ -51,7 +54,7 @@ export function NavbarMobileMenu({ items, cta, pathname }: Props) {
       document.documentElement.style.overflow = ''
       window.removeEventListener('keydown', onKey)
     }
-  }, [open, lenis])
+  }, [open, lenis, setOpen])
 
   // Leaving the phone/tablet range while open would strand the panel.
   useEffect(() => {
@@ -59,13 +62,13 @@ export function NavbarMobileMenu({ items, cta, pathname }: Props) {
     const onChange = () => mq.matches && setOpen(false)
     mq.addEventListener('change', onChange)
     return () => mq.removeEventListener('change', onChange)
-  }, [])
+  }, [setOpen])
 
   const close = () => setOpen(false)
   const step = (i: number) => ({ '--d': `${140 + i * 60}ms` }) as CSSProperties
 
   const panel = (
-    <div className="ve-mnav" data-open={open ? 'true' : 'false'} aria-hidden={!open}>
+    <div className="ve-mnav" data-open={open ? 'true' : 'false'} data-lenis-prevent aria-hidden={!open}>
       <div className="ve-mnav-glow" aria-hidden="true" />
       <nav className="ve-mnav-inner" aria-label="Mobile">
         <ul className="ve-mnav-list">
@@ -157,7 +160,7 @@ export function NavbarMobileMenu({ items, cta, pathname }: Props) {
         data-open={open ? 'true' : 'false'}
         aria-label={open ? 'Close menu' : 'Open menu'}
         aria-expanded={open}
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => setOpen(!open)}
       >
         <span />
         <span />

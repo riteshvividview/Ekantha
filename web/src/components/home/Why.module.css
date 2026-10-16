@@ -109,9 +109,30 @@
   grid-column: span 5;
 }
 @media (max-width: 860px) {
+  /* Less bottom padding than the desktop clamp (up to 11rem) — the next
+     section trims its own top padding to match, so the two gaps together
+     don't add up to one long empty stretch. */
+  .why {
+    padding-bottom: clamp(2.5rem, 7vw, 3.5rem);
+  }
+  /* Roomier than the desktop gap (up to 1.75rem) — this is the headroom
+     the cards' scroll parallax (scaled down for mobile in Why.tsx, but
+     still real motion) drifts into, so adjacent cards can't ever overlap. */
+  /* Flex, not grid — a single mobile column has no need for the desktop
+     12-track grid, and the grid's own auto-sizing was computing some
+     column tracks wider than the available space at certain widths (the
+     card's own content setting an intrinsic minimum that a grid item's
+     min-width: 0 didn't fully suppress), pushing cards past the viewport's
+     right edge. Flex has no such auto-minimum-size step to fight. */
+  .grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
   .wide,
   .narrow {
-    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
     min-height: clamp(20rem, 80vw, 28rem);
   }
 }

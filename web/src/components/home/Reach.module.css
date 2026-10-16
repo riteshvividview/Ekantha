@@ -17,6 +17,18 @@
   isolation: isolate;
 }
 
+/* Pure layout wrappers — `display: contents` on desktop/tablet means zero
+   box-model presence, so .map/.vignette and the .top/.hero/.beat/.arrival/
+   .hud text groups behave exactly as direct .stage children (unchanged
+   full-bleed-map-with-overlaid-text composition). Only the mobile rule
+   below turns them into real, stacked-in-flow blocks — see the comment
+   there for why. */
+.mapBox,
+.textStage,
+.narrative {
+  display: contents;
+}
+
 .map {
   position: absolute;
   inset: 0;
@@ -153,7 +165,7 @@
 .headline {
   font-family: var(--font-qalisten), Georgia, serif;
   font-weight: 400;
-  font-size: clamp(3.2rem, 8.4vw, 8rem);
+  font-size: clamp(2.8rem, 6.2vw, 5.8rem);
   line-height: 0.98;
   letter-spacing: -0.01em;
   color: #f8f0e2;
@@ -537,26 +549,92 @@
   }
 }
 
-/* Phones: captions sit at the bottom, above the progress line. */
+/* Phones/small tablets: the map becomes its own contained box up top, and
+   every text group that used to overlay it (top bar, hero title, the three
+   drive-by captions, arrival card, live-progress HUD) moves below it into
+   a normal stacked block instead — the map is still pinned and scroll-
+   scrubbed exactly as before, just no longer sharing coordinate space with
+   text, so nothing can overlap it the way the title/locate-button did. */
 @media (max-width: 900px) {
-  .hero {
-    top: auto;
-    bottom: clamp(6rem, 14vh, 8rem);
-    transform: none;
+  .stage {
+    height: auto;
+    min-height: 0;
+    display: block;
+    overflow: visible;
   }
-  .beat,
-  .arrival {
-    bottom: clamp(5.5rem, 12vh, 7.5rem);
+  .mapBox {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 42vh;
+    min-height: 16rem;
+    overflow: hidden;
+  }
+  .vignette {
+    background: linear-gradient(180deg, rgba(14, 11, 8, 0) 55%, rgba(14, 11, 8, 0.95) 100%);
+  }
+
+  .textStage {
+    display: block;
+    position: relative;
+    width: 100%;
+    background: #14110e;
+    padding: 1.5rem var(--pad-x) 2rem;
   }
   .top {
-    top: clamp(5.5rem, 12vw, 6.5rem);
+    position: static;
     flex-direction: column;
     align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
   }
   .locateWrap {
     align-items: flex-start;
   }
   .geoNote {
     text-align: left;
+  }
+
+  /* The three narrative stages (hero/beat/arrival) crossfade in the SAME
+     spot here, same as on desktop — just stacked below the map instead of
+     over it. */
+  .narrative {
+    display: block;
+    position: relative;
+    min-height: 19rem;
+  }
+  .hero,
+  .beat,
+  .arrival {
+    position: absolute;
+    inset: 0;
+    left: 0;
+    right: 0;
+    max-width: 100%;
+    transform: none;
+  }
+
+  .hud {
+    position: static;
+    margin-top: 1.5rem;
+  }
+
+  /* Distinctly smaller than the desktop minimums — not those minimums
+     re-scaled, real small-screen sizes of their own. */
+  .headline {
+    font-size: clamp(1.9rem, 9.5vw, 2.6rem);
+    text-shadow: none;
+  }
+  .tag {
+    font-size: clamp(0.64rem, 3vw, 0.74rem);
+    line-height: 1.6;
+  }
+  .line {
+    font-size: clamp(1.5rem, 7.5vw, 2.1rem);
+    text-shadow: none;
+  }
+  .arrivalTitle {
+    font-size: clamp(1.7rem, 8.5vw, 2.3rem);
+    text-shadow: none;
   }
 }

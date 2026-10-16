@@ -62,35 +62,16 @@
 }
 
 /* ── Logo ─────────────────────────────────────────────────────────── */
+/* A single full-wordmark image now (Navbar.tsx swaps its src between the
+   white/brown logo files to match whichever of the two pill looks is
+   active — see logoSrc there), not an icon + styled text. */
 .ve-nav .ve-nav-logo {
-  gap: 0.7rem;
-  font-family: var(--font-qalisten), Georgia, serif;
-  font-weight: 400;
-  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
-  line-height: 1;
-  letter-spacing: 0;
-  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
 }
 .ve-nav .ve-nav-logo img {
-  width: clamp(28px, 3vw, 36px);
-  height: clamp(28px, 3vw, 36px);
-}
-/* The mark is dark artwork: on the dark glass it is shown as a cream silhouette. */
-.ve-nav-glass .ve-nav-logo img {
-  filter: brightness(0) invert(0.93) sepia(0.15);
-}
-.ve-nav .ve-nav-logo em {
-  font-family: var(--font-qalisten), Georgia, serif;
-  font-style: normal;
-  background: linear-gradient(100deg, var(--nav-gold), #cfa15c);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-.ve-nav.ve-nav-solid .ve-nav-logo em {
-  background: linear-gradient(100deg, #a9793a, #c99450);
-  -webkit-background-clip: text;
-  background-clip: text;
+  width: clamp(6.5rem, 9vw, 8.5rem);
+  height: auto;
 }
 
 /* ── Desktop links ────────────────────────────────────────────────── */
@@ -300,23 +281,24 @@
   height: var(--mh, 0);
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-10px) scale(0.965);
+  transform: translateY(-6px) scale(0.98);
   transform-origin: var(--notch, 50%) 0;
   transition:
-    opacity 320ms var(--ease-soft),
-    transform 560ms var(--ease-slow),
-    visibility 0s 320ms;
+    opacity 160ms var(--ease-soft),
+    transform 220ms var(--ease-soft),
+    visibility 0s 160ms;
 }
 /* Only slide + resize while moving between two open menus; the first open
-   snaps into place and just fades/scales in. */
+   snaps into place and just fades/scales in. Quick — this is a hover
+   menu, not a scene transition; it should feel instant, not scenic. */
 .ve-mega[data-morph='true'] {
   transition:
-    opacity 320ms var(--ease-soft),
-    transform 560ms var(--ease-slow),
-    left 560ms var(--ease-slow),
-    width 560ms var(--ease-slow),
-    height 560ms var(--ease-slow),
-    visibility 0s 320ms;
+    opacity 160ms var(--ease-soft),
+    transform 220ms var(--ease-soft),
+    left 260ms var(--ease-soft),
+    width 260ms var(--ease-soft),
+    height 260ms var(--ease-soft),
+    visibility 0s 160ms;
 }
 .ve-mega[data-open='true'] {
   opacity: 1;
@@ -345,10 +327,10 @@
   margin-left: -8px;
   border-radius: 4px 0 0 0;
   transform: rotate(45deg);
-  background: #f8f1e4;
+  background: #fffcf7;
 }
 .ve-mega[data-morph='true'] .ve-mega-notch {
-  transition: left 560ms var(--ease-slow);
+  transition: left 260ms var(--ease-soft);
 }
 .ve-mega-body {
   position: relative;
@@ -356,7 +338,7 @@
   height: 100%;
   overflow: hidden;
   border-radius: 28px;
-  background: #f8f1e4;
+  background: linear-gradient(160deg, #fffcf7 0%, #f8f1e4 70%, #f3e9d8 100%);
   border: 1px solid rgba(255, 255, 255, 0.8);
   box-shadow:
     0 50px 100px -40px rgba(12, 9, 6, 0.65),
@@ -378,15 +360,15 @@
   visibility: hidden;
   transform: translateX(var(--shift, 0));
   transition:
-    opacity 300ms var(--ease-soft),
-    transform 560ms var(--ease-slow),
-    visibility 0s 300ms;
+    opacity 180ms var(--ease-soft),
+    transform 240ms var(--ease-soft),
+    visibility 0s 180ms;
 }
 .ve-mega-panel[data-active='true'] {
   opacity: 1;
   visibility: visible;
   transform: none;
-  transition-delay: 120ms, 120ms, 0s;
+  transition-delay: 40ms, 40ms, 0s;
 }
 
 .ve-mega-list {
@@ -396,6 +378,9 @@
   padding: 0.3rem 0.2rem 0.2rem;
 }
 .ve-mega-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
   height: 2.2rem;
   padding: 0.3rem 0.85rem 0;
   font-family: var(--font-mont);
@@ -405,6 +390,11 @@
   text-transform: uppercase;
   color: rgba(29, 29, 27, 0.6);
 }
+.ve-mega-heading-dash {
+  width: 1.4rem;
+  height: 1px;
+  background: linear-gradient(90deg, #a9793a, rgba(169, 121, 58, 0));
+}
 /* Slides to whichever row is hovered. */
 .ve-mega-hilite {
   position: absolute;
@@ -413,9 +403,9 @@
   top: 2.5rem;
   height: var(--row);
   border-radius: 18px;
-  background: linear-gradient(90deg, rgba(29, 29, 27, 0.075), rgba(29, 29, 27, 0.04));
+  background: linear-gradient(90deg, rgba(227, 196, 140, 0.16), rgba(227, 196, 140, 0.05));
   transform: translateY(calc(var(--hi, 0) * var(--row)));
-  transition: transform 460ms var(--ease-slow);
+  transition: transform 260ms var(--ease-soft);
 }
 .ve-mega-link {
   position: relative;
@@ -428,29 +418,32 @@
   padding: 0 0.85rem 0 0.75rem;
   border-radius: 18px;
   opacity: 0;
-  transform: translateX(-16px);
+  transform: translateX(-10px);
   transition:
-    opacity 420ms var(--ease-soft),
-    transform 560ms var(--ease-slow);
+    opacity 240ms var(--ease-soft),
+    transform 280ms var(--ease-soft);
 }
 .ve-mega-panel[data-active='true'] .ve-mega-link,
 .ve-mega-panel[data-active='true'] .ve-mega-all {
   opacity: 1;
   transform: none;
-  transition-delay: calc(170ms + var(--i, 0) * 60ms);
+  transition-delay: calc(40ms + var(--i, 0) * 30ms);
 }
 .ve-mega-thumb {
   position: relative;
   overflow: hidden;
-  width: 3.2rem;
-  height: 3.2rem;
+  width: 3.6rem;
+  height: 3.6rem;
   border-radius: 14px;
+  border: 1px solid rgba(29, 29, 27, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
   color: rgba(255, 255, 255, 0.85);
   font-size: 1rem;
-  transition: transform 500ms var(--ease-slow);
+  transition:
+    transform 320ms var(--ease-soft),
+    border-color 300ms;
 }
 .ve-mega-thumb img {
   width: 100%;
@@ -458,6 +451,7 @@
   object-fit: cover;
 }
 .ve-mega-link:hover .ve-mega-thumb {
+  border-color: rgba(169, 121, 58, 0.45);
   transform: scale(1.08) rotate(-3deg);
 }
 .ve-mega-text strong {
@@ -503,10 +497,10 @@
   text-transform: uppercase;
   color: #a9793a;
   opacity: 0;
-  transform: translateX(-16px);
+  transform: translateX(-10px);
   transition:
-    opacity 420ms var(--ease-soft),
-    transform 560ms var(--ease-slow);
+    opacity 240ms var(--ease-soft),
+    transform 280ms var(--ease-soft);
 }
 .ve-mega-all i {
   transition: transform 420ms var(--ease-slow);
@@ -523,12 +517,12 @@
   border-radius: 22px;
   color: var(--nav-cream);
   isolation: isolate;
-  clip-path: inset(10% 8% 10% 8% round 22px);
-  transition: clip-path 800ms var(--ease-slow);
+  clip-path: inset(6% 4% 6% 4% round 22px);
+  transition: clip-path 340ms var(--ease-soft);
 }
 .ve-mega-panel[data-active='true'] .ve-mega-feature {
   clip-path: inset(0 0 0 0 round 22px);
-  transition-delay: 160ms;
+  transition-delay: 40ms;
 }
 .ve-mega-fimg {
   position: absolute;
@@ -538,10 +532,10 @@
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transform: scale(1.14);
+  transform: scale(1.06);
   transition:
-    opacity 600ms var(--ease-soft),
-    transform 1400ms var(--ease-slow);
+    opacity 320ms var(--ease-soft),
+    transform 650ms var(--ease-soft);
 }
 .ve-mega-fimg[data-on='true'] {
   opacity: 1;
@@ -572,12 +566,12 @@
   right: 4.2rem;
   bottom: 1.2rem;
   z-index: 2;
-  animation: veMegaText 640ms var(--ease-slow) both;
+  animation: veMegaText 280ms var(--ease-soft) both;
 }
 @keyframes veMegaText {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -645,6 +639,16 @@
 }
 
 /* ── Mobile / tablet menu ─────────────────────────────────────────── */
+/* Mobile Safari/Chrome paint a translucent blue flash on tap by default —
+   this panel has its own tap feedback (the plus-circle rotate, the gold
+   active color), so the browser's own highlight is just visual noise. */
+.ve-mnav a,
+.ve-mnav button {
+  -webkit-tap-highlight-color: transparent;
+}
+.ve-nav-burger {
+  -webkit-tap-highlight-color: transparent;
+}
 .ve-mnav {
   position: fixed;
   inset: 0;
@@ -754,7 +758,7 @@
 .ve-mnav-sub {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 620ms var(--ease-slow);
+  transition: grid-template-rows 380ms var(--ease-soft);
 }
 .ve-mnav-sub[data-open='true'] {
   grid-template-rows: 1fr;
@@ -859,8 +863,8 @@
   }
 }
 @media (max-width: 380px) {
-  .ve-nav .ve-nav-logo em {
-    display: none;
+  .ve-nav .ve-nav-logo img {
+    width: 5.5rem;
   }
 }
 @media (hover: none) {

@@ -8,7 +8,6 @@ import { useLenis } from 'lenis/react'
 import type { Navigation } from '@/payload-types'
 import { NavbarMobileMenu } from './NavbarMobileMenu'
 import { buildNavModel, isItemActive } from './navModel'
-import { resolveMedia } from '@/lib/media'
 import { gsap } from '@/lib/animations/gsap'
 import './navbar.css'
 
@@ -41,7 +40,6 @@ interface MegaBox {
 }
 
 export function Navbar({ data }: { data: Navigation }) {
-  const logoIcon = resolveMedia(data.logo?.icon)
   const pathname = usePathname()
   const items = buildNavModel(data.primaryLinks ?? [])
   const dropdowns = items.filter((i) => i.children && i.children.length > 0)
@@ -49,6 +47,15 @@ export function Navbar({ data }: { data: Navigation }) {
   const [mounted, setMounted] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [onDarkHero, setOnDarkHero] = useState(false)
+  // The solid pill's background is `var(--white)`, which itself follows the
+  // page's scroll-driven light/dark theme (see lib/pageTheme.ts) — tracked
+  // here so the logo image can follow the same swing: the glass pill is
+  // always a dark translucent surface regardless of theme, but the solid
+  // pill can land on either a light or a dark backdrop.
+  const [darkTheme, setDarkTheme] = useState(false)
+  // Owned here (not inside NavbarMobileMenu) so the logo can react to it too
+  // — see logoSrc below.
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [hidden, setHidden] = useState(false)
   const [openKey, setOpenKey] = useState<string | null>(null)
   const [hoverIdx, setHoverIdx] = useState<Record<string, number>>({})
@@ -93,6 +100,20 @@ export function Navbar({ data }: { data: Navigation }) {
     heroes.forEach((hero) => observer.observe(hero))
     return () => observer.disconnect()
   }, [pathname])
+
+  // The theme crossfade (Why.tsx, Gallery.tsx, Reach.tsx, etc.) tweens
+  // `--white` as an inline style on <body> — a MutationObserver on that
+  // style attribute catches every swing without polling on every scroll frame.
+  useEffect(() => {
+    const check = () => {
+      const white = getComputedStyle(document.body).getPropertyValue('--white').trim()
+      setDarkTheme(white === 'rgb(24, 20, 17)')
+    }
+    check()
+    const observer = new MutationObserver(check)
+    observer.observe(document.body, { attributes: true, attributeFilter: ['style'] })
+    return () => observer.disconnect()
+  }, [])
 
   useLenis((lenis) => {
     setScrolled(lenis.scroll > SCROLL_THRESHOLD)
@@ -201,6 +222,9 @@ export function Navbar({ data }: { data: Navigation }) {
   }
 
   const glass = onDarkHero || !scrolled || !!openKey
+  // Glass is always a dark translucent surface regardless of theme; solid
+  // follows whichever page theme is currently active.
+  const logoSrc = glass || darkTheme || mobileMenuOpen ? '/ekantha-logo-white.png' : '/ekantha-logo-brown.png'
   const navClass = [
     've-nav',
     glass ? 've-nav-glass' : 've-nav-solid',
@@ -227,8 +251,7 @@ export function Navbar({ data }: { data: Navigation }) {
             page reload guarantees the active-page state (and the CMS-driven nav/footer
             data) is always freshly server-rendered. */}
         <a href="/" className="ve-navbar-logo ve-nav-logo">
-          {logoIcon.url && <img src={logoIcon.url} alt="" aria-hidden="true" />}
-          <span>{renderWordmark(data.logo?.wordmark ?? 'Vana Ekantha')}</span>
+          <img src={logoSrc} alt="Vana Ekantha" />
         </a>
 
         <nav
@@ -307,7 +330,13 @@ export function Navbar({ data }: { data: Navigation }) {
           <span />
         )}
 
-        <NavbarMobileMenu items={items} cta={data.cta ?? undefined} pathname={pathname} />
+        <NavbarMobileMenu
+          items={items}
+          cta={data.cta ?? undefined}
+          pathname={pathname}
+          open={mobileMenuOpen}
+          onOpenChange={setMobileMenuOpen}
+        />
 
         {/* Shared dropdown surface: one box that slides + resizes between menus. */}
         <div
@@ -346,7 +375,10 @@ export function Navbar({ data }: { data: Navigation }) {
                   style={{ '--shift': `${shift}px` } as CSSProperties}
                 >
                   <div className="ve-mega-list" style={{ '--hi': hi } as CSSProperties}>
-                    <p className="ve-mega-heading">{item.heading}</p>
+                    <p className="ve-mega-heading">
+                      <span className="ve-mega-heading-dash" aria-hidden="true" />
+                      {item.heading}
+                    </p>
                     <span className="ve-mega-hilite" aria-hidden="true" />
                     {kids.map((c, i) => (
                       <a
@@ -410,18 +442,6 @@ export function Navbar({ data }: { data: Navigation }) {
       {/* Dims + softly blurs the page behind an open dropdown. Sibling of the
           header (not a child) so the header's transform can't re-parent it. */}
       <div className="ve-nav-veil" data-open={openKey ? 'true' : 'false'} aria-hidden="true" />
-    </>
-  )
-}
-
-/** Splits "Vana Ekantha" → "Vana <em>Ekantha</em>". */
-function renderWordmark(wordmark: string) {
-  const parts = wordmark.trim().split(' ')
-  if (parts.length < 2) return wordmark
-  const [first, ...rest] = parts
-  return (
-    <>
-      {first} <em>{rest.join(' ')}</em>
     </>
   )
 }

@@ -35,6 +35,18 @@ const META: Record<string, { sub: string; tag: string; icon: string }> = {
   '/events': { sub: 'Weddings, gatherings, offsites', tag: 'A setting for every occasion.', icon: 'fa-champagne-glasses' },
 }
 
+// LOCAL NAV IMAGES — real estate photos for the mega-dropdown's thumbnails
+// and feature panel, standing in until the CMS's own previewImage fields are
+// filled in (same pattern as the other LOCAL_*_IMAGES overrides across the
+// home page components). Falls back to the CMS image, then to the icon.
+const LOCAL_IMAGES: Record<string, string> = {
+  '/mango-house': '/images/home/09-gallery-preview/mango-1.jpg',
+  '/stone-house': '/images/home/09-gallery-preview/stone-1.jpg',
+  '/full-house': '/images/home/03-why-us/Hrs-away-img-two.png',
+  '/farm-dining': '/images/home/09-gallery-preview/bamboo-hero.jpg',
+  '/events': '/images/home/07-events-preview/a-setting-for-Every-Occasion-1.png',
+}
+
 // Standalone CMS links that read as "things to do" are grouped into one
 // Experiences dropdown (when at least two of them are present), placed where
 // the first of them sat.
@@ -44,7 +56,8 @@ type Link = NonNullable<Navigation['primaryLinks']>[number]
 
 const toChild = (label: string, href: string, imageSource: Link['previewImage']): NavChild => {
   const meta = META[href] ?? { sub: '', tag: '', icon: 'fa-leaf' }
-  return { label, href, ...meta, image: resolveMediaSize(imageSource, 'card').url || null }
+  const image = LOCAL_IMAGES[href] ?? resolveMediaSize(imageSource, 'card').url ?? null
+  return { label, href, ...meta, image }
 }
 
 export function buildNavModel(links: Link[]): NavItem[] {

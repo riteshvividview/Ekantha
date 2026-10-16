@@ -499,25 +499,56 @@
   font-size: 0.85rem;
 }
 
-/* ── Tablet / mobile ────────────────────────────────────────────── */
+/* ── Tablet / mobile ────────────────────────────────────────────────────
+   Restructured, not just rescaled: the scene becomes its own contained
+   block at the top (a normal flex item, in document flow) instead of an
+   absolutely-positioned full-bleed layer that every text block below it
+   used to sit on top of. Everything else stacks underneath it in order:
+   eyebrow/headline, the space selector, "currently exploring", the strip. */
 @media (max-width: 1000px) {
   .stage {
     min-height: 0;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    padding-bottom: 6.5rem;
+    gap: clamp(1.5rem, 5vw, 2.25rem);
+    padding: clamp(3rem, 9vw, 4rem) 0 4.5rem;
   }
+
   .hero {
-    left: 0;
-    height: 46%;
+    position: relative;
+    inset: auto;
+    left: auto;
+    right: auto;
+    top: auto;
+    width: 100%;
+    height: 38vh;
+    min-height: 15rem;
+    border-radius: 0 0 28px 28px;
   }
+  /* No fade here — the image sits in its own contained box with nothing
+     overlapping it, so there's nothing left for a readability scrim to do;
+     it only showed up as an unwanted band across the photo. */
   .heroFade {
-    background: linear-gradient(0deg, var(--white) 0%, color-mix(in srgb, var(--white) 25%, transparent) 60%, color-mix(in srgb, var(--white) 55%, transparent) 100%);
+    display: none;
+  }
+
+  .left,
+  .info,
+  .strip {
+    padding-left: var(--pad-x);
+    padding-right: var(--pad-x);
   }
   .left {
     width: 100%;
   }
+  .headline {
+    font-size: clamp(2.1rem, 9.5vw, 2.9rem);
+  }
+  .sub {
+    font-size: clamp(0.66rem, 3vw, 0.76rem);
+    line-height: 1.6;
+  }
+
   .thumbs {
     flex-direction: row;
     gap: 1rem;
@@ -526,7 +557,7 @@
     scrollbar-width: none;
   }
   .thumb {
-    grid-template-columns: 5.5rem;
+    grid-template-columns: 5rem;
     grid-template-areas:
       'arch'
       'name';
@@ -534,20 +565,31 @@
   .thumbArrow {
     display: none;
   }
+  .thumbName {
+    font-size: 0.66rem;
+  }
+
+  /* No more oversized margin-top to clear the (now gone) overlap — the
+     stage's own flex gap is enough since .hero is a normal block now. */
   .info {
     position: relative;
     left: auto;
     top: auto;
-    margin-top: clamp(4rem, 22vw, 9rem);
+    margin-top: 0;
+    max-width: 100%;
   }
+  .name {
+    font-size: clamp(2.3rem, 10.5vw, 3.2rem);
+  }
+  .tagline {
+    font-size: clamp(0.66rem, 3vw, 0.76rem);
+  }
+
   .strip {
     position: relative;
     left: auto;
     right: auto;
     bottom: auto;
-  }
-  .strip {
-    padding-right: 0;
   }
   .trackWrap {
     padding-right: 0;
@@ -555,7 +597,7 @@
   .tray {
     left: -3%;
     right: -3%;
-    border-radius: 55% 55% 0 0 / 46px 46px 0 0;
+    border-radius: 28px 28px 0 0 / 24px 24px 0 0;
   }
   .frameShell {
     width: 70vw;
@@ -593,4 +635,17 @@
 .perk i {
   color: #e3c48c;
   font-size: 0.85rem;
+}
+@media (max-width: 1000px) {
+  .perks {
+    gap: 0.45rem;
+  }
+  .perk {
+    gap: 0.45rem;
+    padding: 0.4rem 0.75rem 0.4rem 0.6rem;
+    font-size: 0.58rem;
+  }
+  .perk i {
+    font-size: 0.68rem;
+  }
 }

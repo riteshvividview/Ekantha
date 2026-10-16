@@ -21,6 +21,11 @@
   padding: var(--pad-y) var(--pad-x) clamp(2rem, 4vw, 3rem);
   max-width: 50rem;
 }
+@media (max-width: 860px) {
+  .head {
+    padding-top: clamp(1.75rem, 7vw, 2.5rem);
+  }
+}
 .eyebrow {
   display: inline-flex;
   align-items: center;

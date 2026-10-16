@@ -109,9 +109,21 @@ const fmtDuration = (sec: number) => {
 const fmtKm = (m: number) => `${Math.round(m / 1000)} km`
 
 const BEATS = [
-  { icon: 'fa-road', kicker: 'The road begins', line: 'Leave the noise of the city behind.' },
-  { icon: 'fa-tree', kicker: 'Open country', line: 'Highways give way to fields and old trees.' },
-  { icon: 'fa-mountain-sun', kicker: 'Almost there', line: 'The horizon widens. The pace slows.' },
+  {
+    icon: 'fa-road',
+    kicker: 'The road begins',
+    line: 'Leave the noise of the city behind.',
+  },
+  {
+    icon: 'fa-tree',
+    kicker: 'Open country',
+    line: 'Highways give way to fields and old trees.',
+  },
+  {
+    icon: 'fa-mountain-sun',
+    kicker: 'Almost there',
+    line: 'The horizon widens. The pace slows.',
+  },
 ]
 
 export function Reach() {
@@ -127,7 +139,11 @@ export function Reach() {
   const currentOrigin = useRef<Origin>(HYDERABAD)
 
   const [origin, setOrigin] = useState<Origin>(HYDERABAD)
-  const [summary, setSummary] = useState<{ duration: string; distance: string; approximate: boolean } | null>(null)
+  const [summary, setSummary] = useState<{
+    duration: string
+    distance: string
+    approximate: boolean
+  } | null>(null)
   const [geo, setGeo] = useState<'idle' | 'locating' | 'ok' | 'denied'>('idle')
 
   useEffect(() => {
@@ -144,7 +160,9 @@ export function Reach() {
     const cameraPadding = () => {
       const w = mapEl.clientWidth
       const h = mapEl.clientHeight
-      return w > 900 ? { top: 0, bottom: 0, left: Math.round(w * 0.3), right: 0 } : { top: 0, bottom: Math.round(h * 0.34), left: 0, right: 0 }
+      return w > 900
+        ? { top: 0, bottom: 0, left: Math.round(w * 0.3), right: 0 }
+        : { top: 0, bottom: Math.round(h * 0.34), left: 0, right: 0 }
     }
 
     const render = (p: number) => {
@@ -180,7 +198,11 @@ export function Reach() {
       const drawn = route.coords.slice(0, idx + 1)
       drawn.push(pt)
       const src = map.getSource('route-prog') as GeoJSONSource | undefined
-      src?.setData({ type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: drawn } })
+      src?.setData({
+        type: 'Feature',
+        properties: {},
+        geometry: { type: 'LineString', coordinates: drawn },
+      })
       e.head?.setLngLat(pt)
       // The car parks itself as it reaches the farmhouse pin.
       if (e.head) e.head.getElement().style.opacity = r > 0.985 ? '0' : '1'
@@ -229,7 +251,12 @@ export function Reach() {
       e.route.coords.forEach((c) => b.extend(c))
       const pad = cameraPadding()
       const cam = e.map.cameraForBounds(b, {
-        padding: { top: 110, bottom: 120 + pad.bottom, left: 60 + pad.left, right: 60 },
+        padding: {
+          top: 110,
+          bottom: 120 + pad.bottom,
+          left: 60 + pad.left,
+          right: 60,
+        },
         bearing: 0,
         pitch: 0,
       })
@@ -254,9 +281,19 @@ export function Reach() {
       e.route = route
       e.bearing = bearingBetween(route.coords[0], route.coords[Math.min(6, route.coords.length - 1)])
 
-      const line = { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: route.coords } } as const
+      const line = {
+        type: 'Feature',
+        properties: {},
+        geometry: { type: 'LineString', coordinates: route.coords },
+      } as const
       ;(map.getSource('route-base') as GeoJSONSource).setData(line)
-      ;(map.getSource('route-prog') as GeoJSONSource).setData({ ...line, geometry: { type: 'LineString', coordinates: [route.coords[0], route.coords[0]] } })
+      ;(map.getSource('route-prog') as GeoJSONSource).setData({
+        ...line,
+        geometry: {
+          type: 'LineString',
+          coordinates: [route.coords[0], route.coords[0]],
+        },
+      })
 
       const el = (cls: string, html: string) => {
         const d = document.createElement('div')
@@ -268,12 +305,18 @@ export function Reach() {
       const end = route.coords[route.coords.length - 1]
       e.markers.push(
         new maplibre.Marker({
-          element: el('vk-start', `<span class="vk-dot"></span><span class="vk-label">${o.label === 'Your location' ? 'You' : o.label}</span>`),
+          element: el(
+            'vk-start',
+            `<span class="vk-dot"></span><span class="vk-label">${o.label === 'Your location' ? 'You' : o.label}</span>`,
+          ),
         })
           .setLngLat(start)
           .addTo(map),
         new maplibre.Marker({
-          element: el('vk-end', '<span class="vk-house"><i class="fa-solid fa-house-chimney"></i></span><span class="vk-label">Our Farmhouse</span>'),
+          element: el(
+            'vk-end',
+            '<span class="vk-house"><i class="fa-solid fa-house-chimney"></i></span><span class="vk-label">Our Farmhouse</span>',
+          ),
           anchor: 'bottom',
         })
           .setLngLat(end)
@@ -288,7 +331,11 @@ export function Reach() {
 
       computeFit(e)
 
-      setSummary({ duration: fmtDuration(route.duration), distance: fmtKm(route.total), approximate: route.approximate })
+      setSummary({
+        duration: fmtDuration(route.duration),
+        distance: fmtKm(route.total),
+        approximate: route.approximate,
+      })
       render(progressRef.current)
 
       // Name a few places along the way (best effort, rate-limited).
@@ -297,7 +344,9 @@ export function Reach() {
           if (disposed || token !== e.token) return
           const [lng, lat] = route.coords[Math.round(at * (route.coords.length - 1))]
           try {
-            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&accept-language=en&lat=${lat}&lon=${lng}`)
+            const res = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&accept-language=en&lat=${lat}&lon=${lng}`,
+            )
             if (res.ok) {
               const a = (await res.json()).address ?? {}
               const name: string | undefined = a.city || a.town || a.village || a.suburb || a.county || a.state_district
@@ -373,10 +422,23 @@ export function Reach() {
 
       // Suppress MapLibre's own error events (tile 404s, style fetch errors)
       // so they don't appear in the console as unhandled errors.
-      map.on('error', () => { /* silenced — partial tile failures are non-fatal */ })
+      map.on('error', () => {
+        /* silenced — partial tile failures are non-fatal */
+      })
 
       map.addControl(new maplibre.AttributionControl({ compact: true }), 'bottom-right')
-      engineRef.current = { map, maplibre, route: null, head: null, chips: [], markers: [], fit: null, followZoom: 11, bearing: 0, token: 0 }
+      engineRef.current = {
+        map,
+        maplibre,
+        route: null,
+        head: null,
+        chips: [],
+        markers: [],
+        fit: null,
+        followZoom: 11,
+        bearing: 0,
+        token: 0,
+      }
 
       // Race the 'load' event against a 12-second timeout so a dead tile
       // server never hangs the whole section indefinitely.
@@ -395,12 +457,42 @@ export function Reach() {
       }
 
       try {
-        const empty: GeoJSON.FeatureCollection = { type: 'FeatureCollection', features: [] }
+        const empty: GeoJSON.FeatureCollection = {
+          type: 'FeatureCollection',
+          features: [],
+        }
         map.addSource('route-base', { type: 'geojson', data: empty })
         map.addSource('route-prog', { type: 'geojson', data: empty })
-        map.addLayer({ id: 'route-base', type: 'line', source: 'route-base', paint: { 'line-color': 'rgba(246,236,220,0.35)', 'line-width': 2.5, 'line-dasharray': [1, 2.4] }, layout: { 'line-cap': 'round' } })
-        map.addLayer({ id: 'route-glow', type: 'line', source: 'route-prog', paint: { 'line-color': '#d3a566', 'line-width': 16, 'line-blur': 12, 'line-opacity': 0.5 }, layout: { 'line-cap': 'round', 'line-join': 'round' } })
-        map.addLayer({ id: 'route-line', type: 'line', source: 'route-prog', paint: { 'line-color': '#f0d49a', 'line-width': 4.5 }, layout: { 'line-cap': 'round', 'line-join': 'round' } })
+        map.addLayer({
+          id: 'route-base',
+          type: 'line',
+          source: 'route-base',
+          paint: {
+            'line-color': 'rgba(246,236,220,0.35)',
+            'line-width': 2.5,
+            'line-dasharray': [1, 2.4],
+          },
+          layout: { 'line-cap': 'round' },
+        })
+        map.addLayer({
+          id: 'route-glow',
+          type: 'line',
+          source: 'route-prog',
+          paint: {
+            'line-color': '#d3a566',
+            'line-width': 16,
+            'line-blur': 12,
+            'line-opacity': 0.5,
+          },
+          layout: { 'line-cap': 'round', 'line-join': 'round' },
+        })
+        map.addLayer({
+          id: 'route-line',
+          type: 'line',
+          source: 'route-prog',
+          paint: { 'line-color': '#f0d49a', 'line-width': 4.5 },
+          layout: { 'line-cap': 'round', 'line-join': 'round' },
+        })
       } catch {
         // The canvas is already showing and correctly loaded at this point
         // — a layer-definition error isn't worth tearing the map down for.
@@ -455,7 +547,11 @@ export function Reach() {
         duration: THEME_SECONDS,
         ease: 'power2.out',
         immediateRender: false,
-        scrollTrigger: { trigger: section, start: 'bottom 92%', toggleActions: 'play none none reverse' },
+        scrollTrigger: {
+          trigger: section,
+          start: 'bottom 92%',
+          toggleActions: 'play none none reverse',
+        },
       })
 
       if (reduced) return
@@ -529,7 +625,11 @@ export function Reach() {
     setGeo('locating')
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        const o: Origin = { lat: pos.coords.latitude, lng: pos.coords.longitude, label: 'Your location' }
+        const o: Origin = {
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          label: 'Your location',
+        }
         currentOrigin.current = o
         setOrigin(o)
         setGeo('ok')
@@ -548,114 +648,120 @@ export function Reach() {
   return (
     <section className={styles.reach} id="location" ref={sectionRef}>
       <div className={styles.stage} ref={stageRef}>
-        <div className={styles.map} ref={mapElRef} />
-        <div className={styles.vignette} aria-hidden="true" />
+        <div className={styles.mapBox}>
+          <div className={styles.map} ref={mapElRef} />
+          <div className={styles.vignette} aria-hidden="true" />
+        </div>
 
-        {/* Top bar */}
-        <div className={styles.top}>
-          <p className={styles.eyebrow} data-in>
-            <span className={styles.eyebrowDash} />
-            Location
-          </p>
-          <div className={styles.locateWrap} data-in>
-            <button type="button" className={styles.locate} onClick={locate} disabled={geo === 'locating'}>
-              <i className={`fa-solid ${geo === 'locating' ? 'fa-spinner fa-spin' : 'fa-location-crosshairs'}`} aria-hidden="true" />
-              {geo === 'ok' ? 'Route from you' : geo === 'locating' ? 'Locating...' : 'Trace it from where you are'}
-            </button>
-            {geo === 'denied' && <p className={styles.geoNote}>Location is off, so this shows the drive from Hyderabad.</p>}
+        <div className={styles.textStage}>
+          {/* Top bar */}
+          <div className={styles.top}>
+            <p className={styles.eyebrow} data-in>
+              <span className={styles.eyebrowDash} />
+              Location
+            </p>
+            <div className={styles.locateWrap} data-in>
+              <button type="button" className={styles.locate} onClick={locate} disabled={geo === 'locating'}>
+                <i className={`fa-solid ${geo === 'locating' ? 'fa-spinner fa-spin' : 'fa-location-crosshairs'}`} aria-hidden="true" />
+                {geo === 'ok' ? 'Route from you' : geo === 'locating' ? 'Locating...' : 'Trace it from where you are'}
+              </button>
+              {geo === 'denied' && <p className={styles.geoNote}>Location is off, so this shows the drive from Hyderabad.</p>}
+            </div>
           </div>
-        </div>
 
-        {/* Opening title */}
-        <div className={styles.hero} data-hero>
-          <h2 className={styles.headline}>
-            Easy to Reach,
-            <br />
-            Hard to <span className={styles.gold}>Leave.</span>
-          </h2>
-          <p className={styles.tag}>A peaceful escape, just a scenic drive away.</p>
-          <span className={styles.cue}>
-            <i className="fa-solid fa-arrow-down" aria-hidden="true" /> Scroll to follow the road
-          </span>
-        </div>
+          <div className={styles.narrative}>
+            {/* Opening title */}
+            <div className={styles.hero} data-hero>
+              <h2 className={styles.headline}>
+                Easy to Reach,
+                <br />
+                Hard to <span className={styles.gold}>Leave.</span>
+              </h2>
+              <p className={styles.tag}>A peaceful escape, just a scenic drive away.</p>
+              <span className={styles.cue}>
+                <i className="fa-solid fa-arrow-down" aria-hidden="true" /> Scroll to follow the road
+              </span>
+            </div>
 
-        {/* Captions that appear on the map as the car moves */}
-        {BEATS.map((b, i) => (
-          <div className={styles.beat} data-beat={i} key={b.kicker}>
-            <span className={styles.kicker}>
-              <i className={`fa-solid ${b.icon}`} aria-hidden="true" />
-              {b.kicker}
+            {/* Captions that appear on the map as the car moves */}
+            {BEATS.map((b, i) => (
+              <div className={styles.beat} data-beat={i} key={b.kicker}>
+                <span className={styles.kicker}>
+                  <i className={`fa-solid ${b.icon}`} aria-hidden="true" />
+                  {b.kicker}
+                </span>
+                <p className={styles.line}>{b.line}</p>
+              </div>
+            ))}
+
+            {/* Arrival */}
+            <div className={styles.arrival} data-arrival>
+              <span className={styles.kicker}>
+                <i className="fa-solid fa-house-chimney" aria-hidden="true" />
+                You've arrived
+              </span>
+              <p className={styles.arrivalTitle}>
+                Welcome to <span className={styles.gold}>Vana Ekantha.</span>
+              </p>
+              <ul className={styles.stats}>
+                <li>
+                  <i className="fa-solid fa-car-side" aria-hidden="true" />
+                  <span>
+                    <strong>{summary ? summary.duration : '...'}</strong>
+                    <small>
+                      From {fromLabel}
+                      {summary?.approximate ? ' (approx.)' : ''}
+                    </small>
+                  </span>
+                </li>
+                <li>
+                  <i className="fa-solid fa-route" aria-hidden="true" />
+                  <span>
+                    <strong>{summary ? summary.distance : '...'}</strong>
+                    <small>By road</small>
+                  </span>
+                </li>
+                <li>
+                  <i className="fa-solid fa-plane" aria-hidden="true" />
+                  <span>
+                    <strong>1.5 Hrs</strong>
+                    <small>From airport</small>
+                  </span>
+                </li>
+              </ul>
+              <div className={styles.actions}>
+                <a className={styles.directions} href={directions} target="_blank" rel="noopener noreferrer">
+                  Get Directions
+                  <span className={styles.directionsIcon} aria-hidden="true">
+                    <i className="fa-solid fa-arrow-right" />
+                  </span>
+                </a>
+                <a className={styles.maps} href={viewOnMaps} target="_blank" rel="noopener noreferrer">
+                  <i className="fa-solid fa-location-dot" aria-hidden="true" />
+                  View on Google Maps
+                  <i className="fa-solid fa-arrow-up-right-from-square" aria-hidden="true" />
+                </a>
+              </div>
+              <p className={styles.privacy}>Pittampally, Hyderabad, Telangana 508114 &middot; 62MM+82</p>
+            </div>
+          </div>
+
+          {/* Live trip progress */}
+          <div className={styles.hud} data-in>
+            <div className={styles.hudTop}>
+              <span className={styles.hudPlace}>{fromLabel}</span>
+              <span className={styles.hudLive}>
+                <i className="fa-solid fa-route" aria-hidden="true" />
+                <span ref={hudDistRef}>0 km</span>
+                <i className="fa-regular fa-clock" aria-hidden="true" />
+                <span ref={hudTimeRef}>0 mins</span>
+              </span>
+              <span className={styles.hudPlace}>Vana Ekantha</span>
+            </div>
+            <span className={styles.bar} aria-hidden="true">
+              <span className={styles.barFill} ref={barRef} />
             </span>
-            <p className={styles.line}>{b.line}</p>
           </div>
-        ))}
-
-        {/* Arrival */}
-        <div className={styles.arrival} data-arrival>
-          <span className={styles.kicker}>
-            <i className="fa-solid fa-house-chimney" aria-hidden="true" />
-            You've arrived
-          </span>
-          <p className={styles.arrivalTitle}>
-            Welcome to <span className={styles.gold}>Vana Ekantha.</span>
-          </p>
-          <ul className={styles.stats}>
-            <li>
-              <i className="fa-solid fa-car-side" aria-hidden="true" />
-              <span>
-                <strong>{summary ? summary.duration : '...'}</strong>
-                <small>
-                  From {fromLabel}
-                  {summary?.approximate ? ' (approx.)' : ''}
-                </small>
-              </span>
-            </li>
-            <li>
-              <i className="fa-solid fa-route" aria-hidden="true" />
-              <span>
-                <strong>{summary ? summary.distance : '...'}</strong>
-                <small>By road</small>
-              </span>
-            </li>
-            <li>
-              <i className="fa-solid fa-plane" aria-hidden="true" />
-              <span>
-                <strong>1.5 Hrs</strong>
-                <small>From airport</small>
-              </span>
-            </li>
-          </ul>
-          <div className={styles.actions}>
-            <a className={styles.directions} href={directions} target="_blank" rel="noopener noreferrer">
-              Get Directions
-              <span className={styles.directionsIcon} aria-hidden="true">
-                <i className="fa-solid fa-arrow-right" />
-              </span>
-            </a>
-            <a className={styles.maps} href={viewOnMaps} target="_blank" rel="noopener noreferrer">
-              <i className="fa-solid fa-location-dot" aria-hidden="true" />
-              View on Google Maps
-              <i className="fa-solid fa-arrow-up-right-from-square" aria-hidden="true" />
-            </a>
-          </div>
-          <p className={styles.privacy}>Pittampally, Hyderabad, Telangana 508114 &middot; 62MM+82</p>
-        </div>
-
-        {/* Live trip progress */}
-        <div className={styles.hud} data-in>
-          <div className={styles.hudTop}>
-            <span className={styles.hudPlace}>{fromLabel}</span>
-            <span className={styles.hudLive}>
-              <i className="fa-solid fa-route" aria-hidden="true" />
-              <span ref={hudDistRef}>0 km</span>
-              <i className="fa-regular fa-clock" aria-hidden="true" />
-              <span ref={hudTimeRef}>0 mins</span>
-            </span>
-            <span className={styles.hudPlace}>Vana Ekantha</span>
-          </div>
-          <span className={styles.bar} aria-hidden="true">
-            <span className={styles.barFill} ref={barRef} />
-          </span>
         </div>
       </div>
     </section>

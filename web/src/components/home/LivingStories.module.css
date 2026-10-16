@@ -40,3 +40,29 @@
   border: 0;
   overflow: hidden;
 }
+
+/* The embedded page (inner-green-testimonials.html) switches to a taller,
+   single-column mobile layout of its own below 900px — its two testimonial
+   cards land much further down a ~1625-design-unit-tall stage than they do
+   on desktop. Our wrapper used to hard-cap at exactly 100vh with
+   overflow: hidden regardless, so that lower content (including the first
+   card) was simply clipped off with no way to reach it. Below that same
+   900px breakpoint, this grows the wrapper to match the inner page's own
+   stage height instead of capping it — 1625/760*100vw mirrors the ratio
+   that page's own CSS already uses (its `--u` unit, width-driven), so the
+   two heights land in step without needing a fixed pixel guess. Desktop
+   (>900px) is untouched — still the fixed full-viewport pinned frame. */
+@media (max-width: 900px) {
+  .section {
+    height: 213.9vw;
+    min-height: 213.9vw;
+    max-height: none;
+    overflow: visible;
+  }
+  .shaderFrame,
+  .shaderFrame :global(.landing-page-frame),
+  .shaderFrame :global(iframe) {
+    height: 100%;
+    overflow: visible;
+  }
+}

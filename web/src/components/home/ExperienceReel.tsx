@@ -32,6 +32,30 @@ function localExperienceImage(index: number) {
   return LOCAL_EXPERIENCE_IMAGES[index % LOCAL_EXPERIENCE_IMAGES.length]
 }
 
+// LOCAL EXPERIENCE TITLE/DESCRIPTION OVERRIDE — BEGIN
+// The CMS copy (title/description) was written for a different set of
+// photos than the local images above now show at each index — e.g. index 0
+// was captioned "Pool" but the local photo there is the mango-tree atrium,
+// index 3 was "Indoor Games" over a poolside photo, and so on. Same
+// mechanism as the image override, and tied to the same flag: this only
+// takes effect where a local image is actually shown, so CMS copy still
+// applies to any index that falls back to a CMS photo.
+const LOCAL_EXPERIENCE_CONTENT: Array<{ title: string; description: string }> = [
+  { title: 'Mango Courtyard', description: 'A mango tree grows straight through the lobby — shade, birdsong, and a quiet first impression.' },
+  { title: 'Long Table Dining', description: "Shared plates under the pergola, the farm's own produce passed down a table built for a crowd." },
+  { title: 'Shared Meals', description: 'Bowls passed hand to hand, glasses refilled without asking — dinner stretched long on purpose.' },
+  { title: 'Poolside', description: 'A quiet, spring-fed pool at the edge of the lawn — best with nothing else planned.' },
+  { title: 'Quiet Mornings', description: 'A room built for slow starts — light through the curtains, nowhere to be.' },
+  { title: 'The Lounge', description: 'Deep cushions, stone and marble underfoot — the room everyone drifts back to after dinner.' },
+  { title: 'Garden Balcony', description: 'A covered balcony wrapped in greenery — morning coffee, or an evening doing nothing much.' },
+]
+
+function localExperienceContent(index: number) {
+  if (!USE_LOCAL_EXPERIENCE_IMAGES || LOCAL_EXPERIENCE_CONTENT.length === 0) return null
+  return LOCAL_EXPERIENCE_CONTENT[index % LOCAL_EXPERIENCE_CONTENT.length]
+}
+// LOCAL EXPERIENCE TITLE/DESCRIPTION OVERRIDE — END
+
 // Scattered positions within the oversized, pannable field canvas
 // (percentages of the field's own box, not the viewport) — ordered so
 // earlier items sit toward the top-left, closer to where the field starts,
@@ -271,18 +295,23 @@ export function ExperienceReel({ data }: { data: Home['experience'] }) {
           {items.map((item, i) => {
             const localImage = localExperienceImage(i)
             const media = localImage ? null : resolveMediaSize(item.image, 'card')
+            const content = localImage ? localExperienceContent(i) : null
+            const title = content?.title ?? item.title
+            const description = content?.description ?? item.description
             return (
               <div className={styles.hCard} key={item.id ?? i}>
                 <div className={styles.hCardMedia}>
                   {localImage ? (
-                    <Image src={localImage} alt={item.title} fill sizes="85vw" />
+                    <Image src={localImage} alt={title} fill sizes="85vw" />
                   ) : (
                     media?.url && <img src={media.url} alt={media.alt} loading="lazy" />
                   )}
+                  <span className={styles.hCardIndex}>{String(i + 1).padStart(2, '0')}</span>
                 </div>
                 <div className={styles.hCardBody}>
-                  <div className={styles.hCardTitle}>{item.title}</div>
-                  <p className={styles.hCardDesc}>{item.description}</p>
+                  <div className={styles.hCardTitle}>{title}</div>
+                  <span className={styles.hCardRule} aria-hidden="true" />
+                  <p className={styles.hCardDesc}>{description}</p>
                 </div>
               </div>
             )
@@ -304,12 +333,14 @@ function ScatterPhoto({
 }) {
   const localImage = localExperienceImage(index)
   const media = localImage ? null : resolveMediaSize(item.image, 'card')
+  const content = localImage ? localExperienceContent(index) : null
+  const title = content?.title ?? item.title
   return (
     <figure className={styles.scatterPhoto} style={{ top: slot.top, left: slot.left, width: slot.width }}>
-      <figcaption>{item.title}</figcaption>
+      <figcaption>{title}</figcaption>
       <div className={styles.scatterPhotoMedia}>
         {localImage ? (
-          <Image src={localImage} alt={item.title} fill sizes="(max-width: 860px) 85vw, 30vw" />
+          <Image src={localImage} alt={title} fill sizes="(max-width: 860px) 85vw, 30vw" />
         ) : (
           media?.url && <img src={media.url} alt={media.alt} loading="lazy" />
         )}

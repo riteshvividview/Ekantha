@@ -122,8 +122,15 @@ export function Why() {
         scrollTrigger: { trigger: q('[data-headline]')[0], start: 'top 86%', once: true },
       })
 
+      // Mobile cards stack full-width in a single column (see the
+      // max-width: 860px rules in Why.module.css), so two adjacent cards
+      // drifting ±26px toward each other can close the gap between them
+      // and visibly overlap — desktop's wide/narrow grid has the room for
+      // the full swing, a single stacked column doesn't. Same effect,
+      // just turned down rather than off.
+      const isMobile = window.matchMedia('(max-width: 860px)').matches
       q('[data-card]').forEach((card) => {
-        const speed = Number(card.dataset.speed ?? 0)
+        const speed = Number(card.dataset.speed ?? 0) * (isMobile ? 0.3 : 1)
         gsap.fromTo(
           card,
           { y: speed },
