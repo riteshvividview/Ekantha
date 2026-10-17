@@ -3,16 +3,17 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Home } from '@/payload-types'
 import { resolveMediaSize } from '@/lib/media'
+import { assetUrl } from '@/lib/assetUrl'
 import { gsap } from '@/lib/animations/gsap'
 import styles from './home.module.css'
 import dine from './BambooDine.module.css'
 
-// Frames live in public/bamboo-dine/ (frame-001.webp … frame-240.webp),
-// generated from the raw 240-PNG sequence via scripts/convert-bamboo-frames.mjs
-// — see that file's header comment for why (188MB of PNG → ~14MB of WebP,
-// the difference between "loads" and "doesn't").
+// Frames are served from R2 (frame-001.webp … frame-240.webp), generated
+// from the raw 240-PNG sequence via scripts/convert-bamboo-frames.mjs — see
+// that file's header comment for why (188MB of PNG → ~14MB of WebP, the
+// difference between "loads" and "doesn't").
 const FRAME_COUNT = 240
-const framePath = (i: number) => `/bamboo-dine/frame-${String(i + 1).padStart(3, '0')}.webp`
+const framePath = (i: number) => assetUrl(`/bamboo-dine/frame-${String(i + 1).padStart(3, '0')}.webp`)
 
 // How much scroll distance (px) the section stays pinned for, spread
 // across the whole sequence — not tied to real time, just scroll depth.
