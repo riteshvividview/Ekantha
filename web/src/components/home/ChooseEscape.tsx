@@ -14,6 +14,13 @@ import styles from './ChooseEscape.module.css'
 const FRAME_COUNT = 273
 const framePath = (i: number) => assetUrl(`/choose-your-escape/frame-${String(i + 1).padStart(3, '0')}.webp`)
 
+// Load only an initial window up front — see the identical note in
+// Hero.tsx. More loads in as the scrub approaches the edge of what's
+// already in memory.
+const INITIAL_FRAME_WINDOW = 30
+const FRAME_LOOKAHEAD = 15
+const FRAME_WINDOW_STEP = 60
+
 // How much scroll distance (px) the stage stays pinned for, spread across
 // the whole sequence — not tied to real time, just scroll depth. Floored
 // against the viewport height so short sequences on tall screens still get
@@ -190,6 +197,7 @@ export function ChooseEscape({
         img.onload = () => {
           frames[i] = img
           if (!cancelled && i === nearestLoadedFrame(currentFrame)) drawFrame(i)
+          if (i === 0 && !cancelled) setReady(true)
           resolve()
         }
         img.onerror = () => resolve()
@@ -197,21 +205,42 @@ export function ChooseEscape({
       })
     }
 
-    async function preload() {
-      await loadFrame(0)
-      if (cancelled) return
-      setReady(true)
-      drawFrame(0)
-
+    // `frontier` is the exclusive upper bound of what's been requested so
+    // far — ensureLoadedThrough(n) only starts new work past it, so calling
+    // it repeatedly (e.g. on every scroll tick) is cheap once a range is
+    // already in flight or loaded. Set synchronously to the initial window
+    // *before* ScrollTrigger.create() below — GSAP fires onUpdate once,
+    // synchronously, during creation, so if frontier were still 0 at that
+    // point, the lookahead check below would immediately race past the
+    // intended initial window before preload() (if it were async) got a
+    // chance to set it.
+    let frontier = INITIAL_FRAME_WINDOW
+    function ensureLoadedThrough(target: number) {
+      const end = Math.min(target, FRAME_COUNT)
+      if (end <= frontier) return
+      const start = frontier
+      frontier = end
       const CONCURRENCY = 6
-      let next = 1
+      let next = start
       async function worker() {
-        while (next < FRAME_COUNT && !cancelled) {
+        while (next < end && !cancelled) {
           const i = next++
           await loadFrame(i)
         }
       }
-      await Promise.all(Array.from({ length: CONCURRENCY }, worker))
+      void Promise.all(Array.from({ length: CONCURRENCY }, worker))
+    }
+
+    function preload() {
+      const CONCURRENCY = 6
+      let next = 0
+      async function worker() {
+        while (next < frontier && !cancelled) {
+          const i = next++
+          await loadFrame(i)
+        }
+      }
+      void Promise.all(Array.from({ length: CONCURRENCY }, worker))
     }
 
     // Observes the canvas's *parent* (see the identical note in
@@ -242,6 +271,9 @@ export function ChooseEscape({
         currentFrame = Math.round(p * (FRAME_COUNT - 1))
         const nearest = nearestLoadedFrame(currentFrame)
         if (nearest >= 0) drawFrame(nearest)
+        if (currentFrame + FRAME_LOOKAHEAD > frontier) {
+          ensureLoadedThrough(currentFrame + FRAME_LOOKAHEAD + FRAME_WINDOW_STEP)
+        }
 
         chapters.forEach((c, i) => {
           const panel = panels[i]

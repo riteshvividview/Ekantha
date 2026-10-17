@@ -1,17 +1,24 @@
 // One-off migration helper: uploads a local directory to the R2 bucket,
 // preserving its relative path structure as the object key prefix. Pass ""
 // as the prefix to upload files at the bucket root (matches how Payload's
-// generateFileURL requests Media collection uploads — no prefix).
-// Usage: node --env-file=.env scripts/upload-to-r2.mjs <localDir> <r2KeyPrefix>
+// generateFileURL requests Media collection uploads — no prefix). Every
+// object gets a far-future Cache-Control header — nothing in this pipeline
+// overwrites a filename in place (a changed asset gets a new name), so
+// "immutable" is accurate, not just optimistic.
+// Usage: node --env-file=.env scripts/upload-to-r2.mjs <localDir> <r2KeyPrefix> [--force]
+// --force re-uploads even if an object of the same size already exists —
+// needed once, to backfill Cache-Control onto objects uploaded before this
+// header existed.
 // Example: node --env-file=.env scripts/upload-to-r2.mjs public/bamboo-dine bamboo-dine
 
 import { S3Client, PutObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3'
 import { readdir, readFile, stat } from 'node:fs/promises'
 import path from 'node:path'
 
-const [, , localDirArg, keyPrefixArg] = process.argv
+const [, , localDirArg, keyPrefixArg, ...rest] = process.argv
+const force = rest.includes('--force')
 if (!localDirArg || keyPrefixArg === undefined) {
-  console.error('Usage: node --env-file=.env scripts/upload-to-r2.mjs <localDir> <r2KeyPrefix>')
+  console.error('Usage: node --env-file=.env scripts/upload-to-r2.mjs <localDir> <r2KeyPrefix> [--force]')
   process.exit(1)
 }
 
@@ -75,7 +82,7 @@ async function uploadOne(filePath) {
   const key = keyPrefix ? `${keyPrefix}/${rel}` : rel
   const { size } = await stat(filePath)
 
-  if (await alreadyUploaded(key, size)) {
+  if (!force && (await alreadyUploaded(key, size))) {
     return { key, skipped: true }
   }
 
@@ -87,6 +94,7 @@ async function uploadOne(filePath) {
       Key: key,
       Body: body,
       ContentType: CONTENT_TYPES[ext] || 'application/octet-stream',
+      CacheControl: 'public, max-age=31536000, immutable',
     }),
   )
   return { key, skipped: false }
