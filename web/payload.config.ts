@@ -42,25 +42,33 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URI || '',
     },
   }),
-  // Supabase Storage is S3-compatible — files uploaded through the Media
-  // collection land in a Supabase Storage bucket instead of local disk, so
-  // uploads behave the same in dev and in production. Only activates once
-  // SUPABASE_URL/SUPABASE_SERVICE_ROLE_KEY are actually set in .env; until
-  // then Payload falls back to local disk storage for Media.
+  // Cloudflare R2 is S3-compatible — files uploaded through the Media
+  // collection land in an R2 bucket instead of local disk, so uploads behave
+  // the same in dev and in production. Only activates once the R2_* vars are
+  // actually set in .env; until then Payload falls back to local disk
+  // storage for Media.
   plugins: [
-    ...(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY
+    ...(process.env.R2_ACCOUNT_ID && process.env.R2_ACCESS_KEY_ID && process.env.R2_SECRET_ACCESS_KEY
       ? [
           s3Storage({
             collections: {
-              media: true,
+              media: {
+                // Without this, Payload builds file URLs against R2's
+                // private S3 API endpoint (needs a signed request, not
+                // fetchable by a plain <img> tag). The public dev URL
+                // (or a custom domain, later) serves the same objects
+                // over plain HTTPS instead.
+                generateFileURL: ({ filename, prefix }) =>
+                  `${process.env.R2_PUBLIC_URL}/${prefix ? `${prefix}/` : ''}${filename}`,
+              },
             },
-            bucket: process.env.SUPABASE_STORAGE_BUCKET || 'media',
+            bucket: process.env.R2_BUCKET_NAME || 'ekantha-media',
             config: {
-              endpoint: `${process.env.SUPABASE_URL}/storage/v1/s3`,
-              region: process.env.SUPABASE_STORAGE_REGION || 'ap-south-1',
+              endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+              region: 'auto',
               credentials: {
-                accessKeyId: process.env.SUPABASE_SERVICE_ROLE_KEY,
-                secretAccessKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+                accessKeyId: process.env.R2_ACCESS_KEY_ID,
+                secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
               },
               forcePathStyle: true,
             },

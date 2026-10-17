@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: '**.supabase.co' },
       { protocol: 'https', hostname: 'bisque-lobster-585068.hostingersite.com' },
       { protocol: 'https', hostname: 'images.unsplash.com' },
+      { protocol: 'https', hostname: '*.r2.dev' },
     ],
     // Next 16 only serves qualities explicitly listed here. 75 is the
     // default used across most of the site; 70/90/95 are used by the
