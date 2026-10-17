@@ -4,14 +4,15 @@ import { useEffect, useRef, useState } from 'react'
 import type { Home, Stay } from '@/payload-types'
 import { DragScrollTrack } from '@/components/shared/DragScrollTrack'
 import { CountUp } from '@/components/shared/CountUp'
+import { assetUrl } from '@/lib/assetUrl'
 import { gsap, ScrollTrigger } from '@/lib/animations/gsap'
 import styles from './ChooseEscape.module.css'
 
-// Frames live in public/choose-your-escape/ (frame-001.webp … frame-273.webp),
-// generated from the raw 273-PNG drone-orbit sequence via
+// Frames are served from R2 (frame-001.webp … frame-273.webp), generated
+// from the raw 273-PNG drone-orbit sequence via
 // scripts/convert-escape-frames.mjs — see that file's header comment.
 const FRAME_COUNT = 273
-const framePath = (i: number) => `/choose-your-escape/frame-${String(i + 1).padStart(3, '0')}.webp`
+const framePath = (i: number) => assetUrl(`/choose-your-escape/frame-${String(i + 1).padStart(3, '0')}.webp`)
 
 // How much scroll distance (px) the stage stays pinned for, spread across
 // the whole sequence — not tied to real time, just scroll depth. Floored

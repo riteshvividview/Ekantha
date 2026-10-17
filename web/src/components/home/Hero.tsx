@@ -2,15 +2,16 @@
 
 import { useEffect, useRef, useState } from 'react'
 import type { Home } from '@/payload-types'
+import { assetUrl } from '@/lib/assetUrl'
 import { gsap, ScrollTrigger } from '@/lib/animations/gsap'
 import styles from './home.module.css'
 
-// Frames live in public/hero-entrance/ (frame-001.webp … frame-440.webp),
-// extracted at 24fps from a single landscape video via
-// scripts/convert-hero-frames.mjs — see that file's header comment. Same
-// technique as BambooDine.tsx: a canvas, not DOM <img>s, scroll-scrubbed.
+// Frames are served from R2 (frame-001.webp … frame-440.webp), extracted at
+// 24fps from a single landscape video via scripts/convert-hero-frames.mjs —
+// see that file's header comment. Same technique as BambooDine.tsx: a
+// canvas, not DOM <img>s, scroll-scrubbed.
 const FRAME_COUNT = 440
-const framePath = (i: number) => `/hero-entrance/frame-${String(i + 1).padStart(3, '0')}.webp`
+const framePath = (i: number) => assetUrl(`/hero-entrance/frame-${String(i + 1).padStart(3, '0')}.webp`)
 
 // Scroll distance (px) the hero stays pinned for, spread across the whole
 // sequence — not tied to real time, just scroll depth.
