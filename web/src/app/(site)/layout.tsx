@@ -4,6 +4,7 @@ import { qalisten } from '@/lib/fonts'
 import { SmoothScrollProvider } from '@/components/layout/SmoothScrollProvider'
 import { TheatreStudioLoader } from '@/components/layout/TheatreStudioLoader'
 import { PageTransitionOverlay } from '@/components/chrome/PageTransitionOverlay'
+import { InitialLoadScreen } from '@/components/chrome/InitialLoadScreen'
 import { InteractionEffects } from '@/components/chrome/InteractionEffects'
 import { IdleNudge } from '@/components/chrome/IdleNudge'
 import { Navbar } from '@/components/chrome/Navbar'
@@ -76,6 +77,7 @@ export default async function SiteRootLayout({ children }: { children: React.Rea
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css" rel="stylesheet" />
       </head>
       <body className={qalisten.variable}>
+        <InitialLoadScreen />
         <PageTransitionOverlay />
         <TheatreStudioLoader />
         <InteractionEffects />

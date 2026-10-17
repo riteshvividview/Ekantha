@@ -454,3 +454,72 @@ section {
 .ve-page-transition-svg[data-visible='true'] {
   visibility: visible;
 }
+
+/* ── First-load screen ──────────────────────────────────────── */
+/* Pure black, not var(--ink) — the loader video's own background is pure
+   black, and anything lighter shows as a visible seam around its edges. */
+.ve-load-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483001;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.5rem, 4vw, 2.25rem);
+  background: #000;
+  transition:
+    opacity 650ms var(--ease-slow),
+    visibility 650ms;
+}
+.ve-load-screen[data-exiting='true'] {
+  opacity: 0;
+  pointer-events: none;
+}
+.ve-load-screen-mark {
+  position: relative;
+  width: clamp(9rem, 20vw, 14rem);
+  aspect-ratio: 1;
+}
+.ve-load-screen-mark video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+/* A calm, static glow behind the mark — not another moving element, just
+   enough to lift it off a flat black field. */
+.ve-load-screen-mark::before {
+  content: '';
+  position: absolute;
+  inset: -40%;
+  background: radial-gradient(circle, rgba(157, 92, 38, 0.18), transparent 70%);
+  z-index: -1;
+}
+.ve-load-screen-pct {
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: clamp(0.85rem, 1.6vw, 1rem);
+  letter-spacing: 0.3em;
+  color: rgba(246, 236, 220, 0.78);
+  font-variant-numeric: tabular-nums;
+  min-width: 4ch;
+  text-align: center;
+}
+.ve-load-screen-bar {
+  width: clamp(8rem, 18vw, 11rem);
+  height: 1px;
+  background: rgba(246, 236, 220, 0.14);
+  overflow: hidden;
+}
+.ve-load-screen-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  transform-origin: left;
+  transition: transform 220ms linear;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ve-load-screen {
+    transition: opacity 300ms ease;
+  }
+}

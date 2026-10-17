@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Home } from '@/payload-types'
 import { assetUrl } from '@/lib/assetUrl'
+import { reportProgress } from '@/lib/loadProgress'
 import { gsap, ScrollTrigger } from '@/lib/animations/gsap'
 import styles from './home.module.css'
 
@@ -179,6 +180,10 @@ export function Hero({ data }: { data: Home['hero'] }) {
       return -1
     }
 
+    // Only the initial window counts toward the first-load progress screen —
+    // frames loaded later (from scroll lookahead) are well past the point
+    // anyone's still watching a loading screen.
+    let initialWindowLoaded = 0
     function loadFrame(i: number): Promise<void> {
       return new Promise((resolve) => {
         const img = new Image()
@@ -187,9 +192,19 @@ export function Hero({ data }: { data: Home['hero'] }) {
           frames[i] = img
           if (!cancelled && i === nearestLoadedFrame(currentFrame)) drawFrame(i)
           if (i === 0 && !cancelled) setReady(true)
+          if (i < INITIAL_FRAME_WINDOW && !cancelled) {
+            initialWindowLoaded++
+            reportProgress('hero', initialWindowLoaded / INITIAL_FRAME_WINDOW)
+          }
           resolve()
         }
-        img.onerror = () => resolve()
+        img.onerror = () => {
+          if (i < INITIAL_FRAME_WINDOW && !cancelled) {
+            initialWindowLoaded++
+            reportProgress('hero', initialWindowLoaded / INITIAL_FRAME_WINDOW)
+          }
+          resolve()
+        }
         img.src = framePath(i)
       })
     }
