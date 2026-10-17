@@ -12,7 +12,7 @@ const IMAGES: Record<string, string | null> = {
   land: assetUrl('/images/home/03-why-us/Untouched-Land-img.png'),
   private: assetUrl('/images/home/03-why-us/Just-For-You-img.png'),
   planned: assetUrl('/images/home/03-why-us/Throughtfully-planned-img.png'),
-  away: assetUrl('/images/home/03-why-us/Hrs-away-img-two.png'),
+  away: assetUrl('/images/home/03-why-us/Hrs-away-img-two.webp'),
 }
 // WHY LOCAL IMAGES — END
 

@@ -224,7 +224,7 @@ export function Navbar({ data }: { data: Navigation }) {
   const glass = onDarkHero || !scrolled || !!openKey
   // Glass is always a dark translucent surface regardless of theme; solid
   // follows whichever page theme is currently active.
-  const logoSrc = glass || darkTheme || mobileMenuOpen ? '/ekantha-logo-white.png' : '/ekantha-logo-brown.png'
+  const logoSrc = glass || darkTheme || mobileMenuOpen ? '/ekantha-logo-white.webp' : '/ekantha-logo-brown.webp'
   const navClass = [
     've-nav',
     glass ? 've-nav-glass' : 've-nav-solid',

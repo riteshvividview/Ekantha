@@ -43,9 +43,9 @@ const META: Record<string, { sub: string; tag: string; icon: string }> = {
 const LOCAL_IMAGES: Record<string, string> = {
   '/mango-house': assetUrl('/images/home/09-gallery-preview/mango-1.jpg'),
   '/stone-house': assetUrl('/images/home/09-gallery-preview/stone-1.jpg'),
-  '/full-house': assetUrl('/images/home/03-why-us/Hrs-away-img-two.png'),
+  '/full-house': assetUrl('/images/home/03-why-us/Hrs-away-img-two.webp'),
   '/farm-dining': assetUrl('/images/home/09-gallery-preview/bamboo-hero.jpg'),
-  '/events': assetUrl('/images/home/07-events-preview/a-setting-for-Every-Occasion-1.png'),
+  '/events': assetUrl('/images/home/07-events-preview/a-setting-for-Every-Occasion-1.webp'),
 }
 
 // Standalone CMS links that read as "things to do" are grouped into one
