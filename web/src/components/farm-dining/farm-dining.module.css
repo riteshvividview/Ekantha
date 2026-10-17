@@ -234,6 +234,7 @@
 }
 
 .expVisual {
+  position: relative;
   aspect-ratio: 5 / 4;
   background: var(--silver);
   border-radius: 20px;

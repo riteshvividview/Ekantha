@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
 import { gsap } from '@/lib/animations/gsap'
 import { PAGE_DARK, PAGE_LIGHT, THEME_SECONDS } from '@/lib/pageTheme'
 import { assetUrl } from '@/lib/assetUrl'
@@ -292,7 +293,7 @@ export function Gallery() {
                   key={s.key}
                   aria-hidden="true"
                 >
-                  {s.hero ? <img src={s.hero} alt="" /> : <i className={`fa-solid ${s.icon} ${styles.heroIcon}`} />}
+                  {s.hero ? <Image src={s.hero} alt="" fill sizes="100vw" style={{ objectFit: 'cover' }} /> : <i className={`fa-solid ${s.icon} ${styles.heroIcon}`} />}
                 </div>
               ))}
             </div>
@@ -337,7 +338,7 @@ export function Gallery() {
                     aria-pressed={on}
                   >
                     <span className={`${styles.arch} ${styles[`tone_${s.key}`]}`}>
-                      {s.thumb ? <img src={s.thumb} alt="" /> : <i className={`fa-solid ${s.icon}`} />}
+                      {s.thumb ? <Image src={s.thumb} alt="" fill sizes="120px" style={{ objectFit: 'cover' }} /> : <i className={`fa-solid ${s.icon}`} />}
                     </span>
                     <span className={styles.thumbArrow} aria-hidden="true">
                       <i className="fa-solid fa-arrow-right" />
@@ -384,7 +385,7 @@ export function Gallery() {
               {current.frames.map((src, i) => (
                 <div className={styles.frameShell} data-frame-shell role="listitem" key={`${current.key}-${i}`}>
                   <div className={`${styles.frame} ${styles[`ftone${i % 6}`]}`} data-frame>
-                    {src ? <img src={src} alt="" draggable={false} /> : <i className={`fa-solid ${FRAME_ICONS[i]}`} />}
+                    {src ? <Image src={src} alt="" fill sizes="(max-width: 768px) 50vw, 300px" style={{ objectFit: 'cover' }} draggable={false} /> : <i className={`fa-solid ${FRAME_ICONS[i]}`} />}
                     <span className={styles.frameNum}>{String(i + 1).padStart(2, '0')}</span>
                   </div>
                 </div>

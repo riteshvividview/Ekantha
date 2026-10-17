@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
 import type { StayPage } from '@/payload-types'
 import { resolveMedia } from '@/lib/media'
 import { WhyStayIconSvg } from './icons'
@@ -90,7 +91,7 @@ export function WhyStay({ data }: { data: StayPage['whyStay'] }) {
               }
             }}
           >
-            <div className={styles.accMedia} aria-hidden="true">{image.url && <img src={image.url} alt="" />}</div>
+            <div className={styles.accMedia} aria-hidden="true">{image.url && <Image src={image.url} alt="" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover' }} />}</div>
             <div className={styles.accScrim} aria-hidden="true" />
             <div className={styles.accPanelTop}>
               <div className={styles.accIcon} aria-hidden="true">

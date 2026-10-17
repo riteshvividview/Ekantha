@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Image from 'next/image'
 import { useLenis } from 'lenis/react'
 import type { Footer as FooterData, Navigation } from '@/payload-types'
 import { gsap } from '@/lib/animations/gsap'
@@ -111,7 +112,7 @@ export function Footer({ data, nav }: { data: FooterData; nav?: Navigation }) {
                   the time a page scrolls this far (every dark section tweens
                   the page back to light before its own end — see Reach.tsx),
                   so this is the one spot that never needs to swap logos. */}
-              <img src="/ekantha-logo-brown.webp" alt="Vana Ekantha" />
+              <Image src="/ekantha-logo-brown.webp" alt="Vana Ekantha" width={700} height={235} />
             </a>
             <p className="ve-foot-tagline">{data.brand?.tagline}</p>
             {data.brand?.note && <p className="ve-foot-note">{data.brand.note}</p>}
@@ -145,7 +146,7 @@ export function Footer({ data, nav }: { data: FooterData; nav?: Navigation }) {
                 <li key={s.href}>
                   <a href={s.href}>
                     <span className={`ve-foot-thumb ve-foot-tone-${i % 3}`}>
-                      {s.image ? <img src={s.image} alt="" /> : <i className={`fa-solid ${s.icon}`} aria-hidden="true" />}
+                      {s.image ? <Image src={s.image} alt="" fill sizes="70px" style={{ objectFit: 'cover' }} /> : <i className={`fa-solid ${s.icon}`} aria-hidden="true" />}
                     </span>
                     <span>
                       <strong>{s.label}</strong>

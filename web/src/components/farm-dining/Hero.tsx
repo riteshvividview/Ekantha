@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Image from 'next/image'
 import type { FarmDining } from '@/payload-types'
 import { resolveMedia } from '@/lib/media'
 import { gsap } from '@/lib/animations/gsap'
@@ -120,7 +121,7 @@ export function Hero({ data }: { data: FarmDining['hero'] }) {
         </div>
       </div>
 
-      <div className={styles.fdHeroVisual}>{image.url && <img src={image.url} alt={image.alt} loading="lazy" />}</div>
+      <div className={styles.fdHeroVisual}>{image.url && <Image src={image.url} alt={image.alt} fill sizes="100vw" style={{ objectFit: 'cover' }} priority />}</div>
     </section>
   )
 }

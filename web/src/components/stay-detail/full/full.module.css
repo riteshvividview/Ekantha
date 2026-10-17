@@ -166,7 +166,7 @@
   .amRow:nth-child(even) .amMedia { order: 0; }
 }
 
-.amMedia { aspect-ratio: 16/10; border-radius: 18px; overflow: hidden; }
+.amMedia { position: relative; aspect-ratio: 16/10; border-radius: 18px; overflow: hidden; }
 .amMedia img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 700ms var(--ease-slow); }
 .amRow:hover .amMedia img { transform: scale(1.06); }
 
@@ -220,6 +220,7 @@
 
 .galleryItem { display: flex; flex-direction: column; gap: 0.6rem; }
 .galleryPlate {
+  position: relative;
   aspect-ratio: 3/4;
   background: var(--white);
   border: 1px solid var(--line);

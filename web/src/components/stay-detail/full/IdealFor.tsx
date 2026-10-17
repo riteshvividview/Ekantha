@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Image from 'next/image'
 import type { Stay } from '@/payload-types'
 import { resolveMedia } from '@/lib/media'
 import { gsap } from '@/lib/animations/gsap'
@@ -59,7 +60,7 @@ export function IdealFor({ items }: { items: Stay['idealFor'] }) {
           return (
             <div className={styles.idealCard} key={item.id ?? i}>
               <div className={styles.idealMedia}>
-                {image.url && <img src={image.url} alt={image.alt} loading="lazy" />}
+                {image.url && <Image src={image.url} alt={image.alt} fill sizes="(max-width: 768px) 50vw, 25vw" style={{ objectFit: 'cover' }} />}
                 <span className={styles.idealNum} aria-hidden="true">
                   {String(i + 1).padStart(2, '0')}
                 </span>

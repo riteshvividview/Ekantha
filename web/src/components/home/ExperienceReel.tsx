@@ -305,7 +305,7 @@ export function ExperienceReel({ data }: { data: Home['experience'] }) {
                   {localImage ? (
                     <Image src={localImage} alt={title} fill sizes="85vw" />
                   ) : (
-                    media?.url && <img src={media.url} alt={media.alt} loading="lazy" />
+                    media?.url && <Image src={media.url} alt={media.alt} fill sizes="85vw" style={{ objectFit: 'cover' }} />
                   )}
                   <span className={styles.hCardIndex}>{String(i + 1).padStart(2, '0')}</span>
                 </div>
@@ -343,7 +343,7 @@ function ScatterPhoto({
         {localImage ? (
           <Image src={localImage} alt={title} fill sizes="(max-width: 860px) 85vw, 30vw" />
         ) : (
-          media?.url && <img src={media.url} alt={media.alt} loading="lazy" />
+          media?.url && <Image src={media.url} alt={media.alt} fill sizes="(max-width: 860px) 85vw, 30vw" style={{ objectFit: 'cover' }} />
         )}
       </div>
     </figure>

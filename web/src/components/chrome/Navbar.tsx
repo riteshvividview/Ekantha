@@ -3,6 +3,7 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useLenis } from 'lenis/react'
 import type { Navigation } from '@/payload-types'
@@ -251,7 +252,7 @@ export function Navbar({ data }: { data: Navigation }) {
             page reload guarantees the active-page state (and the CMS-driven nav/footer
             data) is always freshly server-rendered. */}
         <a href="/" className="ve-navbar-logo ve-nav-logo">
-          <img src={logoSrc} alt="Vana Ekantha" />
+          <Image src={logoSrc} alt="Vana Ekantha" width={700} height={235} priority />
         </a>
 
         <nav
@@ -391,7 +392,7 @@ export function Navbar({ data }: { data: Navigation }) {
                         onFocus={() => setHoverIdx((h) => ({ ...h, [item.key]: i }))}
                       >
                         <span className={`ve-mega-thumb ve-tone-${i % 4}`}>
-                          {c.image ? <img src={c.image} alt="" /> : <i className={`fa-solid ${c.icon}`} aria-hidden="true" />}
+                          {c.image ? <Image src={c.image} alt="" fill sizes="58px" style={{ objectFit: 'cover' }} /> : <i className={`fa-solid ${c.icon}`} aria-hidden="true" />}
                         </span>
                         <span className="ve-mega-text">
                           <strong>{c.label}</strong>
@@ -417,7 +418,7 @@ export function Navbar({ data }: { data: Navigation }) {
                     <a href={hovered.href} className="ve-mega-feature" tabIndex={isActive ? 0 : -1} aria-label={hovered.label}>
                       {kids.map((c, i) => (
                         <span className={`ve-mega-fimg ve-tone-${i % 4}`} data-on={i === hi ? 'true' : 'false'} key={c.href} aria-hidden="true">
-                          {c.image ? <img src={c.image} alt="" /> : <i className={`fa-solid ${c.icon}`} />}
+                          {c.image ? <Image src={c.image} alt="" fill sizes="340px" style={{ objectFit: 'cover' }} /> : <i className={`fa-solid ${c.icon}`} />}
                         </span>
                       ))}
                       <span className="ve-mega-fshade" aria-hidden="true" />

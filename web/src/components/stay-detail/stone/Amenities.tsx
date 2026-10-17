@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import type { Stay } from '@/payload-types'
 import { resolveMediaSize } from '@/lib/media'
 import styles from './stone.module.css'
@@ -26,7 +27,7 @@ export function Amenities({ data }: { data: Stay['amenitiesSection'] }) {
           const media = resolveMediaSize(item.image, 'card')
           return (
             <div className={`${styles.amCell} reveal`} key={item.id ?? i}>
-              {media.url && <img src={media.url} alt={media.alt} loading="lazy" />}
+              {media.url && <Image src={media.url} alt={media.alt} fill sizes="(max-width: 768px) 50vw, 25vw" style={{ objectFit: 'cover' }} />}
               <span className={styles.amCellNumeral} aria-hidden="true" />
               <div className={styles.amCellEmber} aria-hidden="true" />
               <div className={styles.amCellScrim} aria-hidden="true" />

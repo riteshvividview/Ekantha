@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
+import Image from 'next/image'
 import { gsap } from '@/lib/animations/gsap'
 import { assetUrl } from '@/lib/assetUrl'
 import './finalCta.css'
@@ -326,38 +327,18 @@ export function FinalCtaBanner({
 
       <img className="ve-hold-mark" data-mark src="/icon-mark.svg" alt="" aria-hidden="true" />
 
-      <img
-        className="ve-hold-photo ve-hold-photo-a"
-        data-photo
-        src={assetUrl('/images/home/09-gallery-preview/mango-1.jpg')}
-        alt=""
-        aria-hidden="true"
-        loading="lazy"
-      />
-      <img
-        className="ve-hold-photo ve-hold-photo-b"
-        data-photo
-        src={assetUrl('/images/home/09-gallery-preview/stone-2.jpg')}
-        alt=""
-        aria-hidden="true"
-        loading="lazy"
-      />
-      <img
-        className="ve-hold-photo ve-hold-photo-c"
-        data-photo
-        src={assetUrl('/images/home/09-gallery-preview/bamboo-3.jpg')}
-        alt=""
-        aria-hidden="true"
-        loading="lazy"
-      />
-      <img
-        className="ve-hold-photo ve-hold-photo-d"
-        data-photo
-        src={assetUrl('/images/home/09-gallery-preview/mango-5.jpg')}
-        alt=""
-        aria-hidden="true"
-        loading="lazy"
-      />
+      <span className="ve-hold-photo ve-hold-photo-a" data-photo aria-hidden="true">
+        <Image src={assetUrl('/images/home/09-gallery-preview/mango-1.jpg')} alt="" fill sizes="140px" style={{ objectFit: 'cover' }} />
+      </span>
+      <span className="ve-hold-photo ve-hold-photo-b" data-photo aria-hidden="true">
+        <Image src={assetUrl('/images/home/09-gallery-preview/stone-2.jpg')} alt="" fill sizes="140px" style={{ objectFit: 'cover' }} />
+      </span>
+      <span className="ve-hold-photo ve-hold-photo-c" data-photo aria-hidden="true">
+        <Image src={assetUrl('/images/home/09-gallery-preview/bamboo-3.jpg')} alt="" fill sizes="140px" style={{ objectFit: 'cover' }} />
+      </span>
+      <span className="ve-hold-photo ve-hold-photo-d" data-photo aria-hidden="true">
+        <Image src={assetUrl('/images/home/09-gallery-preview/mango-5.jpg')} alt="" fill sizes="140px" style={{ objectFit: 'cover' }} />
+      </span>
 
       <div className="ve-hold-inner">
         {eyebrow && (

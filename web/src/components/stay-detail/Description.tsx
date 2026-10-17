@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Image from 'next/image'
 import type { Stay } from '@/payload-types'
 import { resolveMedia } from '@/lib/media'
 import { gsap } from '@/lib/animations/gsap'
@@ -66,7 +67,7 @@ export function Description({ data }: { data: Stay['description'] }) {
           {data.pullHeadline && <p className={styles.introPull}>{renderPull(data.pullHeadline)}</p>}
           {accentImage.url && (
             <div className={styles.introAccentImg}>
-              <img src={accentImage.url} alt={accentImage.alt} loading="lazy" />
+              <Image src={accentImage.url} alt={accentImage.alt} fill sizes="(max-width: 768px) 100vw, 40vw" style={{ objectFit: 'cover' }} />
             </div>
           )}
         </div>

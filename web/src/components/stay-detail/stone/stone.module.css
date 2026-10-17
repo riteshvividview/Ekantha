@@ -102,6 +102,7 @@
   counter-increment: hlIdx;
 }
 .hlRowMedia {
+  position: relative;
   width: clamp(110px, 16vw, 150px);
   aspect-ratio: 1 / 1;
   flex-shrink: 0;
@@ -386,6 +387,7 @@
   }
 }
 .indexPhoto {
+  position: relative;
   width: 42%;
   flex-shrink: 0;
   aspect-ratio: 1 / 1;

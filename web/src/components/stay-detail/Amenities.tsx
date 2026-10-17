@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Image from 'next/image'
 import type { Stay } from '@/payload-types'
 import { resolveMediaSize } from '@/lib/media'
 import { gsap } from '@/lib/animations/gsap'
@@ -53,7 +54,7 @@ export function Amenities({ data }: { data: Stay['amenitiesSection'] }) {
           const media = resolveMediaSize(item.image, 'card')
           return (
             <div className={styles.amCard} key={item.id ?? i}>
-              <div className={styles.amMedia}>{media.url && <img src={media.url} alt={media.alt} loading="lazy" />}</div>
+              <div className={styles.amMedia}>{media.url && <Image src={media.url} alt={media.alt} fill sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: 'cover' }} />}</div>
               <div className={styles.amContent}>
                 <div className={styles.amTitle}>{item.title}</div>
                 <div className={styles.amBody}>{item.body}</div>

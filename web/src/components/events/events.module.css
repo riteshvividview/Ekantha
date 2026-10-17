@@ -357,6 +357,7 @@
   padding: clamp(1rem, 3vw, 2rem) 0;
 }
 .collagePlate {
+  position: relative;
   width: clamp(150px, 24vw, 210px);
   aspect-ratio: 4 / 5;
   background: var(--white);

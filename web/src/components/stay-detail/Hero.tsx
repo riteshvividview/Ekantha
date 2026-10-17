@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Image from 'next/image'
 import type { Stay } from '@/payload-types'
 import { resolveMediaSize } from '@/lib/media'
 import { CountUp } from '@/components/shared/CountUp'
@@ -87,7 +88,7 @@ export function Hero({ stay, badgeNumber, showBg = false }: { stay: Stay; badgeN
 
       {showBg && (
         <div className={styles.heroBg} aria-hidden="true">
-          {bg.url && <img src={bg.url} alt="" />}
+          {bg.url && <Image src={bg.url} alt="" fill sizes="100vw" style={{ objectFit: 'cover' }} priority />}
           <div className={styles.heroBgWash} />
         </div>
       )}

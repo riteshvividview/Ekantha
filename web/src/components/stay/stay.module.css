@@ -244,6 +244,7 @@
   }
 }
 .stayPlate {
+  position: relative;
   width: 100%;
   aspect-ratio: 4 / 3;
   background: var(--silver);
@@ -426,6 +427,7 @@
   transform: scaleX(0);
 }
 .hCardMedia {
+  position: relative;
   width: 100%;
   aspect-ratio: 4 / 3;
   overflow: hidden;

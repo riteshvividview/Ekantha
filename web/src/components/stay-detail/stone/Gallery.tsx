@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import type { Stay } from '@/payload-types'
 import { resolveMedia } from '@/lib/media'
 import styles from './stone.module.css'
@@ -27,7 +28,7 @@ export function Gallery({ items, title }: { items: Stay['gallery']; title: strin
           return (
             <div className={`${styles.brickItem} reveal`} key={item.id ?? i}>
               <div className={styles.brickPlate}>
-                {image.url && <img src={image.url} alt={item.caption} loading="lazy" />}
+                {image.url && <Image src={image.url} alt={item.caption} fill sizes="(max-width: 768px) 50vw, 25vw" style={{ objectFit: 'cover' }} />}
                 <span className={styles.brickNumeral} aria-hidden="true" />
               </div>
               <p className={styles.brickCaption}>{item.caption}</p>

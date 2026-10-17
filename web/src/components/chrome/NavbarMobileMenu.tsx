@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import type { CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
+import Image from 'next/image'
 import { useLenis } from 'lenis/react'
 import type { Navigation } from '@/payload-types'
 import { isItemActive } from './navModel'
@@ -104,7 +105,7 @@ export function NavbarMobileMenu({ items, cta, pathname, open, onOpenChange: set
                             tabIndex={open && isOpen ? 0 : -1}
                           >
                             <span className="ve-mnav-thumb">
-                              {c.image ? <img src={c.image} alt="" /> : <i className={`fa-solid ${c.icon}`} aria-hidden="true" />}
+                              {c.image ? <Image src={c.image} alt="" fill sizes="48px" style={{ objectFit: 'cover' }} /> : <i className={`fa-solid ${c.icon}`} aria-hidden="true" />}
                             </span>
                             <span>
                               <strong>{c.label}</strong>

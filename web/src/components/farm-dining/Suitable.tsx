@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Image from 'next/image'
 import type { FarmDining } from '@/payload-types'
 import { resolveMedia } from '@/lib/media'
 import { SuitableIconSvg } from './icons'
@@ -68,7 +69,7 @@ export function Suitable({ data }: { data: FarmDining['suitable'] }) {
           const image = resolveMedia(item.image)
           return (
             <div className={`${styles.suitCard}${item.featured ? ` ${styles.featured}` : ''}`} key={item.id ?? i}>
-              {item.featured && image.url && <img className={styles.suitMedia} src={image.url} alt="" loading="lazy" />}
+              {item.featured && image.url && <Image className={styles.suitMedia} src={image.url} alt="" fill sizes="(max-width: 768px) 100vw, 40vw" style={{ objectFit: 'cover' }} />}
               {item.featured && <div className={styles.suitEmber} aria-hidden="true" />}
               <div className={styles.suitIcon} aria-hidden="true">
                 <SuitableIconSvg icon={item.icon} />

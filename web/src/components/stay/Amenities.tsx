@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Image from 'next/image'
 import type { StayPage } from '@/payload-types'
 import { DragScrollTrack } from '@/components/shared/DragScrollTrack'
 import { resolveMediaSize } from '@/lib/media'
@@ -119,7 +120,7 @@ export function Amenities({ data }: { data: StayPage['amenities'] }) {
             const media = resolveMediaSize(item.image, 'card')
             return (
               <div className={styles.hCard} key={item.id ?? i}>
-                <div className={styles.hCardMedia}>{media.url && <img src={media.url} alt={media.alt} loading="lazy" />}</div>
+                <div className={styles.hCardMedia}>{media.url && <Image src={media.url} alt={media.alt} fill sizes="280px" style={{ objectFit: 'cover' }} />}</div>
                 <div className={styles.hCardContent}>
                   <div className={styles.hCardTitle}>{item.title}</div>
                   <p className={styles.hCardDesc}>{item.description}</p>

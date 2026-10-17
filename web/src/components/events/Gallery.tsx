@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Image from 'next/image'
 import type { Event } from '@/payload-types'
 import { resolveMedia } from '@/lib/media'
 import { gsap } from '@/lib/animations/gsap'
@@ -57,7 +58,7 @@ export function Gallery({ data }: { data: Event['gallery'] }) {
           const image = resolveMedia(item.image)
           return (
             <div className={styles.collageItem} key={item.id ?? i}>
-              <div className={styles.collagePlate}>{image.url && <img src={image.url} alt={item.caption ?? ''} loading="lazy" />}</div>
+              <div className={styles.collagePlate}>{image.url && <Image src={image.url} alt={item.caption ?? ''} fill sizes="210px" style={{ objectFit: 'cover' }} />}</div>
               {item.caption && <p className={styles.collageCaption}>{item.caption}</p>}
             </div>
           )

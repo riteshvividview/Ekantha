@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Image from 'next/image'
 import type { FarmDining } from '@/payload-types'
 import { resolveMedia } from '@/lib/media'
 import { gsap } from '@/lib/animations/gsap'
@@ -58,7 +59,7 @@ export function Gallery({ data }: { data: FarmDining['gallery'] }) {
             .join(' ')
           return (
             <div className={`${styles.bentoItem} ${variantClass}`} key={item.id ?? i}>
-              {image.url && <img src={image.url} alt={item.caption ?? ''} loading="lazy" />}
+              {image.url && <Image src={image.url} alt={item.caption ?? ''} fill sizes="(max-width: 768px) 50vw, 25vw" style={{ objectFit: 'cover' }} />}
               {item.caption && <div className={styles.bentoCap}>{item.caption}</div>}
             </div>
           )

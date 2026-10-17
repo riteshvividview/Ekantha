@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Image from 'next/image'
 import type { Stay } from '@/payload-types'
 import { resolveMediaSize } from '@/lib/media'
 import { HighlightIconSvg, badgeColorClass } from './icons'
@@ -74,7 +75,7 @@ export function Highlights({ data }: { data: Stay['highlightsSection'] }) {
       </div>
 
       <div className={styles.hlSplit}>
-        <div className={styles.hlMedia}>{image.url && <img src={image.url} alt={image.alt} loading="lazy" />}</div>
+        <div className={styles.hlMedia}>{image.url && <Image src={image.url} alt={image.alt} fill sizes="(max-width: 768px) 100vw, 40vw" style={{ objectFit: 'cover' }} />}</div>
         <div className={styles.hlList}>
           {items.map((item, i) => (
             <div className={styles.hlRow} key={item.id ?? i}>

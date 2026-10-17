@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Image from 'next/image'
 import type { Stay } from '@/payload-types'
 import { resolveMedia } from '@/lib/media'
 import { gsap } from '@/lib/animations/gsap'
@@ -81,7 +82,7 @@ export function IdealFor({ items, title }: { items: Stay['idealFor']; title: str
               <span className={styles.idealNum} aria-hidden="true">
                 {String(i + 1).padStart(2, '0')}
               </span>
-              <div className={styles.idealPhoto}>{image.url && <img src={image.url} alt={image.alt} loading="lazy" />}</div>
+              <div className={styles.idealPhoto}>{image.url && <Image src={image.url} alt={image.alt} fill sizes="136px" style={{ objectFit: 'cover' }} />}</div>
               <div className={styles.idealContent}>
                 <div className={styles.idealTitle}>{item.title}</div>
                 <div className={styles.idealBody}>{item.body}</div>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Image from 'next/image'
 import type { FarmDining } from '@/payload-types'
 import { resolveMedia } from '@/lib/media'
 import { gsap } from '@/lib/animations/gsap'
@@ -85,7 +86,7 @@ export function Experience({ data }: { data: FarmDining['experience'] }) {
         const image = resolveMedia(item.image)
         return (
           <div className={`${styles.expRow}${i % 2 === 1 ? ` ${styles.reverse}` : ''}`} key={item.id ?? i}>
-            <div className={styles.expVisual}>{image.url && <img src={image.url} alt={image.alt} loading="lazy" />}</div>
+            <div className={styles.expVisual}>{image.url && <Image src={image.url} alt={image.alt} fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover' }} />}</div>
             <div>
               <div className={styles.expTag}>
                 {item.tagNumber} · {item.tagLabel}

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Image from 'next/image'
 import type { Stay } from '@/payload-types'
 import { resolveMedia } from '@/lib/media'
 import { gsap } from '@/lib/animations/gsap'
@@ -69,7 +70,7 @@ export function Gallery({ items }: { items: Stay['gallery'] }) {
       </div>
 
       <div className={styles.galleryHero}>
-        {heroImage.url && <img src={heroImage.url} alt={hero.caption} loading="lazy" />}
+        {heroImage.url && <Image src={heroImage.url} alt={hero.caption} fill sizes="100vw" style={{ objectFit: 'cover' }} />}
         <div className={styles.galleryHeroScrim} aria-hidden="true" />
         <span className={styles.galleryHeroCap}>{hero.caption}</span>
       </div>
@@ -80,7 +81,7 @@ export function Gallery({ items }: { items: Stay['gallery'] }) {
             const image = resolveMedia(item.image)
             return (
               <div className={styles.galleryItem} key={item.id ?? i}>
-                <div className={styles.galleryPlate}>{image.url && <img src={image.url} alt={item.caption} loading="lazy" />}</div>
+                <div className={styles.galleryPlate}>{image.url && <Image src={image.url} alt={item.caption} fill sizes="(max-width: 768px) 50vw, 25vw" style={{ objectFit: 'cover' }} />}</div>
                 <p className={styles.galleryCaption}>{item.caption}</p>
               </div>
             )

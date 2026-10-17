@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Image from 'next/image'
 import type { Stay } from '@/payload-types'
 import { resolveMedia } from '@/lib/media'
 import { gsap } from '@/lib/animations/gsap'
@@ -60,7 +61,7 @@ export function IdealFor({ items, title }: { items: Stay['idealFor']; title: str
           const image = resolveMedia(item.image)
           return (
             <div className={`${styles.indexCard} reveal`} key={item.id ?? i}>
-              <div className={styles.indexPhoto}>{image.url && <img src={image.url} alt={image.alt} loading="lazy" />}</div>
+              <div className={styles.indexPhoto}>{image.url && <Image src={image.url} alt={image.alt} fill sizes="(max-width: 560px) 100vw, 42vw" style={{ objectFit: 'cover' }} />}</div>
               <div className={styles.indexContent}>
                 <span className={styles.indexRule} aria-hidden="true" />
                 <div className={styles.indexTitle}>{item.title}</div>

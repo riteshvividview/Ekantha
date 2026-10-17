@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Image from 'next/image'
 import type { About } from '@/payload-types'
 import { resolveMedia } from '@/lib/media'
 import { CountUp } from '@/components/shared/CountUp'
@@ -90,7 +91,7 @@ export function Overview({ data }: { data: About['overview'] }) {
           </div>
         </div>
 
-        <div className={styles.overviewVisual}>{image.url && <img src={image.url} alt={image.alt} loading="lazy" />}</div>
+        <div className={styles.overviewVisual}>{image.url && <Image src={image.url} alt={image.alt} fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover' }} />}</div>
       </div>
     </section>
   )

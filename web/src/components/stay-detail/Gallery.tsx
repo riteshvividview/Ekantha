@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Image from 'next/image'
 import type { Stay } from '@/payload-types'
 import { resolveMedia } from '@/lib/media'
 import { gsap } from '@/lib/animations/gsap'
@@ -69,7 +70,7 @@ export function Gallery({ items, title }: { items: Stay['gallery']; title: strin
           const image = resolveMedia(item.image)
           return (
             <div className={styles.galleryItem} style={{ aspectRatio: item.aspectRatio ?? '4/3' }} key={item.id ?? i}>
-              {image.url && <img src={image.url} alt={item.caption} loading="lazy" />}
+              {image.url && <Image src={image.url} alt={item.caption} fill sizes="(max-width: 768px) 50vw, 33vw" style={{ objectFit: 'cover' }} />}
               <div className={styles.galleryScrim} aria-hidden="true" />
               <p className={styles.galleryCaption}>{item.caption}</p>
             </div>

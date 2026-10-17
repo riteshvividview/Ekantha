@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
 import type { Event } from '@/payload-types'
 import { resolveMedia } from '@/lib/media'
 import { gsap } from '@/lib/animations/gsap'
@@ -62,7 +63,7 @@ export function EventsWeHost({ data }: { data: Event['eventsWeHost'] }) {
               key={item.id ?? i}
               onClick={() => setActiveId((cur) => (cur === i ? null : i))}
             >
-              {image.url && <img className={styles.panelMedia} src={image.url} alt="" loading="lazy" />}
+              {image.url && <Image className={styles.panelMedia} src={image.url} alt="" fill sizes="(max-width: 768px) 100vw, 20vw" style={{ objectFit: 'cover' }} />}
               <div className={styles.panelNum}>{item.number}</div>
               <div className={styles.panelContent}>
                 <div className={styles.panelTitle}>{item.title}</div>

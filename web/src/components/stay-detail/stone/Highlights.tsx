@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Image from 'next/image'
 import type { Stay } from '@/payload-types'
 import { resolveMedia } from '@/lib/media'
 import { gsap } from '@/lib/animations/gsap'
@@ -60,7 +61,7 @@ export function Highlights({ data }: { data: Stay['highlightsSection'] }) {
 
       <div className={`${styles.hlLayout} reveal`}>
         <div className={styles.hlHero}>
-          {heroImage.url && <img src={heroImage.url} alt={heroImage.alt} loading="lazy" />}
+          {heroImage.url && <Image src={heroImage.url} alt={heroImage.alt} fill sizes="(max-width: 768px) 100vw, 55vw" style={{ objectFit: 'cover' }} />}
           <div className={styles.hlHeroScrim} aria-hidden="true" />
           <div className={styles.hlHeroContent}>
             <span className={styles.hlHeroBadge}>{hero.badgeLabel}</span>
@@ -74,7 +75,7 @@ export function Highlights({ data }: { data: Stay['highlightsSection'] }) {
             const image = resolveMedia(row.image)
             return (
               <div className={styles.hlRow} key={row.id ?? i}>
-                <div className={styles.hlRowMedia}>{image.url && <img src={image.url} alt={image.alt} loading="lazy" />}</div>
+                <div className={styles.hlRowMedia}>{image.url && <Image src={image.url} alt={image.alt} fill sizes="150px" style={{ objectFit: 'cover' }} />}</div>
                 <div>
                   <span className={styles.hlRowNumeral} aria-hidden="true" />
                   <span className={styles.hlRowBadge}>{row.badgeLabel}</span>

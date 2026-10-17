@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, type CSSProperties } from 'react'
+import Image from 'next/image'
 import type { Stay, StayPage } from '@/payload-types'
 import { resolveMediaSize } from '@/lib/media'
 import { CountUp } from '@/components/shared/CountUp'
@@ -184,7 +185,7 @@ export function StaysSection({ data, stays }: { data: StayPage['staysSection']; 
                 </div>
               </div>
 
-              <div className={styles.stayPlate}>{image.url && <img src={image.url} alt={image.alt} loading="lazy" />}</div>
+              <div className={styles.stayPlate}>{image.url && <Image src={image.url} alt={image.alt} fill sizes="(max-width: 768px) 100vw, 45vw" style={{ objectFit: 'cover' }} />}</div>
             </div>
           </div>
         )
