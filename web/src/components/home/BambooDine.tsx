@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { Home } from '@/payload-types'
 import { resolveMediaSize } from '@/lib/media'
 import { assetUrl } from '@/lib/assetUrl'
+import { reportProgress } from '@/lib/loadProgress'
 import { gsap } from '@/lib/animations/gsap'
 import styles from './home.module.css'
 import dine from './BambooDine.module.css'
@@ -15,12 +16,8 @@ import dine from './BambooDine.module.css'
 const FRAME_COUNT = 240
 const framePath = (i: number) => assetUrl(`/bamboo-dine/frame-${String(i + 1).padStart(3, '0')}.webp`)
 
-// Load only an initial window up front — see the identical note in
-// Hero.tsx. More loads in as the scrub approaches the edge of what's
-// already in memory.
-const INITIAL_FRAME_WINDOW = 30
-const FRAME_LOOKAHEAD = 15
-const FRAME_WINDOW_STEP = 60
+// Every frame loads up front, behind the first-load screen — see the
+// identical note in Hero.tsx for why (scrubbing mid-load was stuttering).
 
 // How much scroll distance (px) the section stays pinned for, spread
 // across the whole sequence — not tied to real time, just scroll depth.
@@ -213,6 +210,7 @@ export function BambooDine({ data }: { data: Home['dine'] }) {
 
     // -- preloading ----------------------------------------------------
 
+    let loadedCount = 0
     function loadFrame(i: number): Promise<void> {
       return new Promise((resolve) => {
         const img = new Image()
@@ -221,44 +219,29 @@ export function BambooDine({ data }: { data: Home['dine'] }) {
           frames[i] = img
           if (!cancelled && i === nearestLoadedFrame(currentFrame)) drawFrame(i)
           if (i === 0 && !cancelled) setReady(true)
+          if (!cancelled) {
+            loadedCount++
+            reportProgress('bambooDine', loadedCount / FRAME_COUNT)
+          }
           resolve()
         }
-        img.onerror = () => resolve() // missing frame: keep using its neighbour, don't block the queue
+        img.onerror = () => {
+          // missing frame: keep using its neighbour, don't block the queue
+          if (!cancelled) {
+            loadedCount++
+            reportProgress('bambooDine', loadedCount / FRAME_COUNT)
+          }
+          resolve()
+        }
         img.src = framePath(i)
       })
-    }
-
-    // `frontier` is the exclusive upper bound of what's been requested so
-    // far — ensureLoadedThrough(n) only starts new work past it, so calling
-    // it repeatedly (e.g. on every scroll tick) is cheap once a range is
-    // already in flight or loaded. Set synchronously to the initial window
-    // *before* ScrollTrigger.create() below — GSAP fires onUpdate once,
-    // synchronously, during creation, so if frontier were still 0 at that
-    // point, the lookahead check below would immediately race past the
-    // intended initial window before preload() (if it were async) got a
-    // chance to set it.
-    let frontier = INITIAL_FRAME_WINDOW
-    function ensureLoadedThrough(target: number) {
-      const end = Math.min(target, FRAME_COUNT)
-      if (end <= frontier) return
-      const start = frontier
-      frontier = end
-      const CONCURRENCY = 6
-      let next = start
-      async function worker() {
-        while (next < end && !cancelled) {
-          const i = next++
-          await loadFrame(i)
-        }
-      }
-      void Promise.all(Array.from({ length: CONCURRENCY }, worker))
     }
 
     function preload() {
       const CONCURRENCY = 6
       let next = 0
       async function worker() {
-        while (next < frontier && !cancelled) {
+        while (next < FRAME_COUNT && !cancelled) {
           const i = next++
           await loadFrame(i)
         }
@@ -311,9 +294,6 @@ export function BambooDine({ data }: { data: Home['dine'] }) {
           currentFrame = Math.round(self.progress * (FRAME_COUNT - 1))
           const nearest = nearestLoadedFrame(currentFrame)
           if (nearest >= 0) drawFrame(nearest)
-          if (currentFrame + FRAME_LOOKAHEAD > frontier) {
-            ensureLoadedThrough(currentFrame + FRAME_LOOKAHEAD + FRAME_WINDOW_STEP)
-          }
         },
       },
     })

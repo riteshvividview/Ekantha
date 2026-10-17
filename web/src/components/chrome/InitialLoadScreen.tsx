@@ -4,16 +4,24 @@ import { useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { onProgress } from '@/lib/loadProgress'
 
-// Real signals only — no fake timer dressed up as progress. Each key's
-// weight reflects how much it actually matters to what's on screen at
-// reveal: the hero frame window is most of it (it's most of the viewport),
-// fonts matter because text visibly reflows/swaps without them, the logo
-// is tiny but instantly visible.
-const WEIGHTS: Record<string, number> = { fonts: 0.25, hero: 0.65, logo: 0.1 }
+// Real signals only — no fake timer dressed up as progress. Each sequence
+// now loads every one of its frames before reveal (see the identical note
+// in Hero.tsx) rather than just an initial window, so the weights below
+// cover all three canvases, roughly proportional to their frame counts
+// (440/240/273), plus a small slice each for fonts and the nav logo.
+const WEIGHTS: Record<string, number> = {
+  fonts: 0.05,
+  logo: 0.05,
+  hero: 0.45,
+  bambooDine: 0.2,
+  chooseEscape: 0.25,
+}
 
 // A slow connection shouldn't be able to trap a visitor behind this
 // screen indefinitely — reveal regardless of real progress past this.
-const TIMEOUT_MS = 3500
+// Generous because, unlike before, this is now waiting on every frame of
+// all three sequences (~950 frames total), not just an initial window.
+const TIMEOUT_MS = 20000
 
 // On a fast connection, every asset can resolve in well under what it
 // takes to register as a deliberate moment rather than a flash — this is
@@ -44,7 +52,7 @@ export function InitialLoadScreen() {
   const [curtainOpen, setCurtainOpen] = useState(false)
   const [pct, setPct] = useState(0)
   const [lineIndex, setLineIndex] = useState(0)
-  const progressRef = useRef<Record<string, number>>({ fonts: 0, hero: 0, logo: 0 })
+  const progressRef = useRef<Record<string, number>>({ fonts: 0, hero: 0, logo: 0, bambooDine: 0, chooseEscape: 0 })
   const doneRef = useRef(false)
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
