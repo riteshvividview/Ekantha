@@ -456,30 +456,74 @@ section {
 }
 
 /* ── First-load screen ──────────────────────────────────────── */
-/* Pure black, not var(--ink) — the loader video's own background is pure
-   black, and anything lighter shows as a visible seam around its edges. */
+/* The loader itself is just a positioning root — the two curtain panels
+   below carry the actual black background, so when they split apart there
+   is nothing left behind them but the real page. */
 .ve-load-screen {
   position: fixed;
   inset: 0;
   z-index: 2147483001;
+}
+
+/* Pure black, not var(--ink) — the loader video's own background is pure
+   black, and anything lighter shows as a visible seam around its edges. */
+.ve-load-curtain {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background: #000;
+  z-index: 0;
+  transition: transform 950ms cubic-bezier(0.76, 0, 0.24, 1);
+}
+.ve-load-curtain-left {
+  left: 0;
+}
+.ve-load-curtain-right {
+  right: 0;
+}
+.ve-load-curtain-left[data-open='true'] {
+  transform: translateX(-100%);
+}
+.ve-load-curtain-right[data-open='true'] {
+  transform: translateX(100%);
+}
+
+.ve-load-embers {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 320ms ease;
+}
+.ve-load-embers[data-hidden='true'] {
+  opacity: 0;
+}
+
+.ve-load-content {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(1.5rem, 4vw, 2.25rem);
-  background: #000;
-  transition:
-    opacity 650ms var(--ease-slow),
-    visibility 650ms;
+  gap: clamp(0.5rem, 1.5vw, 0.9rem);
+  padding: 1.5rem;
+  text-align: center;
+  opacity: 1;
+  transition: opacity 320ms ease;
 }
-.ve-load-screen[data-exiting='true'] {
+.ve-load-content[data-hidden='true'] {
   opacity: 0;
-  pointer-events: none;
 }
+
 .ve-load-screen-mark {
   position: relative;
-  width: clamp(9rem, 20vw, 14rem);
+  width: clamp(6.5rem, 14vw, 9.5rem);
   aspect-ratio: 1;
+  margin-bottom: clamp(0.25rem, 1vw, 0.5rem);
 }
 .ve-load-screen-mark video {
   width: 100%;
@@ -492,9 +536,55 @@ section {
 .ve-load-screen-mark::before {
   content: '';
   position: absolute;
-  inset: -40%;
-  background: radial-gradient(circle, rgba(157, 92, 38, 0.18), transparent 70%);
+  inset: -55%;
+  background: radial-gradient(circle, rgba(157, 92, 38, 0.22), transparent 70%);
   z-index: -1;
+}
+
+.ve-load-headline {
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(1.5rem, 3.6vw, 2.2rem);
+  letter-spacing: -0.01em;
+  color: #f6ecdc;
+  margin: 0;
+}
+
+.ve-load-lines {
+  position: relative;
+  height: 1.6em;
+  width: min(90vw, 32rem);
+  margin-bottom: clamp(0.5rem, 1.5vw, 1rem);
+}
+.ve-load-line {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  font-family: var(--font-qalisten), Georgia, serif;
+  font-style: italic;
+  font-size: clamp(0.9rem, 1.8vw, 1.05rem);
+  color: rgba(246, 236, 220, 0.72);
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 550ms var(--ease-slow),
+    transform 550ms var(--ease-slow);
+}
+.ve-load-line[data-on='true'] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ve-load-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+.ve-load-dash {
+  width: 2.2rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
 }
 .ve-load-screen-pct {
   font-family: var(--font-mont);
@@ -505,6 +595,7 @@ section {
   font-variant-numeric: tabular-nums;
   min-width: 4ch;
   text-align: center;
+  margin: 0;
 }
 .ve-load-screen-bar {
   width: clamp(8rem, 18vw, 11rem);
@@ -519,7 +610,10 @@ section {
   transition: transform 220ms linear;
 }
 @media (prefers-reduced-motion: reduce) {
-  .ve-load-screen {
-    transition: opacity 300ms ease;
+  .ve-load-curtain {
+    transition: transform 400ms ease;
+  }
+  .ve-load-content {
+    transition: opacity 200ms ease;
   }
 }
