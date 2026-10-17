@@ -4,19 +4,20 @@ import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { gsap } from '@/lib/animations/gsap'
 import { THEME_SECONDS } from '@/lib/pageTheme'
+import { assetUrl } from '@/lib/assetUrl'
 import styles from './Events.module.css'
 
-// Static uploads, not CMS fields — dropped into
-// web/public/images/home/07-events-preview/ (the originals were 20MB+ PNGs
-// straight off a drone/phone; these are ffmpeg re-encodes — 3840px on the
-// long edge, near-lossless — so next/image still has a genuine 4K source to
-// downsample from on a large/retina screen, not an already-softened copy).
+// Static uploads, not CMS fields — served from R2 under
+// images/home/07-events-preview/ (the originals were 20MB+ PNGs straight off
+// a drone/phone; these are ffmpeg re-encodes — 3840px on the long edge,
+// near-lossless — so next/image still has a genuine 4K source to downsample
+// from on a large/retina screen, not an already-softened copy).
 const IMAGES = {
-  feature: '/images/home/07-events-preview/feature.webp',
-  celebrations: '/images/home/07-events-preview/detail.webp',
-  gatherings: '/images/home/07-events-preview/celebrations.webp',
-  occasions: '/images/home/07-events-preview/corporate.webp',
-  corporate: '/images/home/07-events-preview/occasions.webp',
+  feature: assetUrl('/images/home/07-events-preview/feature.webp'),
+  celebrations: assetUrl('/images/home/07-events-preview/detail.webp'),
+  gatherings: assetUrl('/images/home/07-events-preview/celebrations.webp'),
+  occasions: assetUrl('/images/home/07-events-preview/corporate.webp'),
+  corporate: assetUrl('/images/home/07-events-preview/occasions.webp'),
 }
 
 // One slide per occasion. The photo is the only thing that lives inside the

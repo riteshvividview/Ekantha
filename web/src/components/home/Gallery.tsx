@@ -3,13 +3,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { gsap } from '@/lib/animations/gsap'
 import { PAGE_DARK, PAGE_LIGHT, THEME_SECONDS } from '@/lib/pageTheme'
+import { assetUrl } from '@/lib/assetUrl'
 import styles from './Gallery.module.css'
 
-// Static uploads, not CMS fields — drop files into
-// web/public/images/home/09-gallery-preview/ and fill in the paths below.
-// `hero` is the big scene, `thumb` the small arch selector, `frames` the six
-// film-strip photos. While null, each renders a gradient scene instead.
-const G = '/images/home/09-gallery-preview'
+// Static uploads, not CMS fields — served from R2 under
+// images/home/09-gallery-preview/. `hero` is the big scene, `thumb` the
+// small arch selector, `frames` the six film-strip photos. While null, each
+// renders a gradient scene instead.
+const G = assetUrl('/images/home/09-gallery-preview')
 
 const SPACES = [
   {

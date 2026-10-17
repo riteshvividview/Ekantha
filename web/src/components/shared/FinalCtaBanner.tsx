@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { gsap } from '@/lib/animations/gsap'
+import { assetUrl } from '@/lib/assetUrl'
 import './finalCta.css'
 
 /**
@@ -328,7 +329,7 @@ export function FinalCtaBanner({
       <img
         className="ve-hold-photo ve-hold-photo-a"
         data-photo
-        src="/images/home/09-gallery-preview/mango-1.jpg"
+        src={assetUrl('/images/home/09-gallery-preview/mango-1.jpg')}
         alt=""
         aria-hidden="true"
         loading="lazy"
@@ -336,7 +337,7 @@ export function FinalCtaBanner({
       <img
         className="ve-hold-photo ve-hold-photo-b"
         data-photo
-        src="/images/home/09-gallery-preview/stone-2.jpg"
+        src={assetUrl('/images/home/09-gallery-preview/stone-2.jpg')}
         alt=""
         aria-hidden="true"
         loading="lazy"
@@ -344,7 +345,7 @@ export function FinalCtaBanner({
       <img
         className="ve-hold-photo ve-hold-photo-c"
         data-photo
-        src="/images/home/09-gallery-preview/bamboo-3.jpg"
+        src={assetUrl('/images/home/09-gallery-preview/bamboo-3.jpg')}
         alt=""
         aria-hidden="true"
         loading="lazy"
@@ -352,7 +353,7 @@ export function FinalCtaBanner({
       <img
         className="ve-hold-photo ve-hold-photo-d"
         data-photo
-        src="/images/home/09-gallery-preview/mango-5.jpg"
+        src={assetUrl('/images/home/09-gallery-preview/mango-5.jpg')}
         alt=""
         aria-hidden="true"
         loading="lazy"

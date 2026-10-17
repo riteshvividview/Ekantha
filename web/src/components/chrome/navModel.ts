@@ -1,5 +1,6 @@
 import type { Navigation } from '@/payload-types'
 import { resolveMediaSize } from '@/lib/media'
+import { assetUrl } from '@/lib/assetUrl'
 
 export interface NavChild {
   label: string
@@ -40,11 +41,11 @@ const META: Record<string, { sub: string; tag: string; icon: string }> = {
 // filled in (same pattern as the other LOCAL_*_IMAGES overrides across the
 // home page components). Falls back to the CMS image, then to the icon.
 const LOCAL_IMAGES: Record<string, string> = {
-  '/mango-house': '/images/home/09-gallery-preview/mango-1.jpg',
-  '/stone-house': '/images/home/09-gallery-preview/stone-1.jpg',
-  '/full-house': '/images/home/03-why-us/Hrs-away-img-two.png',
-  '/farm-dining': '/images/home/09-gallery-preview/bamboo-hero.jpg',
-  '/events': '/images/home/07-events-preview/a-setting-for-Every-Occasion-1.png',
+  '/mango-house': assetUrl('/images/home/09-gallery-preview/mango-1.jpg'),
+  '/stone-house': assetUrl('/images/home/09-gallery-preview/stone-1.jpg'),
+  '/full-house': assetUrl('/images/home/03-why-us/Hrs-away-img-two.png'),
+  '/farm-dining': assetUrl('/images/home/09-gallery-preview/bamboo-hero.jpg'),
+  '/events': assetUrl('/images/home/07-events-preview/a-setting-for-Every-Occasion-1.png'),
 }
 
 // Standalone CMS links that read as "things to do" are grouped into one

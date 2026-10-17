@@ -3,9 +3,10 @@
 import { useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { gsap } from '@/lib/animations/gsap'
+import { assetUrl } from '@/lib/assetUrl'
 import styles from './Story.module.css'
 
-// Static uploads, not CMS fields — dropped into web/public/images/home/
+// Static uploads, not CMS fields — served from R2 under images/home/
 // 02-story/. Both source clips were huge HEVC phone/camera captures (94MB
 // and 171MB respectively, 65-90Mbps — not web-safe: HEVC isn't reliably
 // supported in <video> outside Safari, and those bitrates are absurd for a
@@ -13,8 +14,8 @@ import styles from './Story.module.css'
 // 1280×720, ~2.3MB) of Second-section-card2-footage.MP4, the clip actually
 // used in the front card. The still image is served through next/image
 // instead, which handles down-sampling the 8000×5300 source on its own.
-const BIG_FRAME_VIDEO = '/images/home/02-story/card-footage-web.mp4'
-const SMALL_FRAME_IMAGE = '/images/home/02-story/card-image-web.JPG'
+const BIG_FRAME_VIDEO = assetUrl('/images/home/02-story/card-footage-web.mp4')
+const SMALL_FRAME_IMAGE = assetUrl('/images/home/02-story/card-image-web.JPG')
 const HEADLINE = ['A quiet corner', 'of the countryside,', 'made for you.']
 
 const BODY =

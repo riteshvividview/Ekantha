@@ -4,14 +4,15 @@ import { useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { gsap } from '@/lib/animations/gsap'
 import { THEME_SECONDS } from '@/lib/pageTheme'
+import { assetUrl } from '@/lib/assetUrl'
 import styles from './Why.module.css'
 
 // WHY LOCAL IMAGES — BEGIN (set entries to null to restore gradient placeholders)
 const IMAGES: Record<string, string | null> = {
-  land: '/images/home/03-why-us/Untouched-Land-img.png',
-  private: '/images/home/03-why-us/Just-For-You-img.png',
-  planned: '/images/home/03-why-us/Throughtfully-planned-img.png',
-  away: '/images/home/03-why-us/Hrs-away-img-two.png',
+  land: assetUrl('/images/home/03-why-us/Untouched-Land-img.png'),
+  private: assetUrl('/images/home/03-why-us/Just-For-You-img.png'),
+  planned: assetUrl('/images/home/03-why-us/Throughtfully-planned-img.png'),
+  away: assetUrl('/images/home/03-why-us/Hrs-away-img-two.png'),
 }
 // WHY LOCAL IMAGES — END
 

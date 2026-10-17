@@ -1,5 +1,7 @@
 // One-off migration helper: uploads a local directory to the R2 bucket,
-// preserving its relative path structure as the object key prefix.
+// preserving its relative path structure as the object key prefix. Pass ""
+// as the prefix to upload files at the bucket root (matches how Payload's
+// generateFileURL requests Media collection uploads — no prefix).
 // Usage: node --env-file=.env scripts/upload-to-r2.mjs <localDir> <r2KeyPrefix>
 // Example: node --env-file=.env scripts/upload-to-r2.mjs public/bamboo-dine bamboo-dine
 
@@ -8,7 +10,7 @@ import { readdir, readFile, stat } from 'node:fs/promises'
 import path from 'node:path'
 
 const [, , localDirArg, keyPrefixArg] = process.argv
-if (!localDirArg || !keyPrefixArg) {
+if (!localDirArg || keyPrefixArg === undefined) {
   console.error('Usage: node --env-file=.env scripts/upload-to-r2.mjs <localDir> <r2KeyPrefix>')
   process.exit(1)
 }
@@ -70,7 +72,7 @@ async function alreadyUploaded(key, size) {
 
 async function uploadOne(filePath) {
   const rel = path.relative(localDir, filePath).split(path.sep).join('/')
-  const key = `${keyPrefix}/${rel}`
+  const key = keyPrefix ? `${keyPrefix}/${rel}` : rel
   const { size } = await stat(filePath)
 
   if (await alreadyUploaded(key, size)) {

@@ -5,19 +5,20 @@ import { useLenis } from 'lenis/react'
 import type { Footer as FooterData, Navigation } from '@/payload-types'
 import { gsap } from '@/lib/animations/gsap'
 import PolaroidLineCarousel, { type Slide } from '@/components/ui/polaroid-line-carousel'
+import { assetUrl } from '@/lib/assetUrl'
 import { buildNavModel } from './navModel'
 import './footer.css'
 
-// Its own unique set (web/public/images/footer-memories/) rather than
-// reusing the Events section's photos — six candid moments standing in for
-// the sign-off's own "memories from the estate" mood.
+// Its own unique set (served from R2 under images/footer-memories/) rather
+// than reusing the Events section's photos — six candid moments standing in
+// for the sign-off's own "memories from the estate" mood.
 const MEMORY_SLIDES: Slide[] = [
-  { image: '/images/footer-memories/long-table.jpg', title: 'Long Table', caption: 'Meals shared under open skies.' },
-  { image: '/images/footer-memories/a-toast.jpg', title: 'A Toast', caption: 'Small moments, made to last.' },
-  { image: '/images/footer-memories/together.jpg', title: 'Together', caption: 'Friends, family, no rush at all.' },
-  { image: '/images/footer-memories/golden-hour.jpg', title: 'Golden Hour', caption: 'The estate at dusk, lit for the night.' },
-  { image: '/images/footer-memories/after-dark.jpg', title: 'After Dark', caption: 'Stories under string lights.' },
-  { image: '/images/footer-memories/quiet-walks.jpg', title: 'Quiet Walks', caption: 'Just the two of you, and the view.' },
+  { image: assetUrl('/images/footer-memories/long-table.jpg'), title: 'Long Table', caption: 'Meals shared under open skies.' },
+  { image: assetUrl('/images/footer-memories/a-toast.jpg'), title: 'A Toast', caption: 'Small moments, made to last.' },
+  { image: assetUrl('/images/footer-memories/together.jpg'), title: 'Together', caption: 'Friends, family, no rush at all.' },
+  { image: assetUrl('/images/footer-memories/golden-hour.jpg'), title: 'Golden Hour', caption: 'The estate at dusk, lit for the night.' },
+  { image: assetUrl('/images/footer-memories/after-dark.jpg'), title: 'After Dark', caption: 'Stories under string lights.' },
+  { image: assetUrl('/images/footer-memories/quiet-walks.jpg'), title: 'Quiet Walks', caption: 'Just the two of you, and the view.' },
 ]
 
 const MAPS_LINK = 'https://maps.app.goo.gl/1PJsYW8sDpm6sf6HA'

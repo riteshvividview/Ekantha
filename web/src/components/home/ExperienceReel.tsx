@@ -5,6 +5,7 @@ import Image from 'next/image'
 import type { Home } from '@/payload-types'
 import { DragScrollTrack } from '@/components/shared/DragScrollTrack'
 import { resolveMediaSize } from '@/lib/media'
+import { assetUrl } from '@/lib/assetUrl'
 import { gsap, ScrollTrigger } from '@/lib/animations/gsap'
 import { experienceGlow } from '@/lib/animations/theatre/project'
 import { PAGE_DARK, PAGE_LIGHT } from '@/lib/pageTheme'
@@ -17,13 +18,13 @@ const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(mi
 // LOCAL EXPERIENCE IMAGE OVERRIDE — BEGIN (set the flag to false to restore CMS images)
 const USE_LOCAL_EXPERIENCE_IMAGES = true
 const LOCAL_EXPERIENCE_IMAGES = [
-  '/images/home/04-experience-reel/experience-the-estate-img1.JPG',
-  '/images/home/04-experience-reel/experience-the-estate-img2.JPG',
-  '/images/home/04-experience-reel/experience-the-estate-img3.JPG',
-  '/images/home/04-experience-reel/experience-the-estate-img4.JPG',
-  '/images/home/04-experience-reel/experience-the-estate-img5.png',
-  '/images/home/04-experience-reel/experience-the-estate-img6.png',
-  '/images/home/04-experience-reel/experience-the-estate-img7.png',
+  assetUrl('/images/home/04-experience-reel/experience-the-estate-img1.JPG'),
+  assetUrl('/images/home/04-experience-reel/experience-the-estate-img2.JPG'),
+  assetUrl('/images/home/04-experience-reel/experience-the-estate-img3.JPG'),
+  assetUrl('/images/home/04-experience-reel/experience-the-estate-img4.JPG'),
+  assetUrl('/images/home/04-experience-reel/experience-the-estate-img5.png'),
+  assetUrl('/images/home/04-experience-reel/experience-the-estate-img6.png'),
+  assetUrl('/images/home/04-experience-reel/experience-the-estate-img7.png'),
 ]
 // LOCAL EXPERIENCE IMAGE OVERRIDE — END
 
