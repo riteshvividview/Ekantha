@@ -111,7 +111,7 @@ export function Hero({ data }: { data: Home['hero'] }) {
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    const frames: Array<ImageBitmap | null> = new Array(FRAME_COUNT).fill(null)
+    const frames: Array<HTMLImageElement | null> = new Array(FRAME_COUNT).fill(null)
     let currentFrame = 0
     let cancelled = false
 
@@ -166,7 +166,7 @@ export function Hero({ data }: { data: Home['hero'] }) {
     function drawFrame(index: number) {
       const img = frames[index]
       if (!canvas || !ctx2d || !img || canvas.width === 0) return
-      const { sx, sy, sw, sh } = coverRect(img.width, img.height, canvas.width, canvas.height)
+      const { sx, sy, sw, sh } = coverRect(img.naturalWidth, img.naturalHeight, canvas.width, canvas.height)
       ctx2d.clearRect(0, 0, canvas.width, canvas.height)
       ctx2d.drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height)
     }
@@ -222,7 +222,6 @@ export function Hero({ data }: { data: Home['hero'] }) {
       return () => {
         cancelled = true
         resizeObserver.disconnect()
-        frames.forEach((f) => f?.close())
       }
     }
 
@@ -341,7 +340,6 @@ export function Hero({ data }: { data: Home['hero'] }) {
       // .kill(true) reverts the pin-spacer before React's own cleanup —
       // see the identical note in BambooDine.tsx for why that matters.
       pinTrigger.kill(true)
-      frames.forEach((f) => f?.close())
     }
   }, [])
 
