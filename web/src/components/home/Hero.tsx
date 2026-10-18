@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { Home } from '@/payload-types'
 import { assetUrl } from '@/lib/assetUrl'
 import { reportProgress } from '@/lib/loadProgress'
+import { loadFrameImage } from '@/lib/loadFrameImage'
 import { gsap, ScrollTrigger } from '@/lib/animations/gsap'
 import styles from './home.module.css'
 
@@ -180,29 +181,16 @@ export function Hero({ data }: { data: Home['hero'] }) {
     }
 
     let loadedCount = 0
-    function loadFrame(i: number): Promise<void> {
-      return new Promise((resolve) => {
-        const img = new Image()
-        img.decoding = 'async'
-        img.onload = () => {
-          frames[i] = img
-          if (!cancelled && i === nearestLoadedFrame(currentFrame)) drawFrame(i)
-          if (i === 0 && !cancelled) setReady(true)
-          if (!cancelled) {
-            loadedCount++
-            reportProgress('hero', loadedCount / FRAME_COUNT)
-          }
-          resolve()
-        }
-        img.onerror = () => {
-          if (!cancelled) {
-            loadedCount++
-            reportProgress('hero', loadedCount / FRAME_COUNT)
-          }
-          resolve()
-        }
-        img.src = framePath(i)
-      })
+    async function loadFrame(i: number): Promise<void> {
+      const img = await loadFrameImage(framePath(i))
+      if (cancelled) return
+      if (img) {
+        frames[i] = img
+        if (i === nearestLoadedFrame(currentFrame)) drawFrame(i)
+        if (i === 0) setReady(true)
+      }
+      loadedCount++
+      reportProgress('hero', loadedCount / FRAME_COUNT)
     }
 
     function preload() {

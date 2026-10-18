@@ -801,6 +801,7 @@
   color: rgba(246, 236, 220, 0.5);
 }
 .ve-mnav-thumb {
+  position: relative;
   width: 3rem;
   height: 3rem;
   overflow: hidden;

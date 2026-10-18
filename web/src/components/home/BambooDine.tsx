@@ -5,6 +5,7 @@ import type { Home } from '@/payload-types'
 import { resolveMediaSize } from '@/lib/media'
 import { assetUrl } from '@/lib/assetUrl'
 import { reportProgress } from '@/lib/loadProgress'
+import { loadFrameImage } from '@/lib/loadFrameImage'
 import { gsap } from '@/lib/animations/gsap'
 import styles from './home.module.css'
 import dine from './BambooDine.module.css'
@@ -211,30 +212,16 @@ export function BambooDine({ data }: { data: Home['dine'] }) {
     // -- preloading ----------------------------------------------------
 
     let loadedCount = 0
-    function loadFrame(i: number): Promise<void> {
-      return new Promise((resolve) => {
-        const img = new Image()
-        img.decoding = 'async'
-        img.onload = () => {
-          frames[i] = img
-          if (!cancelled && i === nearestLoadedFrame(currentFrame)) drawFrame(i)
-          if (i === 0 && !cancelled) setReady(true)
-          if (!cancelled) {
-            loadedCount++
-            reportProgress('bambooDine', loadedCount / FRAME_COUNT)
-          }
-          resolve()
-        }
-        img.onerror = () => {
-          // missing frame: keep using its neighbour, don't block the queue
-          if (!cancelled) {
-            loadedCount++
-            reportProgress('bambooDine', loadedCount / FRAME_COUNT)
-          }
-          resolve()
-        }
-        img.src = framePath(i)
-      })
+    async function loadFrame(i: number): Promise<void> {
+      const img = await loadFrameImage(framePath(i))
+      if (cancelled) return
+      if (img) {
+        frames[i] = img
+        if (i === nearestLoadedFrame(currentFrame)) drawFrame(i)
+        if (i === 0) setReady(true)
+      }
+      loadedCount++
+      reportProgress('bambooDine', loadedCount / FRAME_COUNT)
     }
 
     function preload() {

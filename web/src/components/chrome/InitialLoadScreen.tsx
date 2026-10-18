@@ -47,7 +47,12 @@ const LINE_INTERVAL_MS = 2600
 
 export function InitialLoadScreen() {
   const pathname = usePathname()
-  const [shouldRender, setShouldRender] = useState(false)
+  // Computed synchronously (not in an effect) and matches what the server
+  // renders for this route, so on a hard load of '/' the loader is part of
+  // the very first HTML the browser paints — no gap where the real
+  // homepage is visible underneath before this mounts. Only ever set back
+  // to false once, by finish() below, to unmount after the reveal.
+  const [shouldRender, setShouldRender] = useState(() => pathname === '/')
   const [contentHidden, setContentHidden] = useState(false)
   const [curtainOpen, setCurtainOpen] = useState(false)
   const [pct, setPct] = useState(0)
@@ -55,17 +60,18 @@ export function InitialLoadScreen() {
   const progressRef = useRef<Record<string, number>>({ fonts: 0, hero: 0, logo: 0, bambooDine: 0, chooseEscape: 0 })
   const doneRef = useRef(false)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  // Already shown once this browser session — still render it (so a
+  // refresh never shows the bare page first), but skip the deliberate
+  // MIN_DISPLAY_MS hold so it closes the moment real progress is ready.
+  const skipMinDisplayRef = useRef(false)
 
   useEffect(() => {
     if (pathname !== '/') return
-    if (typeof window === 'undefined') return
     try {
-      if (sessionStorage.getItem(SESSION_KEY)) return
+      if (sessionStorage.getItem(SESSION_KEY)) skipMinDisplayRef.current = true
     } catch {
-      // sessionStorage unavailable (private mode etc.) — show it anyway,
-      // just won't persist the "already shown" flag across reloads.
+      // sessionStorage unavailable (private mode etc.) — treat as first visit.
     }
-    setShouldRender(true)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally only runs on mount for '/'
   }, [])
 
@@ -92,7 +98,7 @@ export function InitialLoadScreen() {
       } catch {
         // ignore — see above
       }
-      const remaining = Math.max(0, MIN_DISPLAY_MS - (Date.now() - mountedAt))
+      const remaining = skipMinDisplayRef.current ? 0 : Math.max(0, MIN_DISPLAY_MS - (Date.now() - mountedAt))
       window.setTimeout(() => {
         // Content fades first, then the curtain splits — two readable
         // beats instead of everything moving at once.
