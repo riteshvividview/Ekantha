@@ -12,16 +12,19 @@ import styles from './Story.module.css'
 // supported in <video> outside Safari, and those bitrates are absurd for a
 // background loop); card2-footage-web.mp4 is an ffmpeg re-encode (H.264,
 // 1280×720, ~2.3MB) of Second-section-card2-footage.MP4, the clip actually
-// used in the front card. card-image-web-2400.jpg is a sharp re-encode
-// (2400px wide, mozjpeg q82, ~360KB) of the original card-image-web.JPG —
+// used in the front card. card-image-web-portrait.jpg is a sharp re-encode
+// (1800px wide, mozjpeg q82, ~420KB) of the original card-image-web.JPG —
 // that original was a 7952×5304, 22.7MB phone capture, which blew well past
 // next/image's remote-fetch timeout (it needs to download *and* decode the
 // source on every uncached variant request), so the card rendered nothing
-// but its placeholder gradient. Resizing ahead of time, the same fix as the
-// video above, rather than leaning on next/image to downsample a file that
-// large on demand.
+// but its placeholder gradient. A first resize pass (card-image-web-2400,
+// now unused) missed that the source carries EXIF orientation 8 — its raw
+// pixel buffer is landscape, only displayed portrait via that tag — and
+// resized the unrotated buffer, so the output lost the tag and rendered
+// sideways. .rotate() (no args, auto-orients from EXIF) before resizing
+// fixes that, same as the video fix above but rotation-aware.
 const BIG_FRAME_VIDEO = assetUrl('/images/home/02-story/card-footage-web.mp4')
-const SMALL_FRAME_IMAGE = assetUrl('/images/home/02-story/card-image-web-2400.jpg')
+const SMALL_FRAME_IMAGE = assetUrl('/images/home/02-story/card-image-web-portrait.jpg')
 const HEADLINE = ['A quiet corner', 'of the countryside,', 'made for you.']
 
 const BODY =
