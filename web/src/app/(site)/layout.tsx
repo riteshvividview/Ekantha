@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
+import { cookies } from 'next/headers'
 import '../globals.css'
 import { qalisten } from '@/lib/fonts'
+import { INITIAL_LOAD_COOKIE } from '@/lib/initialLoadCookie'
 import { SmoothScrollProvider } from '@/components/layout/SmoothScrollProvider'
 import { TheatreStudioLoader } from '@/components/layout/TheatreStudioLoader'
 import { PageTransitionOverlay } from '@/components/chrome/PageTransitionOverlay'
@@ -44,10 +46,18 @@ export default async function SiteRootLayout({ children }: { children: React.Rea
   // real, reachable database yet — it has to be called *inside* each
   // safeFetch callback (not once, outside, and reused) so that failure is
   // caught too, not just failures from the findGlobal call after it.
-  const [nav, footer] = await Promise.all([
+  const [nav, footer, cookieStore] = await Promise.all([
     safeFetch(async () => (await getPayloadClient()).findGlobal({ slug: 'navigation', depth: 1 })),
     safeFetch(async () => (await getPayloadClient()).findGlobal({ slug: 'footer', depth: 1 })),
+    cookies(),
   ])
+  // Read here, server-side, rather than from sessionStorage client-side —
+  // a cookie rides along with the request itself, so on a reload the
+  // server already knows this browser has seen the loader before and can
+  // leave it out of the HTML entirely. sessionStorage can't do that: it's
+  // only readable after the page has already painted, which is exactly
+  // the gap that let the loader flash back in on every reload.
+  const hasLoadedBefore = cookieStore.get(INITIAL_LOAD_COOKIE)?.value === '1'
 
   return (
     <html lang="en" data-scroll-behavior="smooth">
@@ -77,7 +87,7 @@ export default async function SiteRootLayout({ children }: { children: React.Rea
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css" rel="stylesheet" />
       </head>
       <body className={qalisten.variable}>
-        <InitialLoadScreen />
+        <InitialLoadScreen skip={hasLoadedBefore} />
         <PageTransitionOverlay />
         <TheatreStudioLoader />
         <InteractionEffects />

@@ -160,7 +160,7 @@ export function BambooDine({ data }: { data: Home['dine'] }) {
     const ctx = canvas.getContext('2d')
     if (!ctx) return undefined
 
-    const frames: Array<HTMLImageElement | null> = new Array(FRAME_COUNT).fill(null)
+    const frames: Array<ImageBitmap | null> = new Array(FRAME_COUNT).fill(null)
     let currentFrame = 0
     let cancelled = false
 
@@ -191,7 +191,7 @@ export function BambooDine({ data }: { data: Home['dine'] }) {
     function drawFrame(index: number) {
       const img = frames[index]
       if (!canvas || !ctx || !img || canvas.width === 0) return
-      const { sx, sy, sw, sh } = coverRect(img.naturalWidth, img.naturalHeight, canvas.width, canvas.height)
+      const { sx, sy, sw, sh } = coverRect(img.width, img.height, canvas.width, canvas.height)
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       ctx.drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height)
     }
@@ -259,6 +259,7 @@ export function BambooDine({ data }: { data: Home['dine'] }) {
       return () => {
         cancelled = true
         resizeObserver.disconnect()
+        frames.forEach((f) => f?.close())
       }
     }
 
@@ -321,6 +322,7 @@ export function BambooDine({ data }: { data: Home['dine'] }) {
       // why skipping the revert crashes React's reconciliation.
       tl.scrollTrigger?.kill(true)
       tl.kill()
+      frames.forEach((f) => f?.close())
     }
   }, [])
 

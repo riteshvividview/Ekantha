@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { onProgress } from '@/lib/loadProgress'
+import { INITIAL_LOAD_COOKIE } from '@/lib/initialLoadCookie'
 
 // Real signals only — no fake timer dressed up as progress, and no
 // artificial minimum-display floor either: the percentage is exactly the
@@ -39,14 +40,18 @@ const MOOD_LINES = [
 ]
 const LINE_INTERVAL_MS = 2600
 
-export function InitialLoadScreen() {
+export function InitialLoadScreen({ skip }: { skip: boolean }) {
   const pathname = usePathname()
   // Computed synchronously (not in an effect) and matches what the server
   // renders for this route, so on a hard load of '/' the loader is part of
   // the very first HTML the browser paints — no gap where the real
-  // homepage is visible underneath before this mounts. Only ever set back
-  // to false once, by finish() below, to unmount after the reveal.
-  const [shouldRender, setShouldRender] = useState(() => pathname === '/')
+  // homepage is visible underneath before this mounts. `skip` comes from
+  // the server reading a cookie (see the (site) layout) set the first time
+  // this ever finished in this browser — so a reload after that first
+  // visit never renders the loader at all, instead of rendering it and
+  // then hiding it client-side a beat later. Only ever set back to false
+  // once, by finish() below, to unmount after the reveal.
+  const [shouldRender, setShouldRender] = useState(() => pathname === '/' && !skip)
   const [contentHidden, setContentHidden] = useState(false)
   const [curtainOpen, setCurtainOpen] = useState(false)
   const [pct, setPct] = useState(0)
@@ -72,6 +77,16 @@ export function InitialLoadScreen() {
       if (doneRef.current) return
       doneRef.current = true
       setPct(100)
+      // No expiry: a session cookie, cleared when the browser itself
+      // closes — so the loader skips on reloads/back-nav within a visit
+      // but plays again in a fresh session, same as the old sessionStorage
+      // flag's intent, just readable by the server this time.
+      try {
+        document.cookie = `${INITIAL_LOAD_COOKIE}=1; path=/; SameSite=Lax`
+      } catch {
+        // document.cookie can throw under strict privacy settings — fine,
+        // it just means the loader shows again next time.
+      }
       // Content fades first, then the curtain splits — two readable beats
       // instead of everything moving at once. The 950ms before unmounting
       // matches .ve-load-curtain's own transition duration in globals.css
