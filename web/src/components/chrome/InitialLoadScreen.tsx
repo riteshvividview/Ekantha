@@ -4,33 +4,27 @@ import { useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { onProgress } from '@/lib/loadProgress'
 
-// Real signals only — no fake timer dressed up as progress. Each sequence
-// now loads every one of its frames before reveal (see the identical note
-// in Hero.tsx) rather than just an initial window, so the weights below
-// cover all three canvases, roughly proportional to their frame counts
-// (440/240/273), plus a small slice each for fonts and the nav logo.
+// Real signals only — no fake timer dressed up as progress, and no
+// artificial minimum-display floor either: the percentage is exactly the
+// weighted sum below, and the reveal fires the moment it's real.
+//
+// Only the hero sequence (plus fonts/the nav logo) gates the reveal — it's
+// the section the visitor actually sees first, so it's the one thing that
+// has to be fully loaded and cached before the page appears. BambooDine
+// and ChooseEscape sit further down the page and keep preloading in the
+// background (see their own components) without holding the homepage
+// back; gating on all three as well was waiting on ~950 frames before
+// showing anything, which is what was dragging the percentage out and
+// forcing TIMEOUT_MS to cut the wait short before hero had even finished.
 const WEIGHTS: Record<string, number> = {
-  fonts: 0.05,
+  fonts: 0.1,
   logo: 0.05,
-  hero: 0.45,
-  bambooDine: 0.2,
-  chooseEscape: 0.25,
+  hero: 0.85,
 }
 
 // A slow connection shouldn't be able to trap a visitor behind this
 // screen indefinitely — reveal regardless of real progress past this.
-// Generous because, unlike before, this is now waiting on every frame of
-// all three sequences (~950 frames total), not just an initial window.
 const TIMEOUT_MS = 20000
-
-// On a fast connection, every asset can resolve in well under what it
-// takes to register as a deliberate moment rather than a flash — this is
-// a floor, not padding: real progress still drives the percentage, this
-// only holds the reveal back from firing before the mark has had a beat
-// to actually be seen.
-const MIN_DISPLAY_MS = 900
-
-const SESSION_KEY = 've-initial-load-shown'
 
 // Atmosphere, not detail — mood lines in the same voice as the rest of the
 // site's copy (see Hero's "Mornings Without An Agenda", Events' "Good food
@@ -57,23 +51,9 @@ export function InitialLoadScreen() {
   const [curtainOpen, setCurtainOpen] = useState(false)
   const [pct, setPct] = useState(0)
   const [lineIndex, setLineIndex] = useState(0)
-  const progressRef = useRef<Record<string, number>>({ fonts: 0, hero: 0, logo: 0, bambooDine: 0, chooseEscape: 0 })
+  const progressRef = useRef<Record<string, number>>({ fonts: 0, hero: 0, logo: 0 })
   const doneRef = useRef(false)
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  // Already shown once this browser session — still render it (so a
-  // refresh never shows the bare page first), but skip the deliberate
-  // MIN_DISPLAY_MS hold so it closes the moment real progress is ready.
-  const skipMinDisplayRef = useRef(false)
-
-  useEffect(() => {
-    if (pathname !== '/') return
-    try {
-      if (sessionStorage.getItem(SESSION_KEY)) skipMinDisplayRef.current = true
-    } catch {
-      // sessionStorage unavailable (private mode etc.) — treat as first visit.
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally only runs on mount for '/'
-  }, [])
 
   // Rotating mood line, independent of load progress — it's atmosphere,
   // not a status readout.
@@ -87,27 +67,20 @@ export function InitialLoadScreen() {
 
   useEffect(() => {
     if (!shouldRender) return
-    const mountedAt = Date.now()
 
     const finish = () => {
       if (doneRef.current) return
       doneRef.current = true
       setPct(100)
-      try {
-        sessionStorage.setItem(SESSION_KEY, '1')
-      } catch {
-        // ignore — see above
-      }
-      const remaining = skipMinDisplayRef.current ? 0 : Math.max(0, MIN_DISPLAY_MS - (Date.now() - mountedAt))
+      // Content fades first, then the curtain splits — two readable beats
+      // instead of everything moving at once. The 950ms before unmounting
+      // matches .ve-load-curtain's own transition duration in globals.css
+      // (so the slide-out finishes before the DOM is removed), not padding.
+      setContentHidden(true)
       window.setTimeout(() => {
-        // Content fades first, then the curtain splits — two readable
-        // beats instead of everything moving at once.
-        setContentHidden(true)
-        window.setTimeout(() => {
-          setCurtainOpen(true)
-          window.setTimeout(() => setShouldRender(false), 950)
-        }, 320)
-      }, 180 + remaining)
+        setCurtainOpen(true)
+        window.setTimeout(() => setShouldRender(false), 950)
+      }, 320)
     }
 
     const recompute = () => {

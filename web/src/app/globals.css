@@ -537,7 +537,7 @@ section {
 
 .ve-load-screen-mark {
   position: relative;
-  width: clamp(9rem, 20vw, 14rem);
+  width: clamp(11rem, 24vw, 17rem);
   aspect-ratio: 1;
   margin-bottom: clamp(0.5rem, 1.5vw, 1rem);
 }
