@@ -1,31 +1,19 @@
-/* ── Choose Your Escape — scroll-scrubbed drone sequence ───────────────
-   One continuous orbit (ground-level pool → rising past the stone façade
-   → full aerial pass) drives a canvas frame player, pinned while the
-   section scrolls; each stay "owns" the stretch of footage that shows its
-   own framing (see CHAPTERS in ChooseEscape.tsx). Header uses the shared
-   --white/--ink page-theme tokens (this section sits inside the dark
-   stretch between Why and Events, same as the old StaysCarousel did) —
-   the stage itself is always a dark cinematic frame regardless, hardcoded
-   below. Below 860px (and under prefers-reduced-motion) the pin/canvas is
-   replaced entirely by a plain drag-scroll card row — see .fallback.
-
-   NOTE: no overflow: hidden on .escape — it wraps a pinned element, and
-   clipping an ancestor of a pinned element breaks the pin. */
+/* ── Choose Your Escape — premium interactive stay cards ────────────────
+   Used to be a scroll-scrubbed drone-video stage, pinning the page while
+   one continuous orbit crossfaded through each stay's own stretch of
+   footage. Replaced with a plain (no scroll-jacking) three-card row: each
+   stay gets its own still, title, quote, facts and price, with a gentle
+   cursor-tilt interaction on hover — see ChooseEscape.tsx. */
 
 .escape {
-  padding: 0; /* overrides the global `section` padding */
   color: var(--ink);
 }
 
 .head {
-  padding: var(--pad-y) var(--pad-x) clamp(2rem, 4vw, 3rem);
   max-width: 50rem;
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
 }
-@media (max-width: 860px) {
-  .head {
-    padding-top: clamp(1.75rem, 7vw, 2.5rem);
-  }
-}
+
 .eyebrow {
   display: inline-flex;
   align-items: center;
@@ -77,236 +65,196 @@
   max-width: 34em;
 }
 
-/* ── Desktop: pinned cinematic stage ─────────────────────────────────── */
-.stageDesktop {
-  display: block;
+/* ── Card row — grid on desktop, horizontal snap-scroll on mobile ──── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.5rem, 2.6vw, 2.25rem);
 }
 @media (max-width: 860px) {
-  .stageDesktop {
-    display: none;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .stageDesktop {
-    display: none;
+  .grid {
+    display: flex;
+    gap: 1.1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    margin: 0 calc(var(--pad-x) * -1);
+    padding: 0 var(--pad-x) 0.5rem;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
-.stage {
+.card {
   position: relative;
-  height: 100vh;
-  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 28px;
+  background: var(--silver);
+  border: 1px solid var(--line);
   overflow: hidden;
-  background: #14110e;
-  isolation: isolate;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 24px 50px -32px rgba(29, 29, 27, 0.25);
+  transition:
+    box-shadow 450ms var(--ease-slow),
+    transform 450ms var(--ease-slow);
+  will-change: transform;
 }
-.canvas {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-  transition: opacity 500ms var(--ease-soft);
+@media (max-width: 860px) {
+  .card {
+    flex: none;
+    width: min(82vw, 23rem);
+    scroll-snap-align: start;
+  }
 }
-/* One content block per chapter, all stacked in the same spot; opacity and
-   a small lift are driven directly off scroll progress in ChooseEscape.tsx
-   (not CSS transitions — the crossfade has to track the scrub exactly). */
-.panel {
+@media (hover: hover) {
+  .card:hover {
+    box-shadow: 0 34px 70px -30px rgba(29, 29, 27, 0.38);
+  }
+  .card:hover .cardImg {
+    transform: scale(1.08);
+  }
+  .card:hover .cardCtaIcon {
+    transform: translateX(3px) rotate(-35deg);
+    background: #a9793a;
+  }
+  .card:hover .cardNum {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cardNum {
   position: absolute;
   z-index: 2;
-  left: clamp(1.5rem, 6vw, 5rem);
-  bottom: clamp(3rem, 8vw, 6rem);
-  max-width: min(34rem, 86vw);
+  top: 1.1rem;
+  left: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  background: rgba(29, 29, 27, 0.4);
+  backdrop-filter: blur(6px);
   color: #f6ecdc;
-  opacity: 0;
-  visibility: hidden;
-  will-change: opacity, transform;
-}
-/* Mango House only — see the i === 0 check in ChooseEscape.tsx. */
-.panelRight {
-  left: auto;
-  right: clamp(1.5rem, 6vw, 5rem);
-  text-align: right;
-}
-.panelNum {
-  display: block;
   font-family: var(--font-mont);
   font-weight: 600;
-  font-size: 0.72rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(246, 236, 220, 0.6);
-  margin-bottom: 0.9rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  opacity: 0.85;
+  transform: translateY(-2px);
+  transition:
+    opacity 350ms var(--ease-slow),
+    transform 350ms var(--ease-slow);
 }
-.panelKicker {
+
+.cardMedia {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+}
+.cardImg {
+  transition: transform 650ms var(--ease-slow);
+}
+.cardShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(190deg, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.3) 100%);
+  pointer-events: none;
+}
+
+.cardBody {
+  padding: 1.5rem 1.6rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.cardKicker {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
   font-family: var(--font-mont);
   font-weight: 600;
-  font-size: 0.72rem;
-  letter-spacing: 0.26em;
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: #e3c48c;
-  margin-bottom: 0.7rem;
+  color: #a9793a;
+  margin-bottom: 0.6rem;
 }
-.panelKicker::before {
+.cardKicker::before {
   content: '';
-  width: 1.6rem;
+  width: 1.4rem;
   height: 1px;
   background: currentColor;
 }
-/* Mirrors the accent dash to trail the text instead of leading it, since
-   this panel hugs the right edge of the stage. */
-.panelRight .panelKicker {
-  flex-direction: row-reverse;
-}
-.panelTitle {
+.cardTitle {
   font-family: var(--font-qalisten), Georgia, serif;
   font-weight: 400;
-  font-size: clamp(2.4rem, 5vw, 4.2rem);
-  line-height: 1.02;
-  color: #f8f0e2;
-  margin-bottom: 0.75rem;
-  text-shadow: 0 6px 40px rgba(0, 0, 0, 0.45);
-}
-.panelQuote {
-  font-family: var(--font-mont);
-  font-style: italic;
-  font-weight: 500;
-  font-size: clamp(0.95rem, 1.4vw, 1.15rem);
-  line-height: 1.6;
-  color: rgba(246, 236, 220, 0.85);
-  max-width: 32em;
-  margin-bottom: 1rem;
-}
-.panelFacts {
-  font-family: var(--font-mont);
-  font-weight: 500;
-  font-size: clamp(0.85rem, 1.2vw, 0.95rem);
-  line-height: 1.8;
-  color: rgba(246, 236, 220, 0.75);
-  margin-bottom: 1.4rem;
-}
-.dot {
-  margin: 0 0.5rem;
-  color: rgba(246, 236, 220, 0.4);
-}
-.price {
-  color: #f8f0e2;
-  font-weight: 600;
-  font-size: 1.1em;
-}
-.panelCta {
-  display: inline-flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.4rem 0.4rem 0.4rem 1.4rem;
-  border-radius: 999px;
-  background: #f6ecdc;
-  color: #1d1d1b;
-  font-family: var(--font-mont);
-  font-weight: 600;
-  font-size: 0.8rem;
-  letter-spacing: 0.04em;
-  box-shadow: 0 18px 34px -16px rgba(0, 0, 0, 0.7);
-  transition: transform 450ms var(--ease-slow);
-}
-.panelCta:hover {
-  transform: translateY(-2px);
-}
-.panelCtaIcon {
-  width: 2.4rem;
-  height: 2.4rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: #1d1d1b;
-  color: #f6ecdc;
-  font-size: 0.8rem;
-  transition:
-    transform 450ms var(--ease-slow),
-    background-color 300ms;
-}
-.panelCta:hover .panelCtaIcon {
-  transform: translateX(3px) rotate(-35deg);
-  background: #a9793a;
-}
-
-/* ── Mobile / tablet / reduced-motion fallback ───────────────────────── */
-.fallback {
-  display: none;
-  padding: 0 0 var(--pad-y);
-}
-@media (max-width: 860px) {
-  .fallback {
-    display: block;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .fallback {
-    display: block;
-  }
-}
-
-.fallbackCard {
-  flex: none;
-  width: min(80vw, 22rem);
-  padding: 1.5rem 1.5rem 1.75rem;
-  border-radius: 28px;
-  background: var(--silver);
-  border: 1px solid var(--line);
-}
-.fallbackMedia {
-  aspect-ratio: 4 / 3;
-  border-radius: 18px;
-  overflow: hidden;
-  margin-bottom: 1.1rem;
-}
-.fallbackMedia img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-.fallbackKicker {
-  font-family: var(--font-mont);
-  font-weight: 600;
-  font-size: 0.7rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #a9793a;
-  margin-bottom: 0.5rem;
-}
-.fallbackTitle {
-  font-family: var(--font-qalisten), Georgia, serif;
-  font-weight: 400;
-  font-size: 1.9rem;
+  font-size: clamp(1.7rem, 2.6vw, 2.1rem);
   line-height: 1.05;
   color: var(--ink);
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.5rem;
 }
-.fallbackQuote {
+.cardTag {
+  font-family: var(--font-mont);
+  font-weight: 500;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  margin-bottom: 0.9rem;
+}
+.cardQuote {
   font-family: var(--font-mont);
   font-style: italic;
   font-size: 0.92rem;
   line-height: 1.55;
   color: var(--ink-soft);
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.9rem;
 }
-.fallbackFacts {
+.cardFacts {
   font-family: var(--font-mont);
   font-size: 0.85rem;
   line-height: 1.8;
   color: var(--ink-soft);
-  margin-bottom: 1.1rem;
 }
-.fallbackFacts .dot {
+.dot {
+  margin: 0 0.5rem;
   color: var(--ink-faint);
 }
-.fallbackFacts .price {
+.cardPrice {
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.98rem;
   color: var(--ink);
+  margin-bottom: 1.25rem;
+}
+
+.cardCta {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  align-self: flex-start;
+  padding: 0.4rem 0.4rem 0.4rem 1.3rem;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--white);
+  font-family: var(--font-mont);
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+}
+.cardCtaIcon {
+  width: 2.3rem;
+  height: 2.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  color: var(--white);
+  font-size: 0.78rem;
+  transition:
+    transform 450ms var(--ease-slow),
+    background-color 300ms;
 }
