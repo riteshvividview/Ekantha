@@ -7,7 +7,6 @@ import { DragScrollTrack } from '@/components/shared/DragScrollTrack'
 import { resolveMediaSize } from '@/lib/media'
 import { assetUrl } from '@/lib/assetUrl'
 import { gsap, ScrollTrigger } from '@/lib/animations/gsap'
-import { PAGE_DARK, PAGE_LIGHT } from '@/lib/pageTheme'
 import styles from './home.module.css'
 
 const MOBILE_BREAKPOINT = '(min-width: 861px)'
@@ -110,29 +109,6 @@ export function ExperienceReel({ data }: { data: Home['experience'] }) {
   const glowRef = useRef<HTMLDivElement>(null)
   const counterRef = useRef<HTMLSpanElement>(null)
   const linesRef = useRef<SVGSVGElement>(null)
-
-  // Play a fixed-duration palette transition when the section reaches its
-  // trigger, then reverse that same transition when scrolling back above it.
-  // Keeping this time-based avoids tying the visible fade to scroll speed.
-  useEffect(() => {
-    const section = sectionRef.current
-    if (!section) return undefined
-    const ctx = gsap.context(() => {
-      gsap.fromTo(document.body, PAGE_DARK, {
-        ...PAGE_LIGHT,
-        duration: 0.8,
-        ease: 'power2.inOut',
-        immediateRender: false,
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse',
-          invalidateOnRefresh: true,
-        },
-      })
-    }, section)
-    return () => ctx.revert()
-  }, [])
 
   // Dynamically imported, and only in development: @theatre/core (~900KB)
   // has no reason to ship in the production bundle for a glow that's

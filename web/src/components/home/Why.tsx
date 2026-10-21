@@ -3,7 +3,6 @@
 import { useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { gsap } from '@/lib/animations/gsap'
-import { THEME_SECONDS } from '@/lib/pageTheme'
 import { assetUrl } from '@/lib/assetUrl'
 import styles from './Why.module.css'
 
@@ -53,29 +52,6 @@ const REASONS = [
 
 const MARQUEE = ['Untouched', 'Private', 'Unhurried', 'Yours']
 
-// The page's light → dark shift. The site's palette lives in CSS custom
-// properties on :root, so tweening those same properties on <body> (scrubbed
-// to scroll) repaints every section at once as one continuous fade — no
-// hard block edges. Values mirror the :root tokens in globals.css.
-const LIGHT = {
-  '--white': 'rgb(250, 240, 230)',
-  '--silver': 'rgb(254, 248, 248)',
-  '--ink': 'rgb(29, 29, 27)',
-  '--ink-soft': 'rgba(29, 29, 27, 0.62)',
-  '--ink-faint': 'rgba(29, 29, 27, 0.42)',
-  '--line': 'rgba(29, 29, 27, 0.12)',
-  '--line-strong': 'rgba(29, 29, 27, 0.22)',
-}
-const DARK = {
-  '--white': 'rgb(24, 20, 17)',
-  '--silver': 'rgb(34, 28, 23)',
-  '--ink': 'rgb(244, 234, 217)',
-  '--ink-soft': 'rgba(244, 234, 217, 0.66)',
-  '--ink-faint': 'rgba(244, 234, 217, 0.44)',
-  '--line': 'rgba(244, 234, 217, 0.14)',
-  '--line-strong': 'rgba(244, 234, 217, 0.26)',
-}
-
 export function Why() {
   const sectionRef = useRef<HTMLElement>(null)
 
@@ -87,14 +63,6 @@ export function Why() {
     const q = <T extends Element = HTMLElement>(sel: string) => Array.from(section.querySelectorAll<T>(sel))
 
     const ctx = gsap.context(() => {
-      // One continuous light → dark fade across the gap above this section.
-      gsap.fromTo(document.body, LIGHT, {
-        ...DARK,
-        duration: THEME_SECONDS,
-        ease: 'power2.out',
-        scrollTrigger: { trigger: section, start: 'top 82%', toggleActions: 'play none none reverse' },
-      })
-
       if (reduced) return
 
       gsap.fromTo(

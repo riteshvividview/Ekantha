@@ -1,11 +1,10 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import type { Map as MapLibreMap, Marker, GeoJSONSource, StyleSpecification } from 'maplibre-gl'
+import type { Map as MapLibreMap, Marker, GeoJSONSource } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { gsap } from '@/lib/animations/gsap'
 import { darkenStyle } from '@/lib/darkMapStyle'
-import { PAGE_DARK, PAGE_LIGHT, THEME_SECONDS } from '@/lib/pageTheme'
 import styles from './Reach.module.css'
 
 // Free, key-less stack: MapLibre GL (BSD) + OpenFreeMap vector tiles +
@@ -88,16 +87,16 @@ function fallbackRoute(o: Origin): RouteState {
   r.duration = (r.total / 1000 / 55) * 3600
   return r
 }
-async function fetchRoute(o: Origin): Promise<RouteState> {
+async function fetchRoute(o: Origin): Promise<RouteState | null> {
   try {
     const url = `https://router.project-osrm.org/route/v1/driving/${o.lng},${o.lat};${FARM.lng},${FARM.lat}?overview=full&geometries=geojson`
-    const res = await fetch(url)
+    const res = await fetch(url, { signal: AbortSignal.timeout(8000) })
     if (!res.ok) throw new Error('route')
     const r = (await res.json()).routes?.[0]
     if (!r) throw new Error('no route')
-    return buildRoute(decimate(r.geometry.coordinates as LngLat[], 420), r.duration, false)
+    return buildRoute(decimate(r.geometry.coordinates as LngLat[], 260), r.duration, false)
   } catch {
-    return fallbackRoute(o)
+    return null
   }
 }
 const fmtDuration = (sec: number) => {
@@ -137,6 +136,7 @@ export function Reach() {
   const loadRouteRef = useRef<(o: Origin) => Promise<void>>(async () => {})
   const progressRef = useRef(0)
   const currentOrigin = useRef<Origin>(HYDERABAD)
+  const locationRequested = useRef(false)
 
   const [origin, setOrigin] = useState<Origin>(HYDERABAD)
   const [summary, setSummary] = useState<{
@@ -144,7 +144,6 @@ export function Reach() {
     distance: string
     approximate: boolean
   } | null>(null)
-  const [geo, setGeo] = useState<'idle' | 'locating' | 'ok' | 'denied'>('idle')
 
   useEffect(() => {
     const section = sectionRef.current
@@ -165,11 +164,13 @@ export function Reach() {
         : { top: 0, bottom: Math.round(h * 0.34), left: 0, right: 0 }
     }
 
-    const render = (p: number) => {
+    let renderFrame = 0
+    let pendingProgress = 0
+    const renderFrameNow = (p: number) => {
       const e = engineRef.current
       if (!e || !e.route) return
       const { route, map } = e
-      const r = clamp((p - 0.04) / 0.86, 0, 1)
+      const r = clamp(p / 0.9, 0, 1)
       const at = (m: number): LngLat => {
         const target = clamp(m, 0, route.total)
         let lo = 0
@@ -243,6 +244,14 @@ export function Reach() {
       if (hudTimeRef.current) hudTimeRef.current.textContent = fmtDuration(route.duration * r)
       if (barRef.current) barRef.current.style.transform = `scaleX(${r})`
     }
+    const render = (p: number) => {
+      pendingProgress = p
+      if (renderFrame) return
+      renderFrame = window.requestAnimationFrame(() => {
+        renderFrame = 0
+        renderFrameNow(pendingProgress)
+      })
+    }
 
     // Framing for the final overview (and how far to zoom while chasing).
     const computeFit = (e: Engine) => {
@@ -270,76 +279,63 @@ export function Reach() {
       const e = engineRef.current
       if (!e) return
       const token = ++e.token
-      const route = await fetchRoute(o)
-      if (disposed || token !== e.token) return
       const { map, maplibre } = e
-
-      e.markers.forEach((m) => m.remove())
-      e.chips.forEach((c) => c.marker.remove())
-      e.markers = []
-      e.chips = []
-      e.route = route
-      e.bearing = bearingBetween(route.coords[0], route.coords[Math.min(6, route.coords.length - 1)])
-
-      const line = {
-        type: 'Feature',
-        properties: {},
-        geometry: { type: 'LineString', coordinates: route.coords },
-      } as const
-      ;(map.getSource('route-base') as GeoJSONSource).setData(line)
-      ;(map.getSource('route-prog') as GeoJSONSource).setData({
-        ...line,
-        geometry: {
-          type: 'LineString',
-          coordinates: [route.coords[0], route.coords[0]],
-        },
-      })
-
       const el = (cls: string, html: string) => {
         const d = document.createElement('div')
         d.className = cls
         d.innerHTML = html
         return d
       }
-      const start = route.coords[0]
-      const end = route.coords[route.coords.length - 1]
-      e.markers.push(
-        new maplibre.Marker({
-          element: el(
-            'vk-start',
-            `<span class="vk-dot"></span><span class="vk-label">${o.label === 'Your location' ? 'You' : o.label}</span>`,
-          ),
-        })
-          .setLngLat(start)
-          .addTo(map),
-        new maplibre.Marker({
-          element: el(
-            'vk-end',
-            '<span class="vk-house"><i class="fa-solid fa-house-chimney"></i></span><span class="vk-label">Our Farmhouse</span>',
-          ),
-          anchor: 'bottom',
-        })
-          .setLngLat(end)
-          .addTo(map),
-      )
-      e.head = new maplibre.Marker({
-        element: el('vk-head', '<span class="vk-pulse"></span><span class="vk-car"><i class="fa-solid fa-car-side"></i></span>'),
-      })
-        .setLngLat(start)
-        .addTo(map)
-      e.markers.push(e.head)
+      const applyRoute = (route: RouteState) => {
+        if (disposed || token !== e.token) return
+        e.markers.forEach((m) => m.remove())
+        e.chips.forEach((c) => c.marker.remove())
+        e.markers = []
+        e.chips = []
+        e.route = route
+        e.bearing = bearingBetween(route.coords[0], route.coords[Math.min(6, route.coords.length - 1)])
 
-      computeFit(e)
+        const line = {
+          type: 'Feature',
+          properties: {},
+          geometry: { type: 'LineString', coordinates: route.coords },
+        } as const
+        ;(map.getSource('route-base') as GeoJSONSource).setData(line)
+        ;(map.getSource('route-prog') as GeoJSONSource).setData({
+          ...line,
+          geometry: { type: 'LineString', coordinates: [route.coords[0], route.coords[0]] },
+        })
 
-      setSummary({
-        duration: fmtDuration(route.duration),
-        distance: fmtKm(route.total),
-        approximate: route.approximate,
-      })
-      render(progressRef.current)
+        const start = route.coords[0]
+        const end = route.coords[route.coords.length - 1]
+        e.markers.push(
+          new maplibre.Marker({
+            element: el('vk-start', `<span class="vk-dot"></span><span class="vk-label">${o.label === 'Your location' ? 'You' : o.label}</span>`),
+          }).setLngLat(start).addTo(map),
+          new maplibre.Marker({
+            element: el('vk-end', '<span class="vk-house"><i class="fa-solid fa-house-chimney"></i></span><span class="vk-label">Our Farmhouse</span>'),
+            anchor: 'bottom',
+          }).setLngLat(end).addTo(map),
+        )
+        e.head = new maplibre.Marker({
+          element: el('vk-head', '<span class="vk-pulse"></span><span class="vk-car"><i class="fa-solid fa-car-side"></i></span>'),
+        }).setLngLat(start).addTo(map)
+        e.markers.push(e.head)
+
+        computeFit(e)
+        setSummary({ duration: fmtDuration(route.duration), distance: fmtKm(route.total), approximate: route.approximate })
+        render(progressRef.current)
+      }
+
+      // Draw a route immediately so scrolling never waits for OSRM. Replace
+      // it with the road geometry when the network route is ready.
+      applyRoute(fallbackRoute(o))
+      const route = await fetchRoute(o)
+      if (disposed || token !== e.token) return
+      if (route) applyRoute(route)
 
       // Name a few places along the way (best effort, rate-limited).
-      if (!route.approximate) {
+      if (route && !route.approximate) {
         for (const at of [0.22, 0.42, 0.62, 0.8]) {
           if (disposed || token !== e.token) return
           const [lng, lat] = route.coords[Math.round(at * (route.coords.length - 1))]
@@ -511,7 +507,7 @@ export function Reach() {
       cleanups.push(() => ro.disconnect())
 
       try {
-        await loadRoute(HYDERABAD)
+        await loadRoute(currentOrigin.current)
       } catch {
         /* route fetch is best-effort */
       }
@@ -522,47 +518,68 @@ export function Reach() {
       return true
     }
 
-    ;(async () => {
-      const MAX_ATTEMPTS = 5
-      for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-        if (disposed) return
-        const ok = await attemptSetup()
-        if (ok || disposed) return
-        // Backs off a little more each time, giving a transient
-        // WebGL-context crunch room to clear before trying again.
-        await new Promise((r) => setTimeout(r, 1500 * attempt))
+    // Ask once on initial page load. A denied or unavailable location keeps
+    // the default Hyderabad origin without interrupting the page.
+    if (!locationRequested.current) {
+      locationRequested.current = true
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const o: Origin = { lat: pos.coords.latitude, lng: pos.coords.longitude, label: 'Your location' }
+            currentOrigin.current = o
+            setOrigin(o)
+            void loadRouteRef.current(o)
+          },
+          () => {
+            currentOrigin.current = HYDERABAD
+          },
+          { enableHighAccuracy: false, timeout: 12000, maximumAge: 600000 },
+        )
       }
-      // Every attempt failed — leave the section visible with a dark map
-      // div rather than retrying forever (this is the "WebGL genuinely
-      // isn't available here" case, not a transient one).
-    })()
+    }
 
-    // ── Scroll: pin the stage; one timeline drives map + captions ──────
+    // MapLibre's WebGL work can compete with the rest of the homepage.
+    // Start it shortly before the location section enters view.
+    let mapStarted = false
+    const startMap = () => {
+      if (mapStarted || disposed) return
+      mapStarted = true
+      void (async () => {
+        const MAX_ATTEMPTS = 5
+        for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+          if (disposed) return
+          const ok = await attemptSetup()
+          if (ok || disposed) return
+          await new Promise((r) => setTimeout(r, 1500 * attempt))
+        }
+      })()
+    }
+    const mapObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          mapObserver.disconnect()
+          startMap()
+        }
+      },
+      { rootMargin: '700px 0px' },
+    )
+    mapObserver.observe(section)
+    cleanups.push(() => mapObserver.disconnect())
+
+    // Pin the map only while its route story plays, then release directly
+    // into the next homepage section.
     const proxy = { p: 0 }
     let tl: gsap.core.Timeline | null = null
     const ctx = gsap.context(() => {
-      // The page returns from the dark theme as the map leaves the screen.
-      gsap.fromTo(document.body, PAGE_DARK, {
-        ...PAGE_LIGHT,
-        duration: THEME_SECONDS,
-        ease: 'power2.out',
-        immediateRender: false,
-        scrollTrigger: {
-          trigger: section,
-          start: 'bottom 92%',
-          toggleActions: 'play none none reverse',
-        },
-      })
-
       if (reduced) return
 
       tl = gsap.timeline({
         scrollTrigger: {
           trigger: stage,
           start: 'top top',
-          end: () => `+=${Math.round(window.innerHeight * 2.2)}`,
+          end: () => `+=${Math.round(window.innerHeight * 1.5)}`,
           pin: true,
-          scrub: 0.7,
+          scrub: true,
           invalidateOnRefresh: true,
         },
       })
@@ -606,6 +623,7 @@ export function Reach() {
     return () => {
       disposed = true
       cleanups.forEach((fn) => fn())
+      if (renderFrame) window.cancelAnimationFrame(renderFrame)
       tl?.scrollTrigger?.kill(true)
       tl?.kill()
       ctx.revert()
@@ -616,29 +634,6 @@ export function Reach() {
       engineRef.current = null
     }
   }, [])
-
-  const locate = () => {
-    if (!('geolocation' in navigator)) {
-      setGeo('denied')
-      return
-    }
-    setGeo('locating')
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const o: Origin = {
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-          label: 'Your location',
-        }
-        currentOrigin.current = o
-        setOrigin(o)
-        setGeo('ok')
-        void loadRouteRef.current(o)
-      },
-      () => setGeo('denied'),
-      { enableHighAccuracy: false, timeout: 12000, maximumAge: 600000 },
-    )
-  }
 
   const fromLabel = origin.label === 'Your location' ? 'You' : origin.label
   // Both buttons open the farmhouse's own Google Maps listing.
@@ -660,13 +655,6 @@ export function Reach() {
               <span className={styles.eyebrowDash} />
               Location
             </p>
-            <div className={styles.locateWrap} data-in>
-              <button type="button" className={styles.locate} onClick={locate} disabled={geo === 'locating'}>
-                <i className={`fa-solid ${geo === 'locating' ? 'fa-spinner fa-spin' : 'fa-location-crosshairs'}`} aria-hidden="true" />
-                {geo === 'ok' ? 'Route from you' : geo === 'locating' ? 'Locating...' : 'Trace it from where you are'}
-              </button>
-              {geo === 'denied' && <p className={styles.geoNote}>Location is off, so this shows the drive from Hyderabad.</p>}
-            </div>
           </div>
 
           <div className={styles.narrative}>
@@ -698,7 +686,7 @@ export function Reach() {
             <div className={styles.arrival} data-arrival>
               <span className={styles.kicker}>
                 <i className="fa-solid fa-house-chimney" aria-hidden="true" />
-                You've arrived
+                You&apos;ve arrived
               </span>
               <p className={styles.arrivalTitle}>
                 Welcome to <span className={styles.gold}>Vana Ekantha.</span>

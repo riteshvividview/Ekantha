@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { gsap } from '@/lib/animations/gsap'
-import { THEME_SECONDS } from '@/lib/pageTheme'
 import { assetUrl } from '@/lib/assetUrl'
 import styles from './Events.module.css'
 
@@ -69,29 +68,6 @@ const SLIDES = [
 ]
 const N = SLIDES.length
 
-// Mirrors Why.tsx: the page palette lives in CSS custom properties, so
-// tweening them on <body> repaints everything at once. Why.tsx fades the
-// page to dark; this fades it back to light for the Events section, so the
-// page breathes light → dark → light with no hard block edges.
-const DARK = {
-  '--white': 'rgb(24, 20, 17)',
-  '--silver': 'rgb(34, 28, 23)',
-  '--ink': 'rgb(244, 234, 217)',
-  '--ink-soft': 'rgba(244, 234, 217, 0.66)',
-  '--ink-faint': 'rgba(244, 234, 217, 0.44)',
-  '--line': 'rgba(244, 234, 217, 0.14)',
-  '--line-strong': 'rgba(244, 234, 217, 0.26)',
-}
-const LIGHT = {
-  '--white': 'rgb(250, 240, 230)',
-  '--silver': 'rgb(254, 248, 248)',
-  '--ink': 'rgb(29, 29, 27)',
-  '--ink-soft': 'rgba(29, 29, 27, 0.62)',
-  '--ink-faint': 'rgba(29, 29, 27, 0.42)',
-  '--line': 'rgba(29, 29, 27, 0.12)',
-  '--line-strong': 'rgba(29, 29, 27, 0.26)',
-}
-
 export function Events() {
   const sectionRef = useRef<HTMLElement>(null)
   const cardRef = useRef<HTMLDivElement>(null)
@@ -102,7 +78,7 @@ export function Events() {
   const go = (i: number) => setActive(((i % N) + N) % N)
   const titleLines = SLIDES[active].title.split('\n')
 
-  // Page-theme crossfade + scroll-in reveal + scroll-driven parallax on the
+  // Scroll-in reveal + scroll-driven parallax on the
   // copy block. Slide switches are handled separately, by a plain CSS
   // "enter" animation keyed to `active` — see .copyAnim in
   // Events.module.css — since they don't need to track scroll at all.
@@ -116,17 +92,6 @@ export function Events() {
     const q = <T extends Element = HTMLElement>(sel: string) => Array.from(section.querySelectorAll<T>(sel))
 
     const ctx = gsap.context(() => {
-      // Dark → light, scrubbed across the gap above this section.
-      // immediateRender: false so it never stomps Why.tsx's own tween on
-      // first paint; the two ranges don't overlap.
-      gsap.fromTo(document.body, DARK, {
-        ...LIGHT,
-        duration: THEME_SECONDS,
-        ease: 'power2.out',
-        immediateRender: false,
-        scrollTrigger: { trigger: section, start: 'top 82%', toggleActions: 'play none none reverse' },
-      })
-
       if (reduced) return
 
       gsap.from(q('[data-fade]'), {

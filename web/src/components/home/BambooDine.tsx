@@ -149,12 +149,36 @@ export function BambooDine({ data }: { data: Home['dine'] }) {
     if (!section || !video || !text1 || !text2 || !text3 || !railFill) return undefined
 
     let cancelled = false
+    let seekFrame = 0
+    let targetTime = 0
+    let scrollProgress = 0
+    const frameDuration = 1 / 24
+    const flushSeek = () => {
+      seekFrame = 0
+      if (cancelled || video.seeking || !Number.isFinite(video.duration) || video.duration <= 0) return
+      if (Math.abs(video.currentTime - targetTime) < frameDuration) return
+      video.currentTime = targetTime
+    }
+    const syncVideoToScroll = (progress: number) => {
+      if (!Number.isFinite(video.duration) || video.duration <= 0) return
+      targetTime = Math.min(1, Math.max(0, progress)) * video.duration
+      if (!seekFrame) seekFrame = window.requestAnimationFrame(flushSeek)
+    }
+    const onSeeked = () => {
+      // Keep only the newest scroll position while the decoder seeks. This
+      // avoids piling up stale seeks that make the video appear frozen.
+      if (Math.abs(video.currentTime - targetTime) >= frameDuration && !seekFrame) {
+        seekFrame = window.requestAnimationFrame(flushSeek)
+      }
+    }
+    video.addEventListener('seeked', onSeeked)
 
     // -- video load progress --------------------------------------------
     // Reports real buffered-vs-duration progress (not a fake timer) so the
     // first-load screen's percentage stays accurate — same technique as
     // Hero.tsx.
     function reportBufferedProgress() {
+      syncVideoToScroll(scrollProgress)
       if (cancelled || !video || !Number.isFinite(video.duration) || video.duration <= 0) return
       if (video.buffered.length === 0) return
       const bufferedEnd = video.buffered.end(video.buffered.length - 1)
@@ -179,6 +203,8 @@ export function BambooDine({ data }: { data: Home['dine'] }) {
       gsap.set([text1, text2, text3], { autoAlpha: 1, y: 0 })
       return () => {
         cancelled = true
+        if (seekFrame) window.cancelAnimationFrame(seekFrame)
+        video.removeEventListener('seeked', onSeeked)
         video.removeEventListener('progress', reportBufferedProgress)
         video.removeEventListener('loadedmetadata', reportBufferedProgress)
         video.removeEventListener('canplaythrough', reportBufferedProgress)
@@ -201,9 +227,8 @@ export function BambooDine({ data }: { data: Home['dine'] }) {
         scrub: true,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          if (Number.isFinite(video.duration) && video.duration > 0) {
-            video.currentTime = self.progress * video.duration
-          }
+          scrollProgress = self.progress
+          syncVideoToScroll(scrollProgress)
         },
       },
     })
@@ -237,6 +262,8 @@ export function BambooDine({ data }: { data: Home['dine'] }) {
 
     return () => {
       cancelled = true
+      if (seekFrame) window.cancelAnimationFrame(seekFrame)
+      video.removeEventListener('seeked', onSeeked)
       video.removeEventListener('progress', reportBufferedProgress)
       video.removeEventListener('loadedmetadata', reportBufferedProgress)
       video.removeEventListener('canplaythrough', reportBufferedProgress)

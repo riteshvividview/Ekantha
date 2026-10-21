@@ -99,55 +99,6 @@
   height: 1px;
   background: linear-gradient(90deg, #e3c48c, rgba(227, 196, 140, 0));
 }
-.locateWrap {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.6rem;
-}
-.locate {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.65rem;
-  padding: 0.75rem 1.2rem;
-  border-radius: 999px;
-  border: 1px solid rgba(227, 196, 140, 0.45);
-  background: rgba(20, 16, 12, 0.65);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
-  color: #f6ecdc;
-  font-family: var(--font-mont);
-  font-weight: 600;
-  font-size: 0.68rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  transition:
-    background-color 350ms var(--ease-slow),
-    border-color 350ms var(--ease-slow),
-    transform 450ms var(--ease-slow);
-}
-.locate:hover:not(:disabled) {
-  background: #e3c48c;
-  border-color: #e3c48c;
-  color: #1d1d1b;
-  transform: translateY(-2px);
-}
-.locate i {
-  color: #e3c48c;
-}
-.locate:hover:not(:disabled) i {
-  color: #1d1d1b;
-}
-.geoNote {
-  max-width: 17rem;
-  text-align: right;
-  font-family: var(--font-mont);
-  font-weight: 500;
-  font-size: 0.72rem;
-  line-height: 1.5;
-  color: rgba(246, 236, 220, 0.75);
-}
-
 /* ── Opening title + captions ────────────────────────────────────── */
 .hero,
 .beat,
@@ -588,13 +539,6 @@
     gap: 1rem;
     margin-bottom: 1.5rem;
   }
-  .locateWrap {
-    align-items: flex-start;
-  }
-  .geoNote {
-    text-align: left;
-  }
-
   /* The three narrative stages (hero/beat/arrival) crossfade in the SAME
      spot here, same as on desktop — just stacked below the map instead of
      over it. */

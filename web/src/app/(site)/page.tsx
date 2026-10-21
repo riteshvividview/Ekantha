@@ -14,6 +14,7 @@ import { BambooDine } from '@/components/home/BambooDine'
 import { Events } from '@/components/home/Events'
 
 import { LivingStories } from '@/components/home/LivingStories'
+import { StoryGalleryStrap } from '@/components/home/StoryGalleryStrap'
 import { Gallery } from '@/components/home/Gallery'
 import { Reach } from '@/components/home/Reach'
 
@@ -45,6 +46,7 @@ export default async function HomePage() {
       <Events />
 
       <LivingStories />
+      <StoryGalleryStrap />
       <Gallery />
       <Reach />
       <FinalCtaBanner

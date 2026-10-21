@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { gsap } from '@/lib/animations/gsap'
-import { PAGE_DARK, PAGE_LIGHT, THEME_SECONDS } from '@/lib/pageTheme'
 import { assetUrl } from '@/lib/assetUrl'
 import styles from './Gallery.module.css'
 
@@ -177,18 +176,6 @@ export function Gallery() {
     })
 
     const ctx = gsap.context(() => {
-      // The page turns dark as this section arrives (scrubbed, so the whole page
-      // changes together with no seams). It stays dark through the Location map
-      // and returns to light after it — see Reach.tsx.
-      // immediateRender: false so it never stomps another section's tween.
-      gsap.fromTo(document.body, PAGE_LIGHT, {
-        ...PAGE_DARK,
-        duration: THEME_SECONDS,
-        ease: 'power2.out',
-        immediateRender: false,
-        scrollTrigger: { trigger: section, start: 'top 82%', toggleActions: 'play none none reverse' },
-      })
-
       if (reduced) return
 
       gsap.from(q('[data-line-inner]'), {

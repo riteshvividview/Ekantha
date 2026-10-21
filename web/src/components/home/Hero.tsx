@@ -10,12 +10,9 @@ import styles from './home.module.css'
 // A real compressed video (H.264, keyframe every 8 frames so any scroll
 // position seeks cheaply), scrubbed via video.currentTime — not a canvas
 // redrawing a 440-WebP-frame sequence loaded as separate <img>s (the
-// previous approach here). That was ~41MB of images for this section
-// alone, loaded individually; this is one ~5MB file. See
-// scripts/convert-hero-frames.mjs's history for how the old frames were
-// produced, and the project's /videos/ convention for how this one was
-// (ffmpeg -g 8 -keyint_min 8, same as BambooDine/ChooseEscape below).
-const VIDEO_SRC = assetUrl('/videos/hero-entrance.mp4')
+// previous approach here). The replacement is a fast-start, 1600x900 H.264
+// file with short GOPs for quick scroll seeks, optimized to about 7MB.
+const VIDEO_SRC = assetUrl('/videos/hero-drone-clip-01.mp4')
 
 // Scroll distance (px) the hero stays pinned for — not tied to real time
 // or frame count, just scroll depth; the video's own duration is what
@@ -105,6 +102,29 @@ export function Hero({ data }: { data: Home['hero'] }) {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     let cancelled = false
+    let seekFrame = 0
+    let targetTime = 0
+    let scrollProgress = 0
+    const frameDuration = 1 / 30
+    const flushSeek = () => {
+      seekFrame = 0
+      if (cancelled || video.seeking || !Number.isFinite(video.duration) || video.duration <= 0) return
+      if (Math.abs(video.currentTime - targetTime) < frameDuration) return
+      video.currentTime = targetTime
+    }
+    const syncVideoToScroll = (progress: number) => {
+      if (!Number.isFinite(video.duration) || video.duration <= 0) return
+      targetTime = Math.min(1, Math.max(0, progress)) * video.duration
+      if (!seekFrame) seekFrame = window.requestAnimationFrame(flushSeek)
+    }
+    const onSeeked = () => {
+      // Drop stale intermediate seeks and decode only the latest scroll
+      // position, keeping the 30fps hero responsive during fast scrolls.
+      if (Math.abs(video.currentTime - targetTime) >= frameDuration && !seekFrame) {
+        seekFrame = window.requestAnimationFrame(flushSeek)
+      }
+    }
+    video.addEventListener('seeked', onSeeked)
 
     // How far the title needs to travel to dock at the bottom of the hero
     // (with TITLE_DOCK_PADDING below it) — measured against its natural,
@@ -140,6 +160,7 @@ export function Hero({ data }: { data: Home['hero'] }) {
     // waiting for it in full is fast, and it means scrubbing never has to
     // wait on the network mid-scroll.
     function reportBufferedProgress() {
+      syncVideoToScroll(scrollProgress)
       if (cancelled || !video || !Number.isFinite(video.duration) || video.duration <= 0) return
       if (video.buffered.length === 0) return
       const bufferedEnd = video.buffered.end(video.buffered.length - 1)
@@ -169,6 +190,8 @@ export function Hero({ data }: { data: Home['hero'] }) {
       gsap.set([eyebrow, sub, explore], { autoAlpha: 1, y: 0 })
       return () => {
         cancelled = true
+        if (seekFrame) window.cancelAnimationFrame(seekFrame)
+        video.removeEventListener('seeked', onSeeked)
         video.removeEventListener('progress', reportBufferedProgress)
         video.removeEventListener('loadedmetadata', reportBufferedProgress)
         video.removeEventListener('canplaythrough', reportBufferedProgress)
@@ -252,9 +275,8 @@ export function Hero({ data }: { data: Home['hero'] }) {
       invalidateOnRefresh: true,
       onUpdate: (self) => {
         const p = self.progress
-        if (Number.isFinite(video.duration) && video.duration > 0) {
-          video.currentTime = p * video.duration
-        }
+        scrollProgress = p
+        syncVideoToScroll(p)
 
         // Background: a slow continuous zoom across the whole pin — layered
         // on the video itself (not .heroMediaTrack, which the cursor-
@@ -295,6 +317,8 @@ export function Hero({ data }: { data: Home['hero'] }) {
 
     return () => {
       cancelled = true
+      if (seekFrame) window.cancelAnimationFrame(seekFrame)
+      video.removeEventListener('seeked', onSeeked)
       video.removeEventListener('progress', reportBufferedProgress)
       video.removeEventListener('loadedmetadata', reportBufferedProgress)
       video.removeEventListener('canplaythrough', reportBufferedProgress)
