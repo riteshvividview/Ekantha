@@ -73,6 +73,19 @@ export default async function SiteRootLayout({ children }: { children: React.Rea
             site-wide (see the note in globals.css), so it's just gone,
             not migrated to next/font. */}
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css" rel="stylesheet" />
+        {/* Warms the Reach (location/map) section's two heaviest requests
+            during the browser's idle time right after the initial page
+            loads — well before that section actually mounts its map,
+            let alone before a visitor scrolls anywhere near it. Without
+            this, a visitor who reaches that pinned section before its own
+            on-mount fetch + WebGL setup has finished would see the map
+            "catch up" mid-scroll (a jump as the camera/markers snap to
+            wherever the scroll position already is) instead of already
+            being ready. The style JSON itself is cached for an hour
+            (see the map-style route's Cache-Control), so this prefetch is
+            what that cache actually gets warmed by. */}
+        <link rel="prefetch" href="/api/map-style" as="fetch" crossOrigin="anonymous" />
+        <link rel="prefetch" href="/maplibre/maplibre-gl-worker.mjs" as="script" />
       </head>
       <body
         className={`${qalisten.variable} ${clashDisplay.variable} ${generalSans.variable} ${montserrat.variable} ${fraunces.variable}`}

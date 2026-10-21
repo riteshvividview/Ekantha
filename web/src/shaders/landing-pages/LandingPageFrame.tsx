@@ -143,8 +143,15 @@ export function LandingPageFrame({
   const containerRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLIFrameElement>(null);
 
-  // Intersection-observer lazy trigger: start loading when the wrapper is
-  // within 200px of the viewport (rootMargin), then disconnect immediately.
+  // Intersection-observer lazy trigger: start loading well before the
+  // wrapper is actually on screen (rootMargin), then disconnect
+  // immediately. This loads a whole separate HTML document — its own JS
+  // bundle, fonts and a three.js/WebGL scene — not a small asset, so 200px
+  // of lead (a fraction of a second at normal scroll speed) wasn't enough:
+  // visitors scrolling at a normal pace reached the section before that
+  // work had finished, landing right in the middle of it starting up —
+  // the stutter this margin is sized to avoid. 1600px gives it several
+  // seconds' head start at typical scroll speed instead.
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -155,7 +162,7 @@ export function LandingPageFrame({
           observer.disconnect();
         }
       },
-      { rootMargin: "200px" },
+      { rootMargin: "1600px 0px" },
     );
     observer.observe(el);
     return () => observer.disconnect();
