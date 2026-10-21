@@ -20,24 +20,23 @@
   --accent: #9d5c26; /* Amber Roast */
   --accent-deep: #462b32; /* Mulberry Noir */
 
-  /* Clash Display / General Sans (Fontshare, free for commercial use) —
-     free-license stand-ins for the Neue Machina / Neue Haas Grotesk Display
-     pairing on noomoagency.com, matched for the same geometric-technical
-     headline + clean grotesk body feel without needing a paid license. */
-  --font-display: 'Clash Display', Arial, sans-serif;
-  --font-body: 'General Sans', Arial, sans-serif;
-  /* The old monospace/typewriter accent (--font-accent, Cascadia Code) used
+  /* --font-display (Clash Display), --font-body (General Sans), --font-mont
+     (Montserrat) and --font-accent-italic (Fraunces) are NOT declared here
+     — same reasoning as --font-qalisten below: all four are next/font
+     fonts now (see src/lib/fonts.ts), whose generated CSS variables only
+     exist on <body> via each font's `variable` class, not at :root. A
+     :root-level fallback here would reference a font family string
+     ('Clash Display' etc.) that nothing loads anymore — Clash
+     Display/General Sans/Montserrat/Fraunces used to load via two
+     render-blocking Google Fonts/Fontshare <link> tags in the root
+     layout; now self-hosted and inlined at build time instead, with no
+     runtime request to either origin.
+     The old monospace/typewriter accent (--font-accent, Cascadia Code) used
      for labels, counters and eyebrows has been retired site-wide — every
      former usage now sets `font-family: var(--font-qalisten), Georgia,
-     serif;` directly (not through a :root custom property: --font-qalisten
-     only exists on <body>, via next/font/local's `variable` class — see the
-     identical note on .heroTitle in home.module.css for why a :root-level
-     var(--font-accent) referencing it would've computed to invalid and
-     never resolved). --font-accent-italic (Fraunces) is unrelated and
-     unchanged — it's the one-italic-word editorial accent inside headings
-     (e.g. the "Ekantha" in "why Vana Ekantha"), never the monospace one. */
-  --font-accent-italic: 'Fraunces', Georgia, serif;
-  --font-mont: 'Montserrat', Arial, sans-serif;
+     serif;` directly. --font-accent-italic (Fraunces) is unrelated —
+     it's the one-italic-word editorial accent inside headings (e.g. the
+     "Ekantha" in "why Vana Ekantha"), never the monospace one. */
 
   --ease-slow: cubic-bezier(0.6, 0.05, 0.3, 1);
   --ease-soft: cubic-bezier(0.25, 0.46, 0.45, 0.94);

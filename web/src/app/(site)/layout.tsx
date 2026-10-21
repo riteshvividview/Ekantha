@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import '../globals.css'
-import { qalisten } from '@/lib/fonts'
+import { qalisten, clashDisplay, generalSans, montserrat, fraunces } from '@/lib/fonts'
 import { INITIAL_LOAD_COOKIE } from '@/lib/initialLoadCookie'
 import { SmoothScrollProvider } from '@/components/layout/SmoothScrollProvider'
 import { TheatreStudioLoader } from '@/components/layout/TheatreStudioLoader'
@@ -62,31 +62,21 @@ export default async function SiteRootLayout({ children }: { children: React.Rea
   return (
     <html lang="en" data-scroll-behavior="smooth">
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://api.fontshare.com" />
-        <link rel="preconnect" href="https://cdn.fontshare.com" crossOrigin="anonymous" />
-        {/* eslint-disable-next-line @next/next/no-page-custom-font -- this
-            rule is a Pages Router-era check for per-page <Head> usage; this
-            is the App Router *root* layout, so these tags are already
-            site-wide, which is exactly what the rule is asking for. */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Cascadia+Code:ital,wght@0,200..700;1,200..700&family=Fraunces:ital,wght@0,400;1,400..600&family=Montserrat:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-        {/* Clash Display (headlines) + General Sans (body) from Fontshare —
-            free-license stand-ins for noomoagency.com's Neue Machina / Neue
-            Haas Grotesk Display pairing, which are paid commercial fonts we
-            don't hold a license for. Loaded the same way as Cascadia Code
-            above: a single hosted stylesheet, not next/font/local, since
-            there's no font file in this repo to subset. */}
-        <link
-          href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=general-sans@400,500,600,700&display=swap"
-          rel="stylesheet"
-        />
+        {/* Clash Display, General Sans, Montserrat and Fraunces used to
+            load via two render-blocking <link rel="stylesheet"> tags
+            (Google Fonts + Fontshare, each its own DNS/TLS round trip)
+            plus their preconnects. All four are self-hosted and inlined
+            at build time now via next/font (see src/lib/fonts.ts) — no
+            runtime request to either origin, blocking or not. Cascadia
+            Code, the one font that link also loaded, was dead weight: no
+            CSS has referenced it since --font-accent was retired
+            site-wide (see the note in globals.css), so it's just gone,
+            not migrated to next/font. */}
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css" rel="stylesheet" />
       </head>
-      <body className={qalisten.variable}>
+      <body
+        className={`${qalisten.variable} ${clashDisplay.variable} ${generalSans.variable} ${montserrat.variable} ${fraunces.variable}`}
+      >
         <InitialLoadScreen skip={hasLoadedBefore} />
         <PageTransitionOverlay />
         <TheatreStudioLoader />
