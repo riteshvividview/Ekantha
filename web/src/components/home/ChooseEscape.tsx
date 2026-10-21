@@ -6,24 +6,33 @@ import { DragScrollTrack } from '@/components/shared/DragScrollTrack'
 import { CountUp } from '@/components/shared/CountUp'
 import { assetUrl } from '@/lib/assetUrl'
 import { reportProgress } from '@/lib/loadProgress'
-import { loadFrameImage } from '@/lib/loadFrameImage'
 import { gsap, ScrollTrigger } from '@/lib/animations/gsap'
 import styles from './ChooseEscape.module.css'
 
-// Frames are served from R2 (frame-001.webp … frame-273.webp), generated
-// from the raw 273-PNG drone-orbit sequence via
-// scripts/convert-escape-frames.mjs — see that file's header comment.
-const FRAME_COUNT = 273
-const framePath = (i: number) => assetUrl(`/choose-your-escape/frame-${String(i + 1).padStart(3, '0')}.webp`)
+// A real compressed video (H.264, keyframe every 8 frames so any scroll
+// position seeks cheaply), scrubbed via video.currentTime — not a canvas
+// redrawing a 273-WebP-frame sequence loaded as separate <img>s (the
+// previous approach here, ~6.5MB of images loaded individually). Re-
+// encoded from the original raw PNG sequence (not the WebP frames, to
+// avoid compounding lossy compression) via ffmpeg -g 8 -keyint_min 8; one
+// ~2MB file now, at 24fps.
+const VIDEO_SRC = assetUrl('/videos/choose-your-escape.mp4')
+// Per-chapter still images for the mobile/tablet fallback card row (see
+// .fallback below) — extracted from the same video at the same relative
+// timestamps the old per-frame poster lookup used (chapter.start + 0.03),
+// since there's no longer a numbered frame file to address directly.
+const POSTER_SRC: Record<string, string> = {
+  'mango-house': assetUrl('/choose-your-escape/poster-mango-house.jpg'),
+  'stone-house': assetUrl('/choose-your-escape/poster-stone-house.jpg'),
+  'full-house': assetUrl('/choose-your-escape/poster-full-house.jpg'),
+}
 
-// Every frame loads up front, behind the first-load screen — see the
-// identical note in Hero.tsx for why (scrubbing mid-load was stuttering).
-
-// How much scroll distance (px) the stage stays pinned for, spread across
-// the whole sequence — not tied to real time, just scroll depth. Floored
-// against the viewport height so short sequences on tall screens still get
-// a deliberate scroll.
-const PX_PER_FRAME = 7
+// How much scroll distance (px) the stage stays pinned for — not tied to
+// real time or frame count, just scroll depth; the video's own duration
+// is what currentTime scrubs across regardless of this span. Floored
+// against the viewport height so short sequences on tall screens still
+// get a deliberate scroll.
+const SCROLL_DISTANCE_PX = 1911
 const MIN_SCROLL_VH = 1.6
 
 // Desktop-only breakpoint for the pinned scrub — matches ExperienceReel's
@@ -94,18 +103,15 @@ export function ChooseEscape({
 
   const sectionRef = useRef<HTMLElement>(null)
   const stageRef = useRef<HTMLDivElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
   const panelRefs = useRef<Array<HTMLDivElement | null>>([])
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
     const section = sectionRef.current
     const stage = stageRef.current
-    const canvas = canvasRef.current
-    if (!section || !stage || !canvas) return undefined
-
-    const ctx2d = canvas.getContext('2d')
-    if (!ctx2d) return undefined
+    const video = videoRef.current
+    if (!section || !stage || !video) return undefined
 
     const q = <T extends Element = HTMLElement>(sel: string) => Array.from(section.querySelectorAll<T>(sel))
 
@@ -145,86 +151,31 @@ export function ChooseEscape({
       return () => revealCtx.revert()
     }
 
-    const frames: Array<HTMLImageElement | null> = new Array(FRAME_COUNT).fill(null)
-    let currentFrame = 0
     let cancelled = false
 
-    // -- canvas sizing / drawing (same cover-fit technique as BambooDine) --
-
-    function resizeCanvas() {
-      if (!canvas) return
-      const dpr = Math.min(window.devicePixelRatio || 1, 2)
-      const rect = canvas.getBoundingClientRect()
-      canvas.width = Math.round(rect.width * dpr)
-      canvas.height = Math.round(rect.height * dpr)
-      drawFrame(nearestLoadedFrame(currentFrame))
+    // -- video load progress --------------------------------------------
+    // Reports real buffered-vs-duration progress (not a fake timer) so the
+    // first-load screen's percentage stays accurate — same technique as
+    // Hero.tsx.
+    function reportBufferedProgress() {
+      if (cancelled || !video || !Number.isFinite(video.duration) || video.duration <= 0) return
+      if (video.buffered.length === 0) return
+      const bufferedEnd = video.buffered.end(video.buffered.length - 1)
+      const frac = Math.min(1, bufferedEnd / video.duration)
+      reportProgress('chooseEscape', frac)
+      if (frac >= 0.999) setReady(true)
     }
-
-    function coverRect(imgW: number, imgH: number, dstW: number, dstH: number) {
-      const srcRatio = imgW / imgH
-      const dstRatio = dstW / dstH
-      if (srcRatio > dstRatio) {
-        const sw = imgH * dstRatio
-        return { sx: (imgW - sw) / 2, sy: 0, sw, sh: imgH }
-      }
-      const sh = imgW / dstRatio
-      return { sx: 0, sy: (imgH - sh) / 2, sw: imgW, sh }
-    }
-
-    function drawFrame(index: number) {
-      const img = frames[index]
-      if (!canvas || !ctx2d || !img || canvas.width === 0) return
-      const { sx, sy, sw, sh } = coverRect(img.naturalWidth, img.naturalHeight, canvas.width, canvas.height)
-      ctx2d.clearRect(0, 0, canvas.width, canvas.height)
-      ctx2d.drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height)
-    }
-
-    function nearestLoadedFrame(target: number) {
-      if (frames[target]) return target
-      for (let d = 1; d < FRAME_COUNT; d++) {
-        if (frames[target - d]) return target - d
-        if (frames[target + d]) return target + d
-      }
-      return -1
-    }
-
-    let loadedCount = 0
-    async function loadFrame(i: number): Promise<void> {
-      const img = await loadFrameImage(framePath(i))
-      if (cancelled) return
-      if (img) {
-        frames[i] = img
-        if (i === nearestLoadedFrame(currentFrame)) drawFrame(i)
-        if (i === 0) setReady(true)
-      }
-      loadedCount++
-      reportProgress('chooseEscape', loadedCount / FRAME_COUNT)
-    }
-
-    function preload() {
-      const CONCURRENCY = 6
-      let next = 0
-      async function worker() {
-        while (next < FRAME_COUNT && !cancelled) {
-          const i = next++
-          await loadFrame(i)
-        }
-      }
-      void Promise.all(Array.from({ length: CONCURRENCY }, worker))
-    }
-
-    // Observes the canvas's *parent* (see the identical note in
-    // BambooDine.tsx for why — avoids a resize feedback loop).
-    const resizeObserver = new ResizeObserver(resizeCanvas)
-    resizeObserver.observe(canvas.parentElement as Element)
-    resizeCanvas()
-    preload()
+    video.addEventListener('progress', reportBufferedProgress)
+    video.addEventListener('loadedmetadata', reportBufferedProgress)
+    video.addEventListener('canplaythrough', reportBufferedProgress)
+    video.preload = 'auto'
+    video.load()
 
     // -- scroll-driven pin + chapter crossfade --------------------------
 
     const panels = panelRefs.current.filter((el): el is HTMLDivElement => !!el)
 
-    const scrollDistance = Math.max(FRAME_COUNT * PX_PER_FRAME, window.innerHeight * MIN_SCROLL_VH)
+    const scrollDistance = Math.max(SCROLL_DISTANCE_PX, window.innerHeight * MIN_SCROLL_VH)
 
     const trigger = ScrollTrigger.create({
       trigger: stage,
@@ -238,9 +189,9 @@ export function ChooseEscape({
       invalidateOnRefresh: true,
       onUpdate: (self) => {
         const p = self.progress
-        currentFrame = Math.round(p * (FRAME_COUNT - 1))
-        const nearest = nearestLoadedFrame(currentFrame)
-        if (nearest >= 0) drawFrame(nearest)
+        if (Number.isFinite(video.duration) && video.duration > 0) {
+          video.currentTime = p * video.duration
+        }
 
         chapters.forEach((c, i) => {
           const panel = panels[i]
@@ -267,7 +218,9 @@ export function ChooseEscape({
 
     return () => {
       cancelled = true
-      resizeObserver.disconnect()
+      video.removeEventListener('progress', reportBufferedProgress)
+      video.removeEventListener('loadedmetadata', reportBufferedProgress)
+      video.removeEventListener('canplaythrough', reportBufferedProgress)
       revealCtx.revert()
       // .kill(true) reverts the pin-spacer before React's own cleanup —
       // see the identical note in BambooDine.tsx for why that matters.
@@ -307,7 +260,17 @@ export function ChooseEscape({
       {/* Desktop: the scroll-scrubbed drone sequence. */}
       <div className={styles.stageDesktop}>
         <div className={styles.stage} ref={stageRef} data-reveal>
-          <canvas ref={canvasRef} className={styles.canvas} style={{ opacity: ready ? 1 : 0 }} aria-hidden="true" />
+          {/* eslint-disable-next-line jsx-a11y/media-has-caption -- silent decorative scroll-scrubbed background, nothing to caption */}
+          <video
+            ref={videoRef}
+            className={styles.canvas}
+            style={{ opacity: ready ? 1 : 0 }}
+            src={VIDEO_SRC}
+            muted
+            playsInline
+            preload="auto"
+            aria-hidden="true"
+          />
 
           {chapters.map((c, i) => (
             <div
@@ -343,15 +306,14 @@ export function ChooseEscape({
       </div>
 
       {/* Mobile / tablet / reduced-motion: a plain drag-scroll card row —
-          no scroll-jacking, no 273-frame fetch. */}
+          no scroll-jacking, no video fetch. */}
       <div className={styles.fallback}>
         <DragScrollTrack>
           {chapters.map((c) => {
-            const posterIdx = Math.round((c.start + 0.03) * (FRAME_COUNT - 1))
             return (
               <div className={styles.fallbackCard} key={c.slug}>
                 <div className={styles.fallbackMedia}>
-                  <img src={framePath(posterIdx)} alt="" loading="lazy" />
+                  <img src={POSTER_SRC[c.slug]} alt="" loading="lazy" />
                 </div>
                 <p className={styles.fallbackKicker}>{c.kicker}</p>
                 <h3 className={styles.fallbackTitle}>{c.stay.title}</h3>

@@ -7,7 +7,6 @@ import { DragScrollTrack } from '@/components/shared/DragScrollTrack'
 import { resolveMediaSize } from '@/lib/media'
 import { assetUrl } from '@/lib/assetUrl'
 import { gsap, ScrollTrigger } from '@/lib/animations/gsap'
-import { experienceGlow } from '@/lib/animations/theatre/project'
 import { PAGE_DARK, PAGE_LIGHT } from '@/lib/pageTheme'
 import styles from './home.module.css'
 
@@ -135,12 +134,27 @@ export function ExperienceReel({ data }: { data: Home['experience'] }) {
     return () => ctx.revert()
   }, [])
 
+  // Dynamically imported, and only in development: @theatre/core (~900KB)
+  // has no reason to ship in the production bundle for a glow that's
+  // inert in production anyway — see the doc comment above for why. This
+  // keeps the dev-only Studio authoring workflow intact without visitors
+  // ever downloading the library.
   useEffect(() => {
+    if (process.env.NODE_ENV !== 'development') return undefined
     const glow = glowRef.current
-    if (!glow) return
-    return experienceGlow.onValuesChange((values) => {
-      glow.style.opacity = String(values.intensity)
+    if (!glow) return undefined
+    let unsubscribe: (() => void) | undefined
+    let cancelled = false
+    import('@/lib/animations/theatre/project').then(({ experienceGlow }) => {
+      if (cancelled) return
+      unsubscribe = experienceGlow.onValuesChange((values) => {
+        glow.style.opacity = String(values.intensity)
+      })
     })
+    return () => {
+      cancelled = true
+      unsubscribe?.()
+    }
   }, [])
 
   useEffect(() => {

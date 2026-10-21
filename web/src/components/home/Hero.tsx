@@ -4,27 +4,23 @@ import { useEffect, useRef, useState } from 'react'
 import type { Home } from '@/payload-types'
 import { assetUrl } from '@/lib/assetUrl'
 import { reportProgress } from '@/lib/loadProgress'
-import { loadFrameImage } from '@/lib/loadFrameImage'
 import { gsap, ScrollTrigger } from '@/lib/animations/gsap'
 import styles from './home.module.css'
 
-// Frames are served from R2 (frame-001.webp … frame-440.webp), extracted at
-// 24fps from a single landscape video via scripts/convert-hero-frames.mjs —
-// see that file's header comment. Same technique as BambooDine.tsx: a
-// canvas, not DOM <img>s, scroll-scrubbed.
-const FRAME_COUNT = 440
-const framePath = (i: number) => assetUrl(`/hero-entrance/frame-${String(i + 1).padStart(3, '0')}.webp`)
+// A real compressed video (H.264, keyframe every 8 frames so any scroll
+// position seeks cheaply), scrubbed via video.currentTime — not a canvas
+// redrawing a 440-WebP-frame sequence loaded as separate <img>s (the
+// previous approach here). That was ~41MB of images for this section
+// alone, loaded individually; this is one ~5MB file. See
+// scripts/convert-hero-frames.mjs's history for how the old frames were
+// produced, and the project's /videos/ convention for how this one was
+// (ffmpeg -g 8 -keyint_min 8, same as BambooDine/ChooseEscape below).
+const VIDEO_SRC = assetUrl('/videos/hero-entrance.mp4')
 
-// Every frame loads up front, behind the first-load screen (see
-// InitialLoadScreen.tsx) — scrubbing mid-load was showing the nearest
-// already-loaded neighbour as a stand-in and snapping to the real frame
-// once it arrived, a visible stutter. Loading everything before the page
-// is ever shown trades a longer initial wait (behind a real loading
-// screen, not a blank one) for zero stutter once it's scrubbable.
-
-// Scroll distance (px) the hero stays pinned for, spread across the whole
-// sequence — not tied to real time, just scroll depth.
-const PX_PER_FRAME = 8
+// Scroll distance (px) the hero stays pinned for — not tied to real time
+// or frame count, just scroll depth; the video's own duration is what
+// currentTime scrubs across regardless of how far this spans.
+const SCROLL_DISTANCE_PX = 3600
 const MIN_SCROLL_VH = 1.4
 
 // The background frame-sequence still scrubs continuously with scroll —
@@ -62,11 +58,11 @@ const HEADING_SCALE_DOCKED = 0.6
 
 export function Hero({ data }: { data: Home['hero'] }) {
   const heroRef = useRef<HTMLElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  // GSAP's scroll/cursor tweens move this wrapper, not the canvas itself —
-  // the canvas is centered/oversized via plain CSS (top/left 50% +
-  // translate(-50%,-50%)), same arrangement the old <img> used, so the
-  // cursor-parallax drift still has a symmetric overscan to pan into
+  const videoRef = useRef<HTMLVideoElement>(null)
+  // GSAP's scroll/cursor tweens move this wrapper, not the video itself —
+  // the video is centered/oversized via plain CSS (top/left 50% +
+  // translate(-50%,-50%)), same arrangement the old <img>/canvas used, so
+  // the cursor-parallax drift still has a symmetric overscan to pan into
   // without ever exposing an edge.
   const trackRef = useRef<HTMLDivElement>(null)
   const eyebrowRef = useRef<HTMLParagraphElement>(null)
@@ -82,7 +78,7 @@ export function Hero({ data }: { data: Home['hero'] }) {
 
   useEffect(() => {
     const hero = heroRef.current
-    const canvas = canvasRef.current
+    const video = videoRef.current
     const eyebrow = eyebrowRef.current
     const title = titleRef.current
     const sub = subRef.current
@@ -93,7 +89,7 @@ export function Hero({ data }: { data: Home['hero'] }) {
     const heading2 = heading2Ref.current
     if (
       !hero ||
-      !canvas ||
+      !video ||
       !eyebrow ||
       !title ||
       !sub ||
@@ -106,13 +102,8 @@ export function Hero({ data }: { data: Home['hero'] }) {
       return undefined
     }
 
-    const ctx2d = canvas.getContext('2d')
-    if (!ctx2d) return undefined
-
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    const frames: Array<HTMLImageElement | null> = new Array(FRAME_COUNT).fill(null)
-    let currentFrame = 0
     let cancelled = false
 
     // How far the title needs to travel to dock at the bottom of the hero
@@ -141,76 +132,26 @@ export function Hero({ data }: { data: Home['hero'] }) {
     let titleMoveDistance = measureDockDistance(title)
     let headingMoveDistance = measureDockDistance(heading)
 
-    // -- canvas sizing / drawing (same cover-fit technique as BambooDine) --
-
-    function resizeCanvas() {
-      if (!canvas) return
-      const dpr = Math.min(window.devicePixelRatio || 1, 2)
-      const rect = canvas.getBoundingClientRect()
-      canvas.width = Math.round(rect.width * dpr)
-      canvas.height = Math.round(rect.height * dpr)
-      drawFrame(nearestLoadedFrame(currentFrame))
+    // -- video load progress --------------------------------------------
+    // Reports real buffered-vs-duration progress (not a fake timer) so the
+    // first-load screen's percentage stays accurate. Fully buffered is the
+    // gate (same "load it all before reveal" intent the old frame sequence
+    // had) rather than just 'canplay' — the file is only ~5MB now, so
+    // waiting for it in full is fast, and it means scrubbing never has to
+    // wait on the network mid-scroll.
+    function reportBufferedProgress() {
+      if (cancelled || !video || !Number.isFinite(video.duration) || video.duration <= 0) return
+      if (video.buffered.length === 0) return
+      const bufferedEnd = video.buffered.end(video.buffered.length - 1)
+      const frac = Math.min(1, bufferedEnd / video.duration)
+      reportProgress('hero', frac)
+      if (frac >= 0.999) setReady(true)
     }
-
-    function coverRect(imgW: number, imgH: number, dstW: number, dstH: number) {
-      const srcRatio = imgW / imgH
-      const dstRatio = dstW / dstH
-      if (srcRatio > dstRatio) {
-        const sw = imgH * dstRatio
-        return { sx: (imgW - sw) / 2, sy: 0, sw, sh: imgH }
-      }
-      const sh = imgW / dstRatio
-      return { sx: 0, sy: (imgH - sh) / 2, sw: imgW, sh }
-    }
-
-    function drawFrame(index: number) {
-      const img = frames[index]
-      if (!canvas || !ctx2d || !img || canvas.width === 0) return
-      const { sx, sy, sw, sh } = coverRect(img.naturalWidth, img.naturalHeight, canvas.width, canvas.height)
-      ctx2d.clearRect(0, 0, canvas.width, canvas.height)
-      ctx2d.drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height)
-    }
-
-    function nearestLoadedFrame(target: number) {
-      if (frames[target]) return target
-      for (let d = 1; d < FRAME_COUNT; d++) {
-        if (frames[target - d]) return target - d
-        if (frames[target + d]) return target + d
-      }
-      return -1
-    }
-
-    let loadedCount = 0
-    async function loadFrame(i: number): Promise<void> {
-      const img = await loadFrameImage(framePath(i))
-      if (cancelled) return
-      if (img) {
-        frames[i] = img
-        if (i === nearestLoadedFrame(currentFrame)) drawFrame(i)
-        if (i === 0) setReady(true)
-      }
-      loadedCount++
-      reportProgress('hero', loadedCount / FRAME_COUNT)
-    }
-
-    function preload() {
-      const CONCURRENCY = 6
-      let next = 0
-      async function worker() {
-        while (next < FRAME_COUNT && !cancelled) {
-          const i = next++
-          await loadFrame(i)
-        }
-      }
-      void Promise.all(Array.from({ length: CONCURRENCY }, worker))
-    }
-
-    // Observes the canvas's *parent* (see the identical note in
-    // BambooDine.tsx for why — avoids a resize feedback loop).
-    const resizeObserver = new ResizeObserver(resizeCanvas)
-    resizeObserver.observe(canvas.parentElement as Element)
-    resizeCanvas()
-    preload()
+    video.addEventListener('progress', reportBufferedProgress)
+    video.addEventListener('loadedmetadata', reportBufferedProgress)
+    video.addEventListener('canplaythrough', reportBufferedProgress)
+    video.preload = 'auto'
+    video.load()
 
     if (reduced) {
       // The expanded copy is deliberately left out here — it's a product
@@ -221,7 +162,9 @@ export function Hero({ data }: { data: Home['hero'] }) {
       gsap.set([eyebrow, sub, explore], { autoAlpha: 1, y: 0 })
       return () => {
         cancelled = true
-        resizeObserver.disconnect()
+        video.removeEventListener('progress', reportBufferedProgress)
+        video.removeEventListener('loadedmetadata', reportBufferedProgress)
+        video.removeEventListener('canplaythrough', reportBufferedProgress)
       }
     }
 
@@ -279,7 +222,7 @@ export function Hero({ data }: { data: Home['hero'] }) {
       if (!cancelled) resyncDockMoves()
     })
 
-    const scrollDistance = Math.max(FRAME_COUNT * PX_PER_FRAME, window.innerHeight * MIN_SCROLL_VH)
+    const scrollDistance = Math.max(SCROLL_DISTANCE_PX, window.innerHeight * MIN_SCROLL_VH)
 
     // Drives both one-shot scenes' play/reverse off the SAME pin trigger's
     // own progress, rather than separate ScrollTriggers on `hero` — a
@@ -302,16 +245,16 @@ export function Hero({ data }: { data: Home['hero'] }) {
       invalidateOnRefresh: true,
       onUpdate: (self) => {
         const p = self.progress
-        currentFrame = Math.round(p * (FRAME_COUNT - 1))
-        const nearest = nearestLoadedFrame(currentFrame)
-        if (nearest >= 0) drawFrame(nearest)
+        if (Number.isFinite(video.duration) && video.duration > 0) {
+          video.currentTime = p * video.duration
+        }
 
         // Background: a slow continuous zoom across the whole pin — layered
-        // on the canvas itself (not .heroMediaTrack, which the cursor-
+        // on the video itself (not .heroMediaTrack, which the cursor-
         // parallax quickTo already owns), composed with the centering
         // translate .heroCanvas sets in CSS so it isn't clobbered.
         const zoom = 1 + (CANVAS_ZOOM_END - 1) * p
-        canvas.style.transform = `translate(-50%, -50%) scale(${zoom})`
+        video.style.transform = `translate(-50%, -50%) scale(${zoom})`
 
         if (!sceneOpen && p > SCENE1_OPEN_P) {
           sceneOpen = true
@@ -333,7 +276,9 @@ export function Hero({ data }: { data: Home['hero'] }) {
 
     return () => {
       cancelled = true
-      resizeObserver.disconnect()
+      video.removeEventListener('progress', reportBufferedProgress)
+      video.removeEventListener('loadedmetadata', reportBufferedProgress)
+      video.removeEventListener('canplaythrough', reportBufferedProgress)
       window.removeEventListener('resize', resyncDockMoves)
       scene.kill()
       scene2.kill()
@@ -439,7 +384,16 @@ export function Hero({ data }: { data: Home['hero'] }) {
     <section className={styles.hero} id="top" ref={heroRef} data-nav-hero>
       <div className={styles.heroMedia} aria-hidden="true">
         <div className={styles.heroMediaTrack} ref={trackRef}>
-          <canvas ref={canvasRef} className={styles.heroCanvas} style={{ opacity: ready ? 1 : 0 }} />
+          {/* eslint-disable-next-line jsx-a11y/media-has-caption -- silent decorative scroll-scrubbed background, nothing to caption */}
+          <video
+            ref={videoRef}
+            className={styles.heroCanvas}
+            style={{ opacity: ready ? 1 : 0 }}
+            src={VIDEO_SRC}
+            muted
+            playsInline
+            preload="auto"
+          />
         </div>
       </div>
       <div className={styles.heroLeftFade} aria-hidden="true" />

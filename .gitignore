@@ -1,12 +1,15 @@
 # Raw source material for the site's scroll-scrubbed sections — each is a
 # disposable intermediate (a full-size PNG sequence, or a single source
-# video) that gets converted to a much smaller WebP sequence under
-# web/public/ by a one-off script (see web/scripts/convert-*-frames.mjs);
-# that converted output is what the site actually serves and is what's
-# committed, not these.
+# video) that gets converted to a much smaller compressed video under R2
+# (see the ffmpeg -g 8 -keyint_min 8 commands in the relevant commit —
+# previously a WebP sequence under web/public/ via
+# web/scripts/convert-*-frames.mjs, before the canvas-frames-to-video
+# rework); that converted output is what the site actually serves and is
+# what's committed, not these.
 choose-your-escape-frames/
 Hero-page-entrance-frames/
 hero-bg-frames-replace.mp4
+hero-section-video-change.mp4
 bamboo-dinner-frames/
 logo-video.mp4
 logo-video.gif

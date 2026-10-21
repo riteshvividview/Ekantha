@@ -14,9 +14,10 @@ import { INITIAL_LOAD_COOKIE } from '@/lib/initialLoadCookie'
 // has to be fully loaded and cached before the page appears. BambooDine
 // and ChooseEscape sit further down the page and keep preloading in the
 // background (see their own components) without holding the homepage
-// back; gating on all three as well was waiting on ~950 frames before
-// showing anything, which is what was dragging the percentage out and
-// forcing TIMEOUT_MS to cut the wait short before hero had even finished.
+// back. All three report real buffered-video progress now (see each
+// component's reportBufferedProgress), not per-frame-image counting —
+// they're compressed videos scrubbed via currentTime, a few MB each
+// instead of the ~62MB of individual WebP frames this used to be.
 const WEIGHTS: Record<string, number> = {
   fonts: 0.1,
   logo: 0.05,
