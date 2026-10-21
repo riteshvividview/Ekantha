@@ -169,6 +169,11 @@ export function ChooseEscape({
     video.addEventListener('loadedmetadata', reportBufferedProgress)
     video.addEventListener('canplaythrough', reportBufferedProgress)
     video.preload = 'auto'
+    // Further below the hero still, not visible on arrival — never
+    // contends with Hero's own video (fetchpriority "high") for
+    // bandwidth. Not in JSX: @types/react doesn't type fetchPriority for
+    // <video> yet.
+    video.setAttribute('fetchpriority', 'low')
     video.load()
 
     // -- scroll-driven pin + chapter crossfade --------------------------

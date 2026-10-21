@@ -151,6 +151,13 @@ export function Hero({ data }: { data: Home['hero'] }) {
     video.addEventListener('loadedmetadata', reportBufferedProgress)
     video.addEventListener('canplaythrough', reportBufferedProgress)
     video.preload = 'auto'
+    // The one thing on the page the visitor sees immediately — outranks
+    // BambooDine/ChooseEscape's own videos (both set to "low") for
+    // bandwidth on a constrained connection, so this one is never left
+    // competing with sections further down that aren't on screen yet. Not
+    // in JSX: @types/react doesn't type fetchPriority for <video> yet
+    // (only img/link/script), though browsers support it there too.
+    video.setAttribute('fetchpriority', 'high')
     video.load()
 
     if (reduced) {
@@ -256,20 +263,32 @@ export function Hero({ data }: { data: Home['hero'] }) {
         const zoom = 1 + (CANVAS_ZOOM_END - 1) * p
         video.style.transform = `translate(-50%, -50%) scale(${zoom})`
 
-        if (!sceneOpen && p > SCENE1_OPEN_P) {
-          sceneOpen = true
-          scene.play()
-        } else if (sceneOpen && p <= SCENE1_OPEN_P) {
-          sceneOpen = false
-          scene.reverse()
+        // Each scene is a fixed-duration animated one-shot (see above), not
+        // scrubbed — so a single scroll tick that jumps past BOTH trigger
+        // points at once (a fast fling, or a scrollbar drag, easily covers
+        // more than SCENE2_OPEN_P - SCENE1_OPEN_P of progress in one tick)
+        // used to call both scene.play() and scene2.play() together,
+        // fading stage 2's content in while stage 1's own animation was
+        // still mid-flight — the overlapping/struck text a fast scroll
+        // could produce. When both flip in the same tick, there was no
+        // scroll time to show the transition anyway, so the skipped one
+        // snaps straight to its end state instead of animating.
+        const wantSceneOpen = p > SCENE1_OPEN_P
+        const wantScene2Open = p > SCENE2_OPEN_P
+        const bothFlipped = wantSceneOpen !== sceneOpen && wantScene2Open !== scene2Open
+
+        if (wantSceneOpen !== sceneOpen) {
+          sceneOpen = wantSceneOpen
+          if (bothFlipped) scene.progress(wantSceneOpen ? 1 : 0)
+          else if (wantSceneOpen) scene.play()
+          else scene.reverse()
         }
 
-        if (!scene2Open && p > SCENE2_OPEN_P) {
-          scene2Open = true
-          scene2.play()
-        } else if (scene2Open && p <= SCENE2_OPEN_P) {
-          scene2Open = false
-          scene2.reverse()
+        if (wantScene2Open !== scene2Open) {
+          scene2Open = wantScene2Open
+          if (bothFlipped) scene2.progress(wantScene2Open ? 1 : 0)
+          else if (wantScene2Open) scene2.play()
+          else scene2.reverse()
         }
       },
     })
