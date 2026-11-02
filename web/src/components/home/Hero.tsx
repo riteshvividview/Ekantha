@@ -114,7 +114,17 @@ export function Hero({ data }: { data: Home['hero'] }) {
     }
     const syncVideoToScroll = (progress: number) => {
       if (!Number.isFinite(video.duration) || video.duration <= 0) return
-      targetTime = Math.min(1, Math.max(0, progress)) * video.duration
+      // Mapped to duration - frameDuration, not duration itself: seeking
+      // to exactly video.duration lands after the last frame's actual
+      // presentation timestamp in most H.264 files, which several
+      // browsers render as black rather than holding the last real
+      // frame. This was the "video disappears once the pin ends" bug —
+      // progress 1 was seeking to the one unseekable instant in the
+      // whole clip. Staying one frame short keeps the last frame itself
+      // as the furthest reachable point, so it's what's left on screen
+      // once the pin releases and scrubbing stops.
+      const maxTime = Math.max(0, video.duration - frameDuration)
+      targetTime = Math.min(1, Math.max(0, progress)) * maxTime
       if (!seekFrame) seekFrame = window.requestAnimationFrame(flushSeek)
     }
     const onSeeked = () => {

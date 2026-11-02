@@ -161,7 +161,13 @@ export function BambooDine({ data }: { data: Home['dine'] }) {
     }
     const syncVideoToScroll = (progress: number) => {
       if (!Number.isFinite(video.duration) || video.duration <= 0) return
-      targetTime = Math.min(1, Math.max(0, progress)) * video.duration
+      // Mapped to duration - frameDuration, not duration itself — see the
+      // identical note in Hero.tsx for why: seeking to exactly
+      // video.duration lands after the last frame's real presentation
+      // timestamp and renders black in several browsers instead of
+      // holding the last frame once the pin releases and scrubbing stops.
+      const maxTime = Math.max(0, video.duration - frameDuration)
+      targetTime = Math.min(1, Math.max(0, progress)) * maxTime
       if (!seekFrame) seekFrame = window.requestAnimationFrame(flushSeek)
     }
     const onSeeked = () => {
