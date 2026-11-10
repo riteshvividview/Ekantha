@@ -80,11 +80,13 @@ export function ChooseEscape({
       })
       gsap.from(q('[data-card]'), {
         opacity: 0,
-        y: 48,
+        // Phones: a small lift that starts as soon as the card enters, so it
+        // never reads as a big empty gap under the heading mid-scroll.
+        y: window.innerWidth < 860 ? 14 : 48,
         duration: 1,
         ease: 'power3.out',
         stagger: 0.14,
-        scrollTrigger: { trigger: q('[data-card]')[0], start: 'top 90%', once: true },
+        scrollTrigger: { trigger: q('[data-card]')[0], start: window.innerWidth < 860 ? 'top 100%' : 'top 90%', once: true },
       })
     }, section)
 

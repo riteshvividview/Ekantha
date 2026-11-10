@@ -867,3 +867,86 @@ html body:not(:has(#living-stories)) #name [class*="storyWord"] { font-size: cla
 }
 .ve-load-light .ve-load-screen-mark { background: #f7efe3; width: clamp(7.5rem, 13vw, 10rem); }
 .ve-load-light .ve-load-screen-mark video { filter: invert(1); opacity: 0.88; }
+
+/* ══ Phones (≤480px): one standard mobile type + spacing scale ══════════
+   Titles ~30px, section titles ~25px, sub-heads ~18px, body 15px, and
+   ~40–56px between sections. Placed last so it wins over desktop rules. */
+@media (max-width: 480px) {
+  /* Inner pages */
+  body:not(:has(#living-stories)) {
+    --inner-hero: 1.9rem;
+    --inner-title: 1.55rem;
+    --inner-sub: 1.1rem;
+    --pad-y: 2.5rem;
+  }
+  html body:not(:has(#living-stories)) :is(#stays, #unique, #events-we-host, #form) :is(h2.section-title, h2[class*="sectionTitle"]),
+  html body:not(:has(#living-stories)) #description [class*="introPull"] { font-size: 1.7rem !important; }
+  html body:not(:has(#living-stories)) #name [class*="storyWord"] { font-size: 1.75rem !important; }
+  body:not(:has(#living-stories)) :is(section p, section li, .section-head p) { font-size: 0.95rem; line-height: 1.65; }
+  body:not(:has(#living-stories)) :is([class*="Title"]:not(h1):not(h2), [class*="Word"]:not(h1)) { font-size: min(1.2rem, 100%); }
+  body:not(:has(#living-stories)) :is(blockquote, [class*="Quote"]) { font-size: 1.15rem !important; }
+  body:not(:has(#living-stories)) [class*="uniqueNum"] { font-size: 2.2rem !important; }
+  body:not(:has(#living-stories)) [class*="Numeral"] { font-size: 4.5rem !important; }
+  body:not(:has(#living-stories)) .section-head { margin-bottom: 1.25rem !important; }
+
+  /* Shared: booking panel + footer */
+  body:not(:has(#living-stories)) .ve-hold-title, body:not(:has(#living-stories)) .ve-hold-title * { font-size: 2rem !important; }
+  body:not(:has(#living-stories)) :is(.ve-hold-summary, .ve-hold-summary *, .ve-hold-muted, .ve-hold-nights) { font-size: 1.05rem !important; }
+  body:not(:has(#living-stories)) .ve-hold { padding-top: 3.5rem !important; padding-bottom: 3rem !important; }
+  html body:not(:has(#living-stories)) footer h2.ve-foot-see { font-size: 2.1rem !important; }
+}
+@media (max-width: 480px) {
+  body:not(:has(#living-stories)) .ve-hold b { font-size: 1.1rem !important; }
+  body:not(:has(#living-stories)) .ve-hold small { font-size: 0.65rem !important; }
+}
+@media (max-width: 400px) { body:not(:has(#living-stories)) .ve-mnav-label { font-size: 1.85rem !important; } }
+
+/* Hamburger menu items use the Forum title face on every page. */
+html body .ve-mnav-label {
+  font-family: var(--font-title), Georgia, serif !important;
+  font-weight: 400 !important;
+  font-style: normal !important;
+  letter-spacing: 0 !important;
+}
+
+/* ══ Homepage on phones (≤480px): same mobile type + spacing scale ══ */
+@media (max-width: 480px) {
+  [class*="heroTitle"] { font-size: 2.5rem !important; }
+  :is([class*="heroExpandedHeading"], [class*="heroExpanded2Heading"]) { font-size: 1.7rem !important; }
+  :is([class*="Story-module"], [class*="Why-module"], [class*="ChooseEscape-module"], [class*="Gallery-module"])[class*="lineInner"],
+  [class*="BambooDine-module"][class*="headline"], [class*="BambooDine-module"][class*="gold"],
+  [class*="Events-module"][class*="line"]:not([class*="lines"]),
+  [class*="Reach-module"][class*="headline"], [class*="Reach-module"][class*="headline"] [class*="gold"] { font-size: 2rem !important; line-height: 1.12 !important; }
+  :is([class*="highlightTitle"], [class*="Why-module"][class*="title"], [class*="cardTitle"], [class*="chapterTitle"]) { font-size: 1.3rem !important; }
+  [class*="Gallery-module"][class*="nameInner"] { font-size: 1.7rem !important; }
+  [class*="Reach-module"][class*="line"]:not([class*="headline"]) { font-size: 1.2rem !important; }
+  [class*="Reach-module"][class*="arrivalTitle"], [class*="Reach-module"][class*="arrivalTitle"] [class*="gold"] { font-size: 1.55rem !important; }
+  :is(section[class*="Story-module"][class*="story"], section[class*="Events-module"][class*="events"], section[class*="home-module"][class*="__hero"]) { padding-top: 3.5rem !important; padding-bottom: 3rem !important; }
+  section[class*="Why-module"][class*="why"] { padding-top: 3rem !important; }
+
+  body:has(#living-stories) .ve-hold-title, body:has(#living-stories) .ve-hold-title * { font-size: 2rem !important; }
+  body:has(#living-stories) :is(.ve-hold-summary, .ve-hold-summary *, .ve-hold-muted, .ve-hold-nights) { font-size: 1.05rem !important; }
+  body:has(#living-stories) .ve-hold { padding-top: 3.5rem !important; padding-bottom: 3rem !important; }
+  body:has(#living-stories) .ve-hold b { font-size: 1.1rem !important; }
+  body:has(#living-stories) .ve-hold small { font-size: 0.65rem !important; }
+  html body:has(#living-stories) footer h2.ve-foot-see { font-size: 2.1rem !important; }
+}
+@media (max-width: 400px) { body:has(#living-stories) .ve-mnav-label { font-size: 1.85rem !important; } }
+@media (max-width: 480px) {
+  section[class*="Why-module"][class*="why"] { padding-bottom: 1.5rem !important; }
+  section[class*="ChooseEscape-module"][class*="escape"] { padding-top: 1.75rem !important; }
+}
+
+/* Homepage stay cards: house names in Forum, a size up; quotes smaller. */
+html body h3[class*="ChooseEscape-module"][class*="cardTitle"] {
+  font-family: var(--font-title), Georgia, serif !important;
+  font-weight: 400 !important;
+  font-style: normal !important;
+  letter-spacing: 0 !important;
+  font-size: clamp(1.75rem, 2.6vw, 2.4rem) !important;
+}
+html body p[class*="ChooseEscape-module"][class*="cardQuote"] { font-size: clamp(0.85rem, 1.1vw, 0.95rem) !important; line-height: 1.6 !important; }
+@media (max-width: 480px) {
+  html body h3[class*="ChooseEscape-module"][class*="cardTitle"] { font-size: 1.75rem !important; }
+  html body p[class*="ChooseEscape-module"][class*="cardQuote"] { font-size: 0.85rem !important; }
+}

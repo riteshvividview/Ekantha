@@ -258,3 +258,15 @@
     transform 450ms var(--ease-slow),
     background-color 300ms;
 }
+
+/* Phones/tablets: room under the swipe rail so card shadows, the entrance
+   lift and the CTA are never clipped; the scrollbar line is hidden. */
+@media (max-width: 860px) {
+  .grid { padding-top: 0.75rem; padding-bottom: 2.5rem; scrollbar-width: none; }
+  .grid::-webkit-scrollbar { display: none; }
+}
+@media (max-width: 860px) {
+  .head { margin-bottom: 1.25rem; }
+  /* Snap cards to the page gutter, not the screen edge. */
+  .grid { padding-top: 0.25rem; scroll-padding-inline: var(--pad-x); }
+}

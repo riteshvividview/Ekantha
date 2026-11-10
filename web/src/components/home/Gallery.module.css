@@ -645,3 +645,9 @@
     font-size: 0.68rem;
   }
 }
+
+/* Smaller screens: the photo no longer fills the section, so the stage
+   carries its own dark background to keep the light text readable. */
+@media (max-width: 1000px) {
+  .stage { background: #14110d; }
+}

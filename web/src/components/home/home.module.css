@@ -1554,3 +1554,7 @@
     opacity: 0;
   }
 }
+@media (max-width: 860px) {
+  .experienceMobile { padding-bottom: 0.25rem; }
+  .experienceMobile :global(.h-track) { padding-bottom: 1rem; }
+}
