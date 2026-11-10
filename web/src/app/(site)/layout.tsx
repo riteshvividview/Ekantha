@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import '../globals.css'
-import { qalisten, clashDisplay, generalSans, montserrat, fraunces } from '@/lib/fonts'
+import { qalisten, clashDisplay, generalSans, montserrat, fraunces, innerFont, titleFont } from '@/lib/fonts'
 import { INITIAL_LOAD_COOKIE } from '@/lib/initialLoadCookie'
 import { SmoothScrollProvider } from '@/components/layout/SmoothScrollProvider'
 import { TheatreStudioLoader } from '@/components/layout/TheatreStudioLoader'
@@ -88,7 +88,7 @@ export default async function SiteRootLayout({ children }: { children: React.Rea
         <link rel="prefetch" href="/maplibre/maplibre-gl-worker.mjs" as="script" />
       </head>
       <body
-        className={`${qalisten.variable} ${clashDisplay.variable} ${generalSans.variable} ${montserrat.variable} ${fraunces.variable}`}
+        className={`${qalisten.variable} ${clashDisplay.variable} ${generalSans.variable} ${montserrat.variable} ${fraunces.variable} ${innerFont.variable} ${titleFont.variable}`}
       >
         <InitialLoadScreen skip={hasLoadedBefore} />
         <PageTransitionOverlay />

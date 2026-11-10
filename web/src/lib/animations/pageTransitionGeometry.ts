@@ -45,6 +45,3 @@ export function currentScaleHuge() {
   return window.matchMedia(MOBILE_MEDIA_QUERY).matches ? SCALE_HUGE_MOBILE : SCALE_HUGE
 }
 
-export function apertureTransform(scale: number) {
-  return `translate(${CENTER.x} ${CENTER.y}) scale(${scale}) translate(${-CENTER.x} ${-CENTER.y})`
-}

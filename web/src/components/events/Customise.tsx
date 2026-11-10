@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import type { Event } from '@/payload-types'
 import { gsap } from '@/lib/animations/gsap'
+import { Landscape, MangoSprig, Toast, Envelope, EstateMap, Icon } from '../illustrations/Line'
 import styles from './events.module.css'
 
 /**
@@ -27,32 +28,18 @@ export function Customise({ data }: { data: Event['customise'] }) {
         ease: 'power3.out',
         scrollTrigger: { trigger: section, start: 'top 80%', once: true },
       })
-
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-
-      const groupBlocks = section.querySelectorAll(`.${styles.customGroups} > div`)
-      groupBlocks.forEach((block) => {
-        gsap.from(block.querySelector(`.${styles.customGroupLabel}`), {
+      section.querySelectorAll(`.${styles.customGroups} > div`).forEach((block) => {
+        gsap.from(block.querySelectorAll(`.${styles.customGroupLabel}, .${styles.chip}`), {
           opacity: 0,
-          y: 16,
-          duration: 0.7,
+          y: 12,
+          duration: 0.6,
           ease: 'power3.out',
-          scrollTrigger: { trigger: block, start: 'top 85%', once: true },
-        })
-
-        gsap.from(block.querySelectorAll(`.${styles.chip}`), {
-          opacity: 0,
-          y: 10,
-          scale: 0.9,
-          duration: 0.45,
-          ease: 'back.out(2.2)',
           stagger: 0.04,
-          delay: 0.1,
           scrollTrigger: { trigger: block, start: 'top 85%', once: true },
         })
       })
     }, section)
-
     return () => ctx.revert()
   }, [])
 
@@ -66,7 +53,8 @@ export function Customise({ data }: { data: Event['customise'] }) {
 
       <div className={styles.customGroups}>
         {groups.map((group, i) => (
-          <div key={group.id ?? i}>
+          <div className={styles.customCard} key={group.id ?? i}>
+            <Icon name={(['flower', 'plate', 'music', 'star'] as const)[i % 4]} className={styles.customIcon} />
             <div className={styles.customGroupLabel}>
               {group.groupLabel} <span>{group.groupNumber}</span>
             </div>

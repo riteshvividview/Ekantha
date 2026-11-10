@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import type { About } from '@/payload-types'
 import { gsap } from '@/lib/animations/gsap'
+import { Landscape, MangoSprig, Toast, Envelope, EstateMap, Icon } from '../illustrations/Line'
 import styles from './about.module.css'
 
 /**
@@ -29,28 +30,13 @@ export function Different({ data }: { data: About['different'] }) {
         stagger: 0.1,
         scrollTrigger: { trigger: section, start: 'top 82%', once: true },
       })
-
-      const contrastRows = section.querySelectorAll(`.${styles.contrastRow}`)
-      contrastRows.forEach((row) => {
-        const tl = gsap.timeline({
-          scrollTrigger: { trigger: row, start: 'top 85%', once: true },
-        })
-        tl.from(row.querySelector(`.${styles.contrastNot}`), {
-          opacity: 0,
-          x: -16,
-          duration: 0.6,
-          ease: 'power2.out',
-        })
-          .from(
-            row.querySelector(`.${styles.contrastArrow}`),
-            { opacity: 0, duration: 0.4, ease: 'power1.out' },
-            '+=0.1',
-          )
-          .from(
-            row.querySelector(`.${styles.contrastYes}`),
-            { opacity: 0, x: 16, scale: 0.92, duration: 0.6, ease: 'back.out(1.6)' },
-            '-=0.15',
-          )
+      gsap.from(section.querySelectorAll(`.${styles.contrastRow}`), {
+        opacity: 0,
+        y: 16,
+        duration: 0.9,
+        ease: 'power3.out',
+        stagger: 0.08,
+        scrollTrigger: { trigger: section.querySelector(`.${styles.contrastList}`), start: 'top 82%', once: true },
       })
     }, section)
 
@@ -67,9 +53,8 @@ export function Different({ data }: { data: About['different'] }) {
       <div className={styles.contrastList}>
         {rows.map((row, i) => (
           <div className={styles.contrastRow} key={row.id ?? i}>
-            <div className={styles.contrastNot}>{row.notText}</div>
-            <div className={styles.contrastArrow}>→</div>
-            <div className={styles.contrastYes}>{row.yesText}</div>
+            <div className={styles.contrastNot}><Icon name="cross" className={styles.contrastIcon} />{row.notText}</div>
+            <div className={styles.contrastYes}><Icon name="check" className={styles.contrastIcon} />{row.yesText}</div>
           </div>
         ))}
       </div>

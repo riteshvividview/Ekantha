@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 import Image from 'next/image'
 import type { FarmDining } from '@/payload-types'
-import { resolveMedia } from '@/lib/media'
+import { resolveMedia } from '@/lib/realMedia'
 import { gsap } from '@/lib/animations/gsap'
 import styles from './farm-dining.module.css'
 
@@ -21,49 +21,15 @@ export function Reserve({ data }: { data: FarmDining['reserve'] }) {
     if (!section) return undefined
 
     const ctx = gsap.context(() => {
-      gsap.from(section.querySelectorAll(`.${styles.reserveFormWrap} > :not(.${styles.reserveEmber})`), {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      gsap.from(section.querySelectorAll(`.${styles.reserveFormWrap} > *, .${styles.reserveVisual}`), {
         opacity: 0,
         y: 22,
         duration: 0.9,
         ease: 'power3.out',
-        stagger: 0.1,
-        scrollTrigger: { trigger: section, start: 'top 75%', once: true },
+        stagger: 0.08,
+        scrollTrigger: { trigger: section, start: 'top 82%', once: true },
       })
-
-      gsap.from(section.querySelectorAll(`.${styles.reserveVisual}`), {
-        opacity: 0,
-        scale: 0.97,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: { trigger: section, start: 'top 75%', once: true },
-      })
-
-      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        const img = section.querySelector(`.${styles.reserveVisual} img`)
-        if (img) {
-          gsap.fromTo(
-            img,
-            { scale: 1.04 },
-            {
-              scale: 1.12,
-              ease: 'none',
-              scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom top', scrub: true },
-            },
-          )
-        }
-
-        const ember = section.querySelector(`.${styles.reserveEmber}`)
-        if (ember) {
-          gsap.to(ember, {
-            opacity: 0.8,
-            scale: 1.15,
-            duration: 5,
-            ease: 'sine.inOut',
-            repeat: -1,
-            yoyo: true,
-          })
-        }
-      }
     }, section)
 
     return () => ctx.revert()
@@ -73,7 +39,6 @@ export function Reserve({ data }: { data: FarmDining['reserve'] }) {
     <section className={`bg-black ${styles.reserveCta}`} id="reserve" ref={sectionRef}>
       <div className={styles.reserveGrid}>
         <div className={styles.reserveFormWrap}>
-          <div className={styles.reserveEmber} aria-hidden="true" />
           <span className="eyebrow">{data.eyebrow}</span>
           <h2 className={`section-title ${styles.sectionTitle}`} style={{ color: 'var(--white)', marginTop: '1rem' }}>
             {renderHeading(data.heading)}

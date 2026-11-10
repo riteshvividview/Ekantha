@@ -17,8 +17,8 @@ export function StoneHouseDetailPage({ stay }: { stay: Stay }) {
   return (
     <>
       <RevealController />
-      <Hero stay={stay} badgeNumber={badgeNumber} />
-      <Description data={stay.description} />
+      <Hero stay={stay} badgeNumber={badgeNumber} exit="stone" />
+      <Description data={stay.description} variant="stone" />
       <Highlights data={stay.highlightsSection} />
       <Amenities data={stay.amenitiesSection} />
       <Gallery items={stay.gallery} title={stay.title} />

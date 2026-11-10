@@ -3,73 +3,61 @@
 import { useEffect, useRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { gsap, ScrollTrigger } from '@/lib/animations/gsap'
-import {
-  MAIN_LOGO_PATH,
-  TRIANGLE_PATH,
-  VIEWBOX,
-  RECENTER,
-  SCALE_TINY,
-  apertureTransform,
-  currentScaleHuge,
-} from '@/lib/animations/pageTransitionGeometry'
+import { createApertureRenderer, type ApertureState } from '@/lib/animations/apertureRenderer'
+import { SCALE_TINY, currentScaleHuge } from '@/lib/animations/pageTransitionGeometry'
 
-const ZOOM_OUT_DURATION = 1.05
-const ZOOM_IN_DURATION = 1.3
-const EASE = 'power3.inOut'
+const CLOSE_DURATION = 0.5
+const OPEN_DURATION = 0.55
+const WHITE_DURATION = 0.2
+const FADE_DURATION = 0.35
 
 /**
- * Site-wide "aperture" page-switch transition, ported from logo/index.html.
- * The site's own logo mark is used as the mask hole: on the way out it
- * shrinks from covering the whole viewport down to a pinpoint (a solid
- * cover, revealing nothing), a real Next.js client-side navigation happens
- * while fully covered, and on arrival it grows back out to reveal the new
- * page — all without a browser document reload.
+ * Site-wide logo page-switch transition, drawn by a GLSL shader (see
+ * apertureRenderer.ts). On the way out, an ink cover closes in around the
+ * logo-shaped hole; a real client-side navigation happens while covered. On
+ * arrival the hole shows only white as it grows to fill the screen, then the
+ * white fades away to uncover the new page.
  *
  * This overlay lives in the (site) root layout, which stays mounted across
- * navigations within the (site) route group (Next only re-renders the page
- * segment below it), so it can drive the whole thing itself: intercept a
- * click, play the exit tween, call router.push(), then watch usePathname()
- * for the moment the new route has actually committed and play the entry
- * tween. Nav/footer data (from Payload) is fetched once per session this
- * way rather than on every navigation — the trade-off a true SPA feel
- * requires; a hard refresh still picks up any CMS edits.
+ * navigations, so it can intercept a click, play the exit, call router.push(),
+ * then watch usePathname() for the moment the new route has committed.
  */
 export function PageTransitionOverlay() {
-  const svgRef = useRef<SVGSVGElement>(null)
-  const groupRef = useRef<SVGGElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const rendererRef = useRef<ReturnType<typeof createApertureRenderer>>(null)
   const isAnimating = useRef(false)
   const awaitingRouteChange = useRef(false)
   const prefetched = useRef(new Set<string>())
   const router = useRouter()
   const pathname = usePathname()
 
-  // Fires once the destination segment has actually rendered — reveal.
   useEffect(() => {
-    const svg = svgRef.current
-    const group = groupRef.current
-    if (!svg || !group || !awaitingRouteChange.current) return
+    const canvas = canvasRef.current
+    const renderer = rendererRef.current
+    if (!canvas || !renderer || !awaitingRouteChange.current) return
     awaitingRouteChange.current = false
 
-    const setScale = (s: number) => group.setAttribute('transform', apertureTransform(s))
-    const proxy = { s: SCALE_TINY }
-    gsap.to(proxy, {
-      s: currentScaleHuge(),
-      duration: ZOOM_IN_DURATION,
-      ease: EASE,
-      onUpdate: () => setScale(proxy.s),
-      onComplete: () => {
-        svg.setAttribute('data-visible', 'false')
-        isAnimating.current = false
-      },
-    })
+    const huge = currentScaleHuge()
+    const state: ApertureState = { scale: SCALE_TINY, holeWhite: 1, solidWhite: 0, opacity: 1 }
+    const draw = () => renderer.draw(state)
+    gsap
+      .timeline({
+        onUpdate: draw,
+        onComplete: () => {
+          canvas.setAttribute('data-visible', 'false')
+          isAnimating.current = false
+        },
+      })
+      .to(state, { scale: huge, duration: OPEN_DURATION, ease: 'expo.in' })
+      // The logo has gaps that ink would show through even at full scale.
+      .to(state, { solidWhite: 1, duration: WHITE_DURATION, ease: 'none' }, OPEN_DURATION - WHITE_DURATION)
+      .to(state, { opacity: 0, duration: FADE_DURATION, ease: 'power1.out' }, OPEN_DURATION)
   }, [pathname])
 
   useEffect(() => {
-    const svg = svgRef.current
-    const group = groupRef.current
-    if (!svg || !group) return
-
-    const setScale = (s: number) => group.setAttribute('transform', apertureTransform(s))
+    const canvas = canvasRef.current
+    if (!canvas) return
+    rendererRef.current = createApertureRenderer(canvas)
 
     function qualifyingHref(target: EventTarget | null): { anchor: HTMLAnchorElement; href: string } | null {
       const anchor = (target as Element | null)?.closest('a[href]') as HTMLAnchorElement | null
@@ -85,35 +73,18 @@ export function PageTransitionOverlay() {
       return { anchor, href: anchor.href }
     }
 
-    function runExit(href: string) {
-      if (!svg || !group || isAnimating.current) return
-      isAnimating.current = true
-      const huge = currentScaleHuge()
-      setScale(huge)
-      svg.setAttribute('data-visible', 'true')
+    function navigate(href: string) {
+      // Outgoing ScrollTriggers (pinned sections especially) must be reverted
+      // before React unmounts the page, or GSAP's pin-spacer DOM changes crash
+      // its reconciliation with "Failed to execute 'removeChild'".
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill(true))
+      router.push(href)
+    }
 
-      const proxy = { s: huge }
-      gsap.to(proxy, {
-        s: SCALE_TINY,
-        duration: ZOOM_OUT_DURATION,
-        ease: EASE,
-        onUpdate: () => setScale(proxy.s),
-        onComplete: () => {
-          // The screen is fully covered at this point, so this is invisible
-          // to the user. It matters because the outgoing page's own
-          // ScrollTriggers (pinned sections in particular, e.g.
-          // ExperienceReel) can otherwise survive into React's unmount of
-          // that page — which happens right after router.push resolves —
-          // and crash with "Failed to execute 'removeChild'" when GSAP's
-          // pin-spacer DOM restructuring and React's reconciliation fight
-          // over the same nodes. Killing every trigger with revert:true
-          // here guarantees a clean DOM before that unmount runs; the
-          // arriving page creates its own triggers fresh on mount.
-          ScrollTrigger.getAll().forEach((trigger) => trigger.kill(true))
-          awaitingRouteChange.current = true
-          router.push(href)
-        },
-      })
+    // The logo-wipe transition was removed at the client's request: pages
+    // now swap directly, keeping only the client-side navigation + prefetch.
+    function runExit(href: string) {
+      navigate(href)
     }
 
     function onClick(event: MouseEvent) {
@@ -127,13 +98,13 @@ export function PageTransitionOverlay() {
       runExit(match.href)
     }
 
-    // Warms the RSC payload as soon as intent is likely, so the covered
-    // window during runExit's navigation is as short as possible.
+    // Warms the full page as soon as intent is likely, so the covered window
+    // while the route loads is as short as possible.
     function onIntent(event: Event) {
       const match = qualifyingHref(event.target)
       if (!match || prefetched.current.has(match.href)) return
       prefetched.current.add(match.href)
-      router.prefetch(match.href)
+      router.prefetch(match.href, { kind: 'full' as never })
     }
 
     document.addEventListener('click', onClick, true)
@@ -148,35 +119,5 @@ export function PageTransitionOverlay() {
     }
   }, [router])
 
-  return (
-    <svg
-      ref={svgRef}
-      className="ve-page-transition-svg"
-      data-visible="false"
-      viewBox={`0 0 ${VIEWBOX.width} ${VIEWBOX.height}`}
-      preserveAspectRatio="xMidYMid slice"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <defs>
-        <mask id="ve-aperture-mask" maskUnits="userSpaceOnUse" x="0" y="0" width={VIEWBOX.width} height={VIEWBOX.height}>
-          <rect x="0" y="0" width={VIEWBOX.width} height={VIEWBOX.height} fill="white" />
-          <g ref={groupRef} transform={apertureTransform(SCALE_TINY)}>
-            <g transform={`translate(${RECENTER.dx},${RECENTER.dy})`}>
-              <path fill="black" d={MAIN_LOGO_PATH} />
-              <path fill="black" d={TRIANGLE_PATH} />
-            </g>
-          </g>
-        </mask>
-      </defs>
-      <rect
-        x="0"
-        y="0"
-        width={VIEWBOX.width}
-        height={VIEWBOX.height}
-        fill="var(--ink)"
-        mask="url(#ve-aperture-mask)"
-      />
-    </svg>
-  )
+  return <canvas ref={canvasRef} className="ve-page-transition" data-visible="false" aria-hidden="true" />
 }

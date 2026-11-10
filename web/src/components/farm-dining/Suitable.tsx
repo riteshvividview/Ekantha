@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 import Image from 'next/image'
 import type { FarmDining } from '@/payload-types'
-import { resolveMedia } from '@/lib/media'
+import { resolveMedia } from '@/lib/realMedia'
 import { SuitableIconSvg } from './icons'
 import { gsap } from '@/lib/animations/gsap'
 import styles from './farm-dining.module.css'
@@ -23,35 +23,21 @@ export function Suitable({ data }: { data: FarmDining['suitable'] }) {
     const ctx = gsap.context(() => {
       gsap.from(section.querySelectorAll(`.${styles.sectionHead}`), {
         opacity: 0,
+        y: 20,
+        duration: 0.9,
+        ease: 'power3.out',
+        stagger: 0,
+        scrollTrigger: { trigger: section, start: 'top 82%', once: true },
+      })
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      gsap.from(section.querySelectorAll(`.${styles.suitCard}`), {
+        opacity: 0,
         y: 24,
         duration: 0.9,
         ease: 'power3.out',
-        scrollTrigger: { trigger: section, start: 'top 80%', once: true },
+        stagger: 0.08,
+        scrollTrigger: { trigger: section, start: 'top 82%', once: true },
       })
-
-      const cards = section.querySelectorAll(`.${styles.suitCard}`)
-      gsap.from(cards, {
-        opacity: 0,
-        y: 36,
-        duration: 0.9,
-        ease: 'power3.out',
-        stagger: 0.1,
-        scrollTrigger: { trigger: cards[0] ?? section, start: 'top 85%', once: true },
-      })
-
-      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        const ember = section.querySelector(`.${styles.suitEmber}`)
-        if (ember) {
-          gsap.to(ember, {
-            opacity: 0.85,
-            scale: 1.12,
-            duration: 4.5,
-            ease: 'sine.inOut',
-            repeat: -1,
-            yoyo: true,
-          })
-        }
-      }
     }, section)
 
     return () => ctx.revert()
@@ -69,8 +55,7 @@ export function Suitable({ data }: { data: FarmDining['suitable'] }) {
           const image = resolveMedia(item.image)
           return (
             <div className={`${styles.suitCard}${item.featured ? ` ${styles.featured}` : ''}`} key={item.id ?? i}>
-              {item.featured && image.url && <Image className={styles.suitMedia} src={image.url} alt="" fill sizes="(max-width: 768px) 100vw, 40vw" style={{ objectFit: 'cover' }} />}
-              {item.featured && <div className={styles.suitEmber} aria-hidden="true" />}
+              {item.featured && image.url && <Image className={styles.suitMedia} src={image.url} alt="" fill sizes="(max-width: 768px) 100vw, 50vw" quality={90} style={{ objectFit: 'cover' }} />}
               <div className={styles.suitIcon} aria-hidden="true">
                 <SuitableIconSvg icon={item.icon} />
               </div>

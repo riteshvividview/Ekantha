@@ -60,7 +60,94 @@
 }
 
 .evHeroInner {
-  max-width: 900px;
+  max-width: 640px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Hero layout: copy on the left, illustrated photo scene on the right. */
+.evHeroGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+  padding-bottom: clamp(2rem, 5vw, 3.5rem);
+}
+@media (max-width: 900px) {
+  .evHeroGrid { grid-template-columns: 1fr; }
+}
+.evHeroVisual {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  justify-self: center;
+  padding: clamp(3rem, 7vw, 4.5rem) clamp(1rem, 3vw, 2rem) clamp(1.5rem, 4vw, 2.5rem);
+}
+.evArch {
+  position: relative;
+  z-index: 1;
+  aspect-ratio: 4 / 5;
+  border-radius: 999px 999px 24px 24px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.45);
+}
+.evDecor {
+  position: absolute;
+  pointer-events: none;
+}
+.evLights {
+  top: 0;
+  left: -4%;
+  width: 108%;
+  height: auto;
+  z-index: 2;
+}
+.evWire { stroke: rgba(255, 255, 255, 0.35); stroke-width: 1.2; }
+.evBulb { fill: #ffd38a; }
+.evBulbHalo { fill: rgba(255, 196, 110, 0.18); }
+.evRing {
+  width: 62%;
+  right: -8%;
+  bottom: 4%;
+  z-index: 0;
+  stroke: rgba(255, 255, 255, 0.22);
+  stroke-width: 1;
+  stroke-dasharray: 2 7;
+}
+.evSprig {
+  width: clamp(70px, 14vw, 110px);
+  left: -2%;
+  bottom: 0;
+  z-index: 2;
+  stroke: #c9a46a;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+}
+.evNote {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.75rem 1rem;
+  border-radius: 14px;
+  background: rgba(250, 245, 238, 0.96);
+  color: var(--black);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+  font-family: var(--font-body);
+  max-width: 13rem;
+}
+.evNote strong { font-size: 0.95rem; font-weight: 600; }
+.evNote span { font-size: 0.75rem; color: rgba(29, 29, 27, 0.65); line-height: 1.35; }
+.evNoteA { left: -6%; top: 38%; }
+.evNoteB { right: -4%; bottom: 14%; }
+/* Phones: the two notes sit side by side under the photo, not over it. */
+@media (max-width: 560px) {
+  .evHeroVisual { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+  .evArch { grid-column: 1 / -1; }
+  .evNote { position: static; max-width: none; padding: 0.65rem 0.8rem; }
+  .evSprig { bottom: auto; top: 58%; }
 }
 .evHeroHeadline {
   /* Overrides the shared `display-xl` (Clash Display) applied alongside it
@@ -190,7 +277,6 @@
   height: 100%;
   object-fit: cover;
   z-index: 0;
-  transition: transform 700ms var(--ease-slow);
 }
 .panel:hover .panelMedia,
 .panel.active .panelMedia {
@@ -558,3 +644,235 @@
   font-size: clamp(0.78rem, 1.7vw, 0.85rem);
   color: var(--ink-soft);
 }
+
+/* ════ Layout refresh: illustrated heads, bento occasions, site-plan
+   features, taped polaroids, card add-ons, two-column enquiry. ════ */
+
+.splitHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: clamp(2rem, 5vw, 3.5rem);
+}
+.splitHead .sectionHead { margin-bottom: 0; }
+.headIllo {
+  flex: none;
+  width: clamp(72px, 13vw, 150px);
+  height: auto;
+  color: var(--ink-faint);
+}
+@media (max-width: 480px) {
+  .splitHead { flex-direction: column-reverse; align-items: flex-start; }
+  .headIllo { width: 72px; }
+}
+
+/* Occasions: bento grid, first occasion featured. Titles always readable. */
+.panels {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: clamp(200px, 20vw, 260px);
+  gap: clamp(0.6rem, 1.4vw, 1rem);
+  height: auto;
+}
+.panel { flex: none; cursor: default; }
+.panel:first-child { grid-column: span 2; grid-row: span 2; }
+.panel:hover, .panel.active { flex: none; }
+.panelTitle,
+.panel:hover .panelTitle,
+.panel.active .panelTitle {
+  writing-mode: horizontal-tb;
+  transform: none;
+  white-space: normal;
+  margin-bottom: 0.4rem;
+  transition: none;
+}
+.panelDesc,
+.panel:hover .panelDesc,
+.panel.active .panelDesc {
+  opacity: 1;
+  max-height: none;
+  transition: none;
+}
+.panel:not(:first-child) .panelDesc { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+.panel::before,
+.panel:hover::before,
+.panel.active::before {
+  background: linear-gradient(180deg, rgba(29, 29, 27, 0) 30%, rgba(29, 29, 27, 0.82) 100%);
+}
+.panelMedia { transition: transform 900ms var(--ease-slow); }
+@media (max-width: 900px) {
+  .panels { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 230px; }
+  .panel:first-child { grid-row: span 1; }
+}
+@media (max-width: 520px) {
+  .panels { grid-template-columns: 1fr; grid-auto-rows: auto; }
+  .panel, .panel:first-child { grid-column: auto; min-height: 240px; }
+  .panel:not(:first-child) .panelDesc { -webkit-line-clamp: unset; }
+}
+
+/* Venue features: hand-drawn site plan beside a two-column card list. */
+.featLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.4fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: start;
+}
+.featMap {
+  position: sticky;
+  top: 6rem;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: clamp(1rem, 2.5vw, 1.75rem);
+  color: var(--ink-soft);
+}
+.featMapSvg { width: 100%; height: auto; display: block; }
+.featMap p { font-size: 0.85rem; line-height: 1.6; color: var(--ink-faint); margin-top: 0.9rem; }
+.ledger {
+  max-width: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.6rem, 1.4vw, 1rem);
+}
+.ledgerRow,
+.ledgerRow:nth-child(odd) {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: clamp(1.1rem, 2.4vw, 1.5rem);
+}
+.ledgerIcon {
+  width: 46px; height: 46px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--silver);
+}
+.ledgerIcon svg { width: 24px; height: 24px; }
+.ledgerDesc { margin-top: 0; }
+@media (max-width: 900px) {
+  .featLayout { grid-template-columns: 1fr; }
+  .featMap { position: static; max-width: 420px; }
+}
+@media (max-width: 520px) {
+  .ledger { grid-template-columns: 1fr; }
+}
+
+/* Gallery: straight grid of taped polaroids. */
+.collage {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr));
+  gap: clamp(1.5rem, 3.5vw, 2.5rem) clamp(1rem, 2.5vw, 1.75rem);
+  padding: 0.5rem 0;
+}
+.collageItem {
+  position: relative;
+  background: var(--white);
+  padding: 0.7rem 0.7rem 0.9rem;
+  border-radius: 6px;
+  box-shadow: 0 14px 30px rgba(29, 29, 27, 0.1);
+  transform: rotate(-1.5deg);
+  transition: transform 500ms var(--ease-slow);
+}
+.collageItem:nth-child(even) { transform: rotate(1.5deg); }
+.collageItem:hover { transform: rotate(0deg) translateY(-4px); }
+.collagePlate,
+.collagePlate:nth-child(n) {
+  width: 100%;
+  margin: 0;
+  transform: none;
+  border: none;
+  border-radius: 3px;
+  box-shadow: none;
+}
+.collagePlate:hover { transform: none !important; box-shadow: none; }
+.collageCaption { font-size: 0.8rem; color: var(--ink-soft); margin-top: 0.7rem; }
+.tape {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  width: 70px;
+  height: 22px;
+  transform: translateX(-50%) rotate(-3deg);
+  background: rgba(201, 164, 106, 0.38);
+  border-left: 1px dashed rgba(255, 255, 255, 0.6);
+  border-right: 1px dashed rgba(255, 255, 255, 0.6);
+  z-index: 2;
+}
+
+/* Customise: one card per group with an icon. */
+.customGroups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: clamp(0.75rem, 1.8vw, 1.25rem);
+}
+.customCard {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: clamp(1.25rem, 3vw, 2rem);
+}
+.customIcon {
+  width: 44px; height: 44px;
+  color: var(--ink);
+  margin-bottom: 1rem;
+}
+.customGroupLabel { flex-wrap: wrap; }
+.chip { padding: 0.45rem 0.9rem; }
+
+/* Enquiry: heading + envelope on the left, form in a card on the right. */
+.enquiryInner {
+  max-width: none;
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: start;
+}
+.enquiryIllo {
+  width: clamp(130px, 18vw, 200px);
+  height: auto;
+  margin-top: clamp(1.5rem, 4vw, 2.5rem);
+  color: var(--ink-faint);
+}
+.enquiryForm {
+  margin-top: 0;
+  background: var(--silver);
+  border-radius: 24px;
+  padding: clamp(1.25rem, 3.5vw, 2.5rem);
+}
+.eqRow { grid-template-columns: minmax(110px, 160px) minmax(0, 1fr); }
+.eqRow:first-child { border-top: none; padding-top: 0; }
+@media (max-width: 900px) {
+  .enquiryInner { grid-template-columns: 1fr; }
+  .enquiryIllo { width: 120px; }
+}
+@media (max-width: 560px) {
+  .eqRow { grid-template-columns: 1fr; }
+}
+.collage { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 980px; margin: 0 auto; }
+@media (max-width: 760px) { .collage { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 400px) { .collage { grid-template-columns: 1fr; } }
+
+/* Occasions: description reveals on hover only (always shown on touch). */
+@media (hover: hover) {
+  .panels .panel .panelDesc {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transform: translateY(10px);
+    transition: max-height 500ms cubic-bezier(0.22, 1, 0.36, 1), opacity 400ms ease, transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .panels .panel:hover .panelDesc {
+    max-height: 8rem;
+    opacity: 1;
+    transform: none;
+    transition-delay: 60ms;
+  }
+  .panels .panel .panelTitle { margin-bottom: 0; transition: margin-bottom 400ms ease; }
+  .panels .panel:hover .panelTitle { margin-bottom: 0.4rem; }
+}
+/* Number labels readable on any photo. */
+.panelNum { color: rgba(255, 255, 255, 0.92); text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45); }

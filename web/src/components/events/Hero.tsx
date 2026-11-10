@@ -1,7 +1,9 @@
 'use client'
 
 import { Fragment, useEffect, useRef } from 'react'
+import Image from 'next/image'
 import type { Event } from '@/payload-types'
+import { assetUrl } from '@/lib/assetUrl'
 import { gsap } from '@/lib/animations/gsap'
 import styles from './events.module.css'
 
@@ -55,6 +57,14 @@ export function Hero({ data }: { data: Event['hero'] }) {
         delay: 0.5,
       })
 
+      gsap.from(section.querySelectorAll(`.${styles.evArch}`), { opacity: 0, y: 30, duration: 1.1, ease: 'power3.out', delay: 0.25 })
+      gsap.from(section.querySelectorAll(`.${styles.evNote}`), { opacity: 0, y: 16, duration: 0.8, ease: 'power3.out', stagger: 0.12, delay: 0.8 })
+      gsap.from(section.querySelectorAll(`.${styles.evDecor}`), { opacity: 0, duration: 1.2, ease: 'power2.out', delay: 0.6 })
+      // String-light bulbs glow gently, each on its own beat.
+      section.querySelectorAll(`.${styles.evBulb}`).forEach((bulb, i) => {
+        gsap.to(bulb, { opacity: 0.45, duration: 1.6 + (i % 3) * 0.4, ease: 'sine.inOut', repeat: -1, yoyo: true, delay: i * 0.15 })
+      })
+
       gsap.from(section.querySelectorAll(`.${styles.marquee}`), {
         opacity: 0,
         duration: 0.9,
@@ -68,6 +78,7 @@ export function Hero({ data }: { data: Event['hero'] }) {
 
   return (
     <section className={styles.evHero} id="top" ref={sectionRef}>
+      <div className={styles.evHeroGrid}>
       <div className={styles.evHeroInner}>
         <div className={styles.evHeroBadge}>
           <span className="dot">{data.badgeMonogram}</span>
@@ -90,6 +101,45 @@ export function Hero({ data }: { data: Event['hero'] }) {
             </a>
           )}
         </div>
+      </div>
+
+      <div className={styles.evHeroVisual} aria-hidden="true">
+        {/* Festoon string lights draped across the top of the scene. */}
+        <svg className={`${styles.evDecor} ${styles.evLights}`} viewBox="0 0 520 90" fill="none">
+          <path d="M4 10 Q 130 78 260 40 T 516 18" className={styles.evWire} />
+          {BULBS.map(([x, y], i) => (
+            <g key={i} transform={`translate(${x} ${y})`}>
+              <line x1="0" y1="0" x2="0" y2="9" className={styles.evWire} />
+              <circle cx="0" cy="15" r="9" className={styles.evBulbHalo} />
+              <circle cx="0" cy="15" r="5" className={styles.evBulb} />
+            </g>
+          ))}
+        </svg>
+
+        <div className={styles.evArch}>
+          <Image src={assetUrl('/images/site/events-preview-a-setting-for-every-occasion-4.jpg')} alt="" fill sizes="(max-width: 900px) 90vw, 42vw" quality={90} style={{ objectFit: 'cover' }} priority />
+        </div>
+
+        {/* Dotted ring behind the arch and a sprig of leaves at its foot. */}
+        <svg className={`${styles.evDecor} ${styles.evRing}`} viewBox="0 0 200 200" fill="none">
+          <circle cx="100" cy="100" r="96" />
+        </svg>
+        <svg className={`${styles.evDecor} ${styles.evSprig}`} viewBox="0 0 120 120" fill="none">
+          <path d="M14 110 C 40 80, 62 54, 104 12" />
+          <path d="M40 80 C 26 72, 22 58, 30 48 C 42 54, 46 68, 40 80 Z" />
+          <path d="M58 58 C 70 46, 84 44, 92 50 C 84 62, 70 64, 58 58 Z" />
+          <path d="M74 38 C 64 26, 64 14, 70 6 C 80 14, 82 28, 74 38 Z" />
+        </svg>
+
+        <div className={`${styles.evNote} ${styles.evNoteA}`}>
+          <strong>Up to 200</strong>
+          <span>guests on the lawns</span>
+        </div>
+        <div className={`${styles.evNote} ${styles.evNoteB}`}>
+          <strong>One event</strong>
+          <span>per day, the estate is yours</span>
+        </div>
+      </div>
       </div>
 
       <div className={styles.marquee} aria-hidden="true">
@@ -131,3 +181,16 @@ function renderHeadline(headline: string) {
     </>
   )
 }
+
+/** Bulb positions along the festoon wire (viewBox 520 x 90). */
+const BULBS: [number, number][] = [
+  [52, 30],
+  [104, 46],
+  [156, 54],
+  [208, 50],
+  [260, 40],
+  [312, 30],
+  [364, 25],
+  [416, 22],
+  [468, 20],
+]

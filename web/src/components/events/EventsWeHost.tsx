@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import type { Event } from '@/payload-types'
-import { resolveMedia } from '@/lib/media'
+import { resolveMedia } from '@/lib/realMedia'
 import { gsap } from '@/lib/animations/gsap'
+import { Landscape, MangoSprig, Toast, Envelope, EstateMap, Icon } from '../illustrations/Line'
 import styles from './events.module.css'
 
 /**
@@ -29,16 +30,14 @@ export function EventsWeHost({ data }: { data: Event['eventsWeHost'] }) {
         ease: 'power3.out',
         scrollTrigger: { trigger: section, start: 'top 80%', once: true },
       })
-
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-
       gsap.from(section.querySelectorAll(`.${styles.panel}`), {
         opacity: 0,
         y: 36,
-        duration: 0.85,
+        duration: 0.9,
         ease: 'power3.out',
         stagger: 0.09,
-        scrollTrigger: { trigger: `.${styles.panels}`, start: 'top 85%', once: true },
+        scrollTrigger: { trigger: section.querySelector(`.${styles.panels}`), start: 'top 82%', once: true },
       })
     }, section)
 
@@ -47,10 +46,13 @@ export function EventsWeHost({ data }: { data: Event['eventsWeHost'] }) {
 
   return (
     <section id="events-we-host" ref={sectionRef}>
-      <div className={styles.sectionHead}>
-        <span className="eyebrow">{data.eyebrow}</span>
-        <h2 className={`section-title ${styles.sectionTitle}`}>{renderHeading(data.heading)}</h2>
-        {data.sub && <p>{data.sub}</p>}
+      <div className={styles.splitHead}>
+        <div className={styles.sectionHead}>
+          <span className="eyebrow">{data.eyebrow}</span>
+          <h2 className={`section-title ${styles.sectionTitle}`}>{renderHeading(data.heading)}</h2>
+          {data.sub && <p>{data.sub}</p>}
+        </div>
+        <Toast className={styles.headIllo} />
       </div>
 
       <div className={styles.panels}>
@@ -63,7 +65,7 @@ export function EventsWeHost({ data }: { data: Event['eventsWeHost'] }) {
               key={item.id ?? i}
               onClick={() => setActiveId((cur) => (cur === i ? null : i))}
             >
-              {image.url && <Image className={styles.panelMedia} src={image.url} alt="" fill sizes="(max-width: 768px) 100vw, 20vw" style={{ objectFit: 'cover' }} />}
+              {image.url && <Image className={styles.panelMedia} src={image.url} alt="" fill sizes="(max-width: 768px) 100vw, 40vw" quality={90} style={{ objectFit: 'cover' }} />}
               <div className={styles.panelNum}>{item.number}</div>
               <div className={styles.panelContent}>
                 <div className={styles.panelTitle}>{item.title}</div>

@@ -3,8 +3,9 @@
 import { useEffect, useRef } from 'react'
 import Image from 'next/image'
 import type { FarmDining } from '@/payload-types'
-import { resolveMedia } from '@/lib/media'
+import { resolveMedia } from '@/lib/realMedia'
 import { gsap } from '@/lib/animations/gsap'
+import { Toast, MangoSprig, Conversation, Icon } from '../illustrations/Line'
 import styles from './farm-dining.module.css'
 
 /** The bento tiles don't fill in on a tidy grid clock — they land with a
@@ -21,22 +22,20 @@ export function Gallery({ data }: { data: FarmDining['gallery'] }) {
     const ctx = gsap.context(() => {
       gsap.from(section.querySelectorAll(`.${styles.sectionHead}`), {
         opacity: 0,
+        y: 20,
+        duration: 0.9,
+        ease: 'power3.out',
+        stagger: 0,
+        scrollTrigger: { trigger: section, start: 'top 82%', once: true },
+      })
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      gsap.from(section.querySelectorAll(`.${styles.bentoItem}`), {
+        opacity: 0,
         y: 24,
         duration: 0.9,
         ease: 'power3.out',
-        scrollTrigger: { trigger: section, start: 'top 80%', once: true },
-      })
-
-      const tiles = section.querySelectorAll(`.${styles.bentoItem}`)
-      gsap.from(tiles, {
-        opacity: 0,
-        y: 30,
-        scale: 0.94,
-        rotate: (i) => (i % 2 === 0 ? -1.4 : 1.4),
-        duration: 0.8,
-        ease: 'power3.out',
-        stagger: { each: 0.08, from: 'start' },
-        scrollTrigger: { trigger: tiles[0] ?? section, start: 'top 90%', once: true },
+        stagger: 0.06,
+        scrollTrigger: { trigger: section, start: 'top 82%', once: true },
       })
     }, section)
 
@@ -45,9 +44,12 @@ export function Gallery({ data }: { data: FarmDining['gallery'] }) {
 
   return (
     <section id="gallery" ref={sectionRef}>
-      <div className={`${styles.sectionHead}`}>
-        <span className="eyebrow">{data.eyebrow}</span>
-        <h2 className={`section-title ${styles.sectionTitle}`}>{renderHeading(data.heading)}</h2>
+      <div className={styles.splitHead}>
+        <div className={`${styles.sectionHead}`}>
+          <span className="eyebrow">{data.eyebrow}</span>
+          <h2 className={`section-title ${styles.sectionTitle}`}>{renderHeading(data.heading)}</h2>
+        </div>
+        <MangoSprig className={styles.headIllo} />
       </div>
 
       <div className={styles.bentoGrid}>
@@ -58,8 +60,8 @@ export function Gallery({ data }: { data: FarmDining['gallery'] }) {
             .filter(Boolean)
             .join(' ')
           return (
-            <div className={`${styles.bentoItem} ${variantClass}`} key={item.id ?? i}>
-              {image.url && <Image src={image.url} alt={item.caption ?? ''} fill sizes="(max-width: 768px) 50vw, 25vw" style={{ objectFit: 'cover' }} />}
+            <div className={styles.bentoItem} data-variant={variantClass ? 'x' : undefined} key={item.id ?? i}>
+              <div className={styles.bentoPhoto}>{image.url && <Image src={image.url} alt={item.caption ?? ''} fill sizes="(max-width: 560px) 92vw, (max-width: 900px) 46vw, 31vw" quality={90} style={{ objectFit: 'cover' }} />}</div>
               {item.caption && <div className={styles.bentoCap}>{item.caption}</div>}
             </div>
           )

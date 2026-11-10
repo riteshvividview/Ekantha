@@ -1,5 +1,5 @@
 import localFont from 'next/font/local'
-import { Fraunces } from 'next/font/google'
+import { Fraunces, Poppins } from 'next/font/google'
 
 // The hero's big display title font — a licensed local file (not a Google/
 // Fontshare CDN font like the rest of the type system), so it's loaded via
@@ -71,5 +71,25 @@ export const fraunces = Fraunces({
   style: 'italic',
   subsets: ['latin'],
   variable: '--font-accent-italic',
+  display: 'swap',
+})
+
+// Inner pages' type (replaces Qalisten/Fraunces there; the homepage keeps
+// its own faces). Poppins: one clean, readable geometric family for both
+// headings and body.
+export const innerFont = Poppins({
+  weight: ['300', '400', '500', '600'],
+  style: ['normal', 'italic'],
+  subsets: ['latin'],
+  variable: '--font-inner',
+  display: 'swap',
+})
+
+// Title face (Forum) for page and section headings across the whole site.
+export const titleFont = localFont({
+  src: '../fonts/forum.regular.ttf',
+  variable: '--font-title',
+  weight: '400',
+  style: 'normal',
   display: 'swap',
 })

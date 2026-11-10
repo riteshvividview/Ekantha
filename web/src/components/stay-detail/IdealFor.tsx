@@ -3,8 +3,9 @@
 import { useEffect, useRef } from 'react'
 import Image from 'next/image'
 import type { Stay } from '@/payload-types'
-import { resolveMedia } from '@/lib/media'
+import { resolveMedia } from '@/lib/realMedia'
 import { gsap } from '@/lib/animations/gsap'
+import { riseTitle } from '@/lib/animations/sectionMotion'
 import styles from './stay-detail.module.css'
 
 /**
@@ -48,6 +49,7 @@ export function IdealFor({ items, title }: { items: Stay['idealFor']; title: str
       )
 
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      riseTitle(section)
 
       section.querySelectorAll(`.${styles.idealNum}`).forEach((num) => {
         gsap.fromTo(
@@ -62,7 +64,41 @@ export function IdealFor({ items, title }: { items: Stay['idealFor']; title: str
       })
     }, section)
 
-    return () => ctx.revert()
+    // Desktop: a large photo follows the cursor over the list, crossfading
+    // to whichever row is under it.
+    const list = section.querySelector<HTMLElement>(`.${styles.idealList}`)
+    const float = section.querySelector<HTMLElement>(`.${styles.idealFloat}`)
+    let cleanupFloat = () => {}
+    if (list && float && window.matchMedia('(hover: hover) and (min-width: 900px)').matches) {
+      const x = gsap.quickTo(float, 'x', { duration: 0.6, ease: 'power3' })
+      const y = gsap.quickTo(float, 'y', { duration: 0.6, ease: 'power3' })
+      const r = gsap.quickTo(float, 'rotate', { duration: 0.8, ease: 'power3' })
+      let lastX = 0
+      const onMove = (e: PointerEvent) => {
+        const box = list.getBoundingClientRect()
+        x(e.clientX - box.left)
+        y(e.clientY - box.top)
+        r(gsap.utils.clamp(-8, 8, (e.clientX - lastX) * 0.6))
+        lastX = e.clientX
+        const row = (e.target as Element).closest<HTMLElement>('[data-ideal]')
+        if (row) float.dataset.active = row.dataset.ideal
+      }
+      const onEnter = () => gsap.to(float, { opacity: 1, scale: 1, duration: 0.4, ease: 'power3.out' })
+      const onLeave = () => gsap.to(float, { opacity: 0, scale: 0.85, duration: 0.35, ease: 'power3.in' })
+      list.addEventListener('pointermove', onMove)
+      list.addEventListener('pointerenter', onEnter)
+      list.addEventListener('pointerleave', onLeave)
+      cleanupFloat = () => {
+        list.removeEventListener('pointermove', onMove)
+        list.removeEventListener('pointerenter', onEnter)
+        list.removeEventListener('pointerleave', onLeave)
+      }
+    }
+
+    return () => {
+      cleanupFloat()
+      ctx.revert()
+    }
   }, [idealFor.length])
 
   if (!idealFor.length) return null
@@ -78,7 +114,7 @@ export function IdealFor({ items, title }: { items: Stay['idealFor']; title: str
         {idealFor.map((item, i) => {
           const image = resolveMedia(item.image)
           return (
-            <div className={styles.idealRow} key={item.id ?? i}>
+            <div className={styles.idealRow} key={item.id ?? i} data-ideal={i}>
               <span className={styles.idealNum} aria-hidden="true">
                 {String(i + 1).padStart(2, '0')}
               </span>
@@ -90,6 +126,16 @@ export function IdealFor({ items, title }: { items: Stay['idealFor']; title: str
             </div>
           )
         })}
+        <div className={styles.idealFloat} data-active="0" aria-hidden="true">
+          {idealFor.map((item, i) => {
+            const image = resolveMedia(item.image)
+            return image.url ? (
+              <div className={styles.idealFloatImg} data-i={i} key={item.id ?? i}>
+                <Image src={image.url} alt="" fill sizes="320px" style={{ objectFit: 'cover' }} />
+              </div>
+            ) : null
+          })}
+        </div>
       </div>
     </section>
   )

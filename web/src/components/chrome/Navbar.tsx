@@ -247,6 +247,13 @@ export function Navbar({ data }: { data: Navigation }) {
           if (e.pointerType === 'mouse') closeMenu()
         }}
       >
+        {/* A fine gold vine with small leaves along the bar's lower edge. */}
+        <svg className="ve-nav-vine" viewBox="0 0 1200 16" preserveAspectRatio="none" fill="none" aria-hidden="true">
+          <path d="M0 9 C 150 3, 300 14, 450 8 S 750 3, 900 9 S 1100 13, 1200 7" />
+          {[180, 420, 610, 800, 1010].map((x, i) => (
+            <path key={x} d={i % 2 ? `M${x} 9 c 6 -7 14 -7 18 -4 c -5 5 -12 6 -18 4 z` : `M${x} 8 c 6 6 14 6 18 3 c -5 -5 -12 -6 -18 -3 z`} className="ve-vine-leaf" />
+          ))}
+        </svg>
         {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- deliberately
             a plain <a>, not <Link>, matching every other nav link on this site: a full
             page reload guarantees the active-page state (and the CMS-driven nav/footer
@@ -358,6 +365,16 @@ export function Navbar({ data }: { data: Navigation }) {
         >
           <span className="ve-mega-notch" aria-hidden="true" />
           <div className="ve-mega-body">
+            {/* Line-art estate landscape, a faint watermark behind the list. */}
+            <svg className="ve-mega-art" viewBox="0 0 320 120" fill="none" aria-hidden="true">
+              <circle cx="258" cy="40" r="18" className="ve-art-accent" />
+              <circle cx="258" cy="40" r="27" className="ve-art-accent" strokeDasharray="2 6" />
+              <path d="M0 96 C 50 70, 90 74, 130 90 S 230 68, 320 86" />
+              <path d="M0 112 C 70 98, 150 102, 200 110 S 280 104, 320 108" />
+              <path d="M150 92 V 72 L 166 60 L 182 72 V 92 M 162 92 V 82 H 170 V 92" />
+              <path d="M60 98 V 76 M 60 58 C 48 62, 48 78, 60 78 C 72 78, 72 62, 60 58 Z" />
+              <path d="M210 30 q 5 -5 10 0 q 5 -5 10 0" />
+            </svg>
             {dropdowns.map((item, di) => {
               const isActive = openKey === item.key
               const hi = hoverIdx[item.key] ?? 0
@@ -377,7 +394,12 @@ export function Navbar({ data }: { data: Navigation }) {
                 >
                   <div className="ve-mega-list" style={{ '--hi': hi } as CSSProperties}>
                     <p className="ve-mega-heading">
-                      <span className="ve-mega-heading-dash" aria-hidden="true" />
+                      <svg className="ve-mega-sprig" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M3 21 C 8 15, 13 10, 21 3" />
+                        <path d="M8 16 C 5 15, 4 12, 5 10 C 8 11, 9 13, 8 16 Z" />
+                        <path d="M12 12 C 14 9, 17 9, 19 10 C 17 12, 14 13, 12 12 Z" />
+                        <path d="M15 8 C 14 5, 15 3, 16 2 C 18 4, 17 6, 15 8 Z" />
+                      </svg>
                       {item.heading}
                     </p>
                     <span className="ve-mega-hilite" aria-hidden="true" />
@@ -440,9 +462,6 @@ export function Navbar({ data }: { data: Navigation }) {
         <NavPreviewPanel ref={previewRef} />
       </header>
 
-      {/* Dims + softly blurs the page behind an open dropdown. Sibling of the
-          header (not a child) so the header's transform can't re-parent it. */}
-      <div className="ve-nav-veil" data-open={openKey ? 'true' : 'false'} aria-hidden="true" />
     </>
   )
 }

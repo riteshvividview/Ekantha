@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import type { Event } from '@/payload-types'
 import { gsap } from '@/lib/animations/gsap'
+import { Landscape, MangoSprig, Toast, Envelope, EstateMap, Icon } from '../illustrations/Line'
 import styles from './events.module.css'
 
 /**
@@ -25,25 +26,14 @@ export function Enquiry({ data }: { data: Event['enquiry'] }) {
         ease: 'power3.out',
         scrollTrigger: { trigger: section, start: 'top 80%', once: true },
       })
-
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-
-      gsap.from(section.querySelectorAll(`.${styles.eqRow}`), {
+      gsap.from(section.querySelectorAll(`.${styles.eqRow}, .${styles.enquirySubmitRow}`), {
         opacity: 0,
         y: 18,
-        duration: 0.6,
+        duration: 0.9,
         ease: 'power3.out',
-        stagger: 0.08,
-        scrollTrigger: { trigger: `.${styles.enquiryForm}`, start: 'top 85%', once: true },
-      })
-
-      gsap.from(section.querySelectorAll(`.${styles.enquirySubmitRow}`), {
-        opacity: 0,
-        y: 16,
-        duration: 0.6,
-        ease: 'power3.out',
-        delay: 0.3,
-        scrollTrigger: { trigger: `.${styles.enquiryForm}`, start: 'top 85%', once: true },
+        stagger: 0.07,
+        scrollTrigger: { trigger: section.querySelector(`.${styles.enquiryForm}`), start: 'top 82%', once: true },
       })
     }, section)
 
@@ -57,6 +47,7 @@ export function Enquiry({ data }: { data: Event['enquiry'] }) {
           <span className="eyebrow">{data.eyebrow}</span>
           <h2 className={`section-title ${styles.sectionTitle}`}>{renderHeading(data.heading)}</h2>
           {data.sub && <p>{data.sub}</p>}
+          <Envelope className={styles.enquiryIllo} />
         </div>
 
         <form

@@ -619,3 +619,310 @@
   max-width: 50ch;
   line-height: 1.7;
 }
+
+/* Hero: WebGL fireflies over the photo. */
+.fdFireflies {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+/* Unique: per-letter title reveal and drawn column dividers. */
+.uniqueItem { position: relative; }
+/* Desktop: the drawn rule replaces the static border. */
+@media (min-width: 761px) {
+  .uniqueItem { border-left-color: transparent; }
+}
+.uniqueWord { display: inline-block; white-space: nowrap; }
+.uniqueChar { display: inline-block; }
+.uniqueRule {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--line);
+  transform-origin: top;
+}
+@media (max-width: 760px) {
+  .uniqueRule { display: none; }
+}
+
+/* Experience photos lean with scroll speed (skew); keep the lean subtle. */
+.expVisual { will-change: transform; }
+
+/* ════ Calm refresh: no fireflies/embers; arched hero, icon cards,
+   compact rows, two-column FAQ, tighter spacing. ════ */
+.fdHeroEmberA, .fdHeroEmberB, .fdFireflies, .suitEmber, .reserveEmber { display: none; }
+.sectionHead { margin-bottom: clamp(1.5rem, 3.5vw, 2.5rem); }
+
+.fdHero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  align-items: center;
+  min-height: 0;
+  padding: clamp(6rem, 12vw, 8rem) var(--pad-x) clamp(2rem, 5vw, 3.5rem);
+}
+.fdHeroText { padding: 0; }
+.fdHeroArt { position: relative; padding-bottom: clamp(1.5rem, 4vw, 2.5rem); }
+.fdHeroVisual {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  max-height: 72vh;
+  border-radius: 999px 999px 24px 24px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(29, 29, 27, 0.15);
+}
+.fdHeroVisual img { transform: none !important; filter: none !important; }
+.fdHeroVisual::after { display: none; }
+.fdHeroNote {
+  position: absolute;
+  left: clamp(-1.5rem, -2vw, 0rem);
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  max-width: 290px;
+  padding: 0.8rem 1rem;
+  border-radius: 16px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  box-shadow: 0 16px 40px rgba(29, 29, 27, 0.12);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.fdHeroNote strong { display: block; color: var(--ink); font-weight: 600; font-size: 0.9rem; }
+.fdHeroNoteSvg { flex: none; width: 48px; height: 48px; color: var(--ink); }
+@media (max-width: 900px) {
+  .fdHero { grid-template-columns: 1fr; }
+  .fdHeroArt { max-width: 520px; width: 100%; }
+  .fdHeroVisual { aspect-ratio: 5 / 4; }
+  .fdHeroNote { left: 0; }
+}
+@media (max-width: 420px) {
+  .fdHeroArt { padding-bottom: 0; }
+  .fdHeroNote { position: static; margin-top: 0.75rem; max-width: none; }
+}
+
+/* Unique: icon cards */
+.uniqueRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: clamp(0.75rem, 1.8vw, 1.25rem);
+  border: none;
+}
+.uniqueItem, .uniqueItem:first-child, .uniqueItem:last-child {
+  padding: clamp(1.3rem, 3vw, 2rem);
+  border: none;
+  border-radius: 22px;
+  background: var(--silver);
+}
+.uniqueIcon { width: 44px; height: 44px; color: var(--ink); margin-bottom: 0.9rem; }
+
+/* Experience: compact alternating rows */
+.expRow { padding: clamp(1.25rem, 3vw, 2rem) 0; }
+.expVisual { transform: none !important; border-radius: 20px; }
+
+/* Gallery head */
+.splitHead { display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; margin-bottom: clamp(1.5rem, 3.5vw, 2.5rem); }
+.splitHead .sectionHead { margin-bottom: 0; }
+.headIllo { flex: none; width: clamp(64px, 11vw, 120px); height: auto; color: var(--ink-faint); }
+@media (max-width: 480px) { .splitHead { flex-direction: column-reverse; align-items: flex-start; } }
+
+/* FAQ: illustration column + list */
+.faqLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(1.5rem, 5vw, 5rem);
+  align-items: start;
+}
+.faqLayout .sectionHead { margin-bottom: 0; }
+.faqIllo { width: clamp(160px, 22vw, 260px); height: auto; margin-top: 1.5rem; color: var(--ink-faint); }
+@media (max-width: 860px) {
+  .faqLayout { grid-template-columns: 1fr; }
+  .faqIllo { width: 150px; }
+}
+
+.reserveVisual img { transform: none !important; }
+
+/* Experience: three photo cards in a row. */
+.expGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(0.75rem, 1.8vw, 1.25rem); }
+.expGrid .expRow, .expGrid .expRow.reverse {
+  display: flex; flex-direction: column; gap: 1rem;
+  padding: 0.75rem 0.75rem 1.4rem; border: none;
+  background: var(--white); border-radius: 22px;
+}
+.expGrid .expRow > div:last-child { padding: 0 0.6rem; }
+.expGrid .expVisual { order: 0; width: 100%; aspect-ratio: 4 / 3; height: auto; border-radius: 16px; }
+@media (max-width: 900px) { .expGrid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .expGrid { grid-template-columns: 1fr; } }
+
+/* Experience — Apple-style bento: full-photo tiles, copy over a soft scrim.
+   First tile is tall on the left, the other two stack on the right. */
+.expGrid {
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  grid-template-rows: repeat(2, minmax(260px, 1fr));
+  gap: clamp(0.6rem, 1.2vw, 1rem);
+}
+.expGrid .expRow,
+.expGrid .expRow.reverse {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(1.25rem, 2.6vw, 2.25rem);
+  min-height: 300px;
+  border-radius: 28px;
+  overflow: hidden;
+  background: var(--ink);
+  isolation: isolate;
+}
+.expGrid .expRow:first-child { grid-row: span 2; min-height: 560px; }
+.expGrid .expVisual,
+.expGrid .expRow.reverse .expVisual {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: auto;
+  height: auto;
+  aspect-ratio: auto;
+  border-radius: 0;
+  order: 0;
+}
+.expGrid .expVisual img { transition: transform 1.2s var(--ease-slow); }
+.expGrid .expRow:hover .expVisual img { transform: scale(1.04) !important; }
+.expGrid .expRow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(20, 18, 15, 0) 35%, rgba(20, 18, 15, 0.82) 100%);
+}
+.expGrid .expRow > div:last-child { padding: 0; max-width: 46ch; }
+.expGrid .expTag { color: rgba(255, 255, 255, 0.7); }
+.expGrid .expTitle { color: var(--white); margin: 0.4rem 0 0.5rem; }
+.expGrid .expBody { color: rgba(255, 255, 255, 0.82); font-size: 0.92rem; line-height: 1.6; }
+.expGrid .expRow:not(:first-child) .expBody { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+@media (max-width: 900px) {
+  .expGrid { grid-template-columns: 1fr; grid-template-rows: none; }
+  .expGrid .expRow:first-child { grid-row: auto; min-height: 420px; }
+  .expGrid .expRow { min-height: 340px; }
+  .expGrid .expRow:not(:first-child) .expBody { -webkit-line-clamp: unset; }
+}
+
+/* Unique — clean white tiles with a large soft numeral, Apple-card feel. */
+.uniqueItem, .uniqueItem:first-child, .uniqueItem:last-child {
+  background: var(--white);
+  border-radius: 28px;
+  box-shadow: 0 1px 2px rgba(29, 29, 27, 0.04), 0 12px 32px rgba(29, 29, 27, 0.05);
+}
+
+/* Unique — one dark panel, 2×2 grid split by hairlines, big type, no icons. */
+.uniqueRow {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  background: #17140f;
+  border-radius: 32px;
+  padding: clamp(0.5rem, 1.5vw, 1rem);
+  overflow: hidden;
+}
+.uniqueItem, .uniqueItem:first-child, .uniqueItem:last-child {
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  padding: clamp(1.5rem, 3.5vw, 3rem);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: clamp(1rem, 2.5vw, 2rem);
+  align-items: start;
+}
+.uniqueItem:nth-child(odd) { border-right: 1px solid rgba(255, 255, 255, 0.1); }
+.uniqueItem:nth-child(-n + 2) { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+.uniqueNum {
+  grid-row: span 2;
+  font-family: var(--font-inner, inherit);
+  font-style: normal;
+  font-weight: 300;
+  font-size: clamp(2.6rem, 5vw, 4rem);
+  line-height: 0.9;
+  background: linear-gradient(160deg, #f3d9a4 0%, #b8843f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin: 0;
+}
+.uniqueTitle { color: #fff; font-size: clamp(1.1rem, 1.8vw, 1.4rem); font-weight: 500; letter-spacing: -0.01em; margin: 0 0 0.5rem; }
+.uniqueBody { color: rgba(255, 255, 255, 0.62); font-size: 0.95rem; line-height: 1.65; max-width: 40ch; }
+@media (max-width: 760px) {
+  .uniqueRow { grid-template-columns: 1fr; border-radius: 24px; }
+  .uniqueItem:nth-child(n) { border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+  .uniqueItem:last-child { border-bottom: none; }
+}
+@media (max-width: 400px) {
+  .uniqueItem, .uniqueItem:first-child, .uniqueItem:last-child { grid-template-columns: 1fr; }
+  .uniqueNum { grid-row: auto; margin-bottom: 0.75rem; }
+}
+.expGrid .expRow:not(:first-child)::after { background: linear-gradient(180deg, rgba(20, 18, 15, 0.1) 0%, rgba(20, 18, 15, 0.88) 75%); }
+.uniqueItem, .uniqueItem:first-child, .uniqueItem:last-child { grid-template-columns: 2.6ch minmax(0, 1fr); }
+.uniqueNum { font-variant-numeric: tabular-nums; }
+.uniqueTitle, .uniqueBody { grid-column: 2; margin-top: 0; }
+.uniqueBody { margin: 0; }
+@media (max-width: 400px) {
+  .uniqueItem, .uniqueItem:first-child, .uniqueItem:last-child { grid-template-columns: 1fr; }
+  .uniqueTitle, .uniqueBody { grid-column: 1; }
+}
+
+/* Gallery — even 3-column grid, uniform landscape frames, caption beneath. */
+.bentoGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: auto;
+  gap: clamp(1rem, 2.2vw, 1.75rem) clamp(0.75rem, 1.6vw, 1.25rem);
+}
+.bentoItem { background: none; border: none; border-radius: 0; overflow: visible; }
+.bentoItem:hover { transform: none; }
+.bentoPhoto {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--silver);
+}
+.bentoPhoto img { transition: transform 1.2s var(--ease-slow); }
+.bentoItem:hover .bentoPhoto img { transform: scale(1.04); }
+.bentoCap {
+  position: static;
+  padding: 0.7rem 0.25rem 0;
+  background: none;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+.bentoCap::first-letter { text-transform: uppercase; }
+@media (max-width: 900px) { .bentoGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .bentoGrid { grid-template-columns: 1fr; } }
+
+/* Experience tiles: description reveals on hover only (always shown on touch). */
+@media (hover: hover) {
+  .expGrid .expBody,
+  .expGrid .expRow:not(:first-child) .expBody {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transform: translateY(10px);
+    transition: max-height 500ms cubic-bezier(0.22, 1, 0.36, 1), opacity 400ms ease, transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .expGrid .expRow:hover .expBody,
+  .expGrid .expRow:not(:first-child):hover .expBody {
+    max-height: 10rem;
+    opacity: 1;
+    transform: none;
+    transition-delay: 60ms;
+  }
+}

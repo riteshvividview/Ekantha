@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { Fragment, useEffect, useRef } from 'react'
 import type { FarmDining } from '@/payload-types'
 import { gsap } from '@/lib/animations/gsap'
 import styles from './farm-dining.module.css'
@@ -17,25 +17,22 @@ export function Unique({ data }: { data: FarmDining['unique'] }) {
     if (!section) return undefined
 
     const ctx = gsap.context(() => {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-
       gsap.from(section.querySelectorAll(`.${styles.sectionHead}`), {
+        opacity: 0,
+        y: 20,
+        duration: 0.9,
+        ease: 'power3.out',
+        stagger: 0,
+        scrollTrigger: { trigger: section, start: 'top 82%', once: true },
+      })
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      gsap.from(section.querySelectorAll(`.${styles.uniqueItem}`), {
         opacity: 0,
         y: 24,
         duration: 0.9,
         ease: 'power3.out',
-        scrollTrigger: { trigger: section, start: 'top 80%', once: true },
-      })
-
-      const cols = section.querySelectorAll(`.${styles.uniqueItem}`)
-      gsap.from(cols, {
-        opacity: 0,
-        y: 36,
-        rotate: (i) => (i % 2 === 0 ? -1.2 : 1.2),
-        duration: 0.9,
-        ease: 'power3.out',
-        stagger: 0.14,
-        scrollTrigger: { trigger: cols[0] ?? section, start: 'top 85%', once: true },
+        stagger: 0.1,
+        scrollTrigger: { trigger: section, start: 'top 82%', once: true },
       })
     }, section)
 
@@ -72,4 +69,21 @@ function renderHeading(heading: string) {
       {words.join(' ')} <em>{last}</em>
     </>
   )
+}
+
+/** Splits a title into per-letter spans (words kept unbroken) for the
+ *  letter-by-letter reveal. Screen readers get the title via aria-label. */
+function splitChars(text: string) {
+  return text.split(' ').map((word, wi, arr) => (
+    <Fragment key={wi}>
+      <span className={styles.uniqueWord} aria-hidden="true">
+        {Array.from(word).map((ch, ci) => (
+          <span className={styles.uniqueChar} key={ci}>
+            {ch}
+          </span>
+        ))}
+      </span>
+      {wi < arr.length - 1 && ' '}
+    </Fragment>
+  ))
 }

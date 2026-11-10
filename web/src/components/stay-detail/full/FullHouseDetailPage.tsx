@@ -17,8 +17,8 @@ export function FullHouseDetailPage({ stay }: { stay: Stay }) {
   return (
     <>
       <RevealController />
-      <Hero stay={stay} badgeNumber={badgeNumber} />
-      <Description data={stay.description} />
+      <Hero stay={stay} badgeNumber={badgeNumber} exit="full" />
+      <Description data={stay.description} variant="full" />
       <Highlights data={stay.highlightsSection} />
       <Amenities data={stay.amenitiesSection} />
       <Gallery items={stay.gallery} />

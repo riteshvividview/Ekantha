@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 import Image from 'next/image'
 import type { FarmDining } from '@/payload-types'
-import { resolveMedia } from '@/lib/media'
+import { resolveMedia } from '@/lib/realMedia'
 import { gsap } from '@/lib/animations/gsap'
 import styles from './farm-dining.module.css'
 
@@ -23,55 +23,17 @@ export function Experience({ data }: { data: FarmDining['experience'] }) {
     const ctx = gsap.context(() => {
       gsap.from(section.querySelectorAll(`.${styles.sectionHead}`), {
         opacity: 0,
-        y: 24,
+        y: 20,
         duration: 0.9,
         ease: 'power3.out',
-        scrollTrigger: { trigger: section, start: 'top 80%', once: true },
+        stagger: 0,
+        scrollTrigger: { trigger: section, start: 'top 82%', once: true },
       })
-
-      const rows = section.querySelectorAll(`.${styles.expRow}`)
-      rows.forEach((row, i) => {
-        const reversed = row.classList.contains(styles.reverse)
-        const visual = row.querySelector(`.${styles.expVisual}`)
-        const copy = row.querySelector(`.${styles.expTag}`)?.parentElement
-
-        gsap.from(visual, {
-          opacity: 0,
-          scale: 0.96,
-          duration: 1,
-          ease: 'power3.out',
-          scrollTrigger: { trigger: row, start: 'top 82%', once: true },
-        })
-
-        if (copy) {
-          gsap.from(copy, {
-            opacity: 0,
-            x: reversed ? 28 : -28,
-            duration: 0.9,
-            ease: 'power3.out',
-            delay: 0.1,
-            scrollTrigger: { trigger: row, start: 'top 82%', once: true },
-          })
-        }
-
-        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          const img = visual?.querySelector('img')
-          if (img) {
-            gsap.fromTo(
-              img,
-              { scale: 1.05, yPercent: i % 2 === 0 ? -3 : 3 },
-              {
-                scale: 1.14,
-                yPercent: i % 2 === 0 ? 3 : -3,
-                ease: 'none',
-                scrollTrigger: { trigger: row, start: 'top bottom', end: 'bottom top', scrub: true },
-              },
-            )
-          }
-        }
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      section.querySelectorAll(`.${styles.expRow}`).forEach((row) => {
+        gsap.from(row, { opacity: 0, y: 28, duration: 0.9, ease: 'power3.out', scrollTrigger: { trigger: row, start: 'top 85%', once: true } })
       })
     }, section)
-
     return () => ctx.revert()
   }, [])
 
@@ -82,11 +44,12 @@ export function Experience({ data }: { data: FarmDining['experience'] }) {
         <h2 className={`section-title ${styles.sectionTitle}`}>{renderHeading(data.heading)}</h2>
       </div>
 
+      <div className={styles.expGrid}>
       {items.map((item, i) => {
         const image = resolveMedia(item.image)
         return (
           <div className={`${styles.expRow}${i % 2 === 1 ? ` ${styles.reverse}` : ''}`} key={item.id ?? i}>
-            <div className={styles.expVisual}>{image.url && <Image src={image.url} alt={image.alt} fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover' }} />}</div>
+            <div className={styles.expVisual}>{image.url && <Image src={image.url} alt={image.alt} fill sizes="(max-width: 768px) 100vw, 60vw" quality={90} style={{ objectFit: 'cover' }} />}</div>
             <div>
               <div className={styles.expTag}>
                 {item.tagNumber} · {item.tagLabel}
@@ -97,6 +60,7 @@ export function Experience({ data }: { data: FarmDining['experience'] }) {
           </div>
         )
       })}
+      </div>
     </section>
   )
 }

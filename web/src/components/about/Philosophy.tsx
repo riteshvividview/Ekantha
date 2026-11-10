@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import type { About } from '@/payload-types'
 import { gsap } from '@/lib/animations/gsap'
+import { Landscape, MangoSprig, Toast, Envelope, EstateMap, Icon } from '../illustrations/Line'
 import styles from './about.module.css'
 
 /**
@@ -21,23 +22,13 @@ export function Philosophy({ data }: { data: About['philosophy'] }) {
     if (!section) return undefined
 
     const ctx = gsap.context(() => {
-      const items = section.querySelectorAll(`.${styles.philoSlab}`)
-      items.forEach((item) => {
-        gsap.from(item.querySelectorAll(`.${styles.philoNum}, .${styles.philoWord}`), {
+      section.querySelectorAll(`.${styles.philoSlab}`).forEach((item) => {
+        gsap.from(item.querySelectorAll(`.${styles.philoNum}, .${styles.philoWord}, .${styles.philoBody}`), {
           opacity: 0,
           y: 18,
-          scale: 0.94,
           duration: 0.9,
           ease: 'power3.out',
           stagger: 0.08,
-          scrollTrigger: { trigger: item, start: 'top 78%', once: true },
-        })
-        gsap.from(item.querySelectorAll(`.${styles.philoBody}`), {
-          opacity: 0,
-          y: 18,
-          duration: 0.9,
-          ease: 'power3.out',
-          delay: 0.1,
           scrollTrigger: { trigger: item, start: 'top 78%', once: true },
         })
       })
@@ -47,9 +38,11 @@ export function Philosophy({ data }: { data: About['philosophy'] }) {
   }, [])
 
   return (
-    <section style={{ padding: 0 }} id="philosophy" ref={sectionRef}>
+    <section id="philosophy" ref={sectionRef}>
+      <div className={styles.philoGrid}>
       {slabs.map((slab, i) => (
-        <div className={`${styles.philoSlab} ${i % 2 === 0 ? 'bg-white' : 'bg-silver'}`} key={slab.id ?? i}>
+        <div className={styles.philoSlab} key={slab.id ?? i}>
+          <Icon name={(['leaf', 'moon', 'path', 'house'] as const)[i % 4]} className={styles.philoIcon} />
           <div>
             <div className={styles.philoNum}>{slab.number}</div>
             <div className={styles.philoWord}>{slab.word}</div>
@@ -57,6 +50,7 @@ export function Philosophy({ data }: { data: About['philosophy'] }) {
           <p className={styles.philoBody} dangerouslySetInnerHTML={{ __html: slab.body }} />
         </div>
       ))}
+      </div>
     </section>
   )
 }

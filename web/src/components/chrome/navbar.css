@@ -889,3 +889,68 @@
     animation: none;
   }
 }
+
+/* ── No page dim/blur behind dropdowns ─────────────────────────── */
+.ve-nav-veil { display: none !important; }
+
+/* ── Header graphics ───────────────────────────────────────────── */
+.ve-nav-vine {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  bottom: 3px;
+  width: 92%;
+  height: 10px;
+  pointer-events: none;
+  stroke: #c9a46a;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.45;
+  z-index: 0;
+}
+.ve-nav-vine .ve-vine-leaf { fill: rgba(201, 164, 106, 0.35); stroke-width: 0.8; }
+@media (max-width: 900px) { .ve-nav-vine { display: none; } }
+
+/* Active item: a tiny gold leaf instead of the plain dot. */
+.ve-nav-active { position: relative; }
+.ve-nav-active::after {
+  content: '' !important;
+  position: absolute;
+  left: 50%;
+  bottom: 0.05rem;
+  margin-left: 0 !important;
+  width: 12px !important;
+  height: 8px !important;
+  transform: translateX(-50%);
+  border-radius: 0 !important;
+  background: no-repeat center / contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 16'%3E%3Cpath d='M2 14 C 8 2, 18 2, 22 4 C 18 12, 10 15, 2 14 Z' fill='%23c9a46a'/%3E%3Cpath d='M2 14 L 16 6' stroke='%23fff' stroke-width='1' opacity='.6'/%3E%3C/svg%3E") !important;
+}
+
+/* Dropdown: sprig before the heading, landscape watermark behind. */
+.ve-mega-body { position: relative; }
+.ve-mega-art {
+  position: absolute;
+  left: 18px;
+  bottom: 10px;
+  width: min(320px, 44%);
+  height: auto;
+  stroke: rgba(29, 29, 27, 0.13);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+  z-index: 0;
+}
+.ve-mega-art .ve-art-accent { stroke: rgba(201, 164, 106, 0.45); }
+.ve-mega-panel { z-index: 1; }
+.ve-mega-sprig {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  stroke: #c9a46a;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  margin-right: 0.15rem;
+}
+.ve-mega-art { left: auto; right: calc(50% + 0.5rem); bottom: 8px; width: 150px; stroke: rgba(29, 29, 27, 0.1); }
+@media (max-width: 1100px) { .ve-mega-art { display: none; } }

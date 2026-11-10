@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vana Ekantha — Sticker Prompts</title>
+<style>
+  :root { --bg: #faf3ea; --card: #fffaf4; --ink: #1d1d1b; --soft: #6b645c; --line: #e6dccd; --gold: #a9793a; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 40px 16px 80px; }
+  h1 { font-size: 28px; margin: 0 0 6px; }
+  .lead { color: var(--soft); margin: 0 0 24px; }
+  .box { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; margin-bottom: 22px; }
+  .box h2 { font-size: 16px; margin: 0 0 8px; }
+  .box h2 + * { margin-top: 0; }
+  .box ol, .box ul { margin: 0 0 12px; padding-left: 20px; color: var(--soft); }
+  code { background: #f1e7d8; padding: 1px 6px; border-radius: 6px; font-size: 13px; }
+  .grid { display: grid; gap: 14px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; }
+  .top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 8px; }
+  .num { font-weight: 700; color: var(--gold); }
+  .name { font-weight: 600; }
+  .file { font-family: ui-monospace, Consolas, monospace; font-size: 13px; background: #1d1d1b; color: #f6eee2; padding: 3px 9px; border-radius: 8px; }
+  .tag { font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 999px; background: #efe3cf; color: #6b4a22; }
+  .tag.motion { background: #e3ead6; color: #4a5a2a; }
+  .where { font-size: 13px; color: var(--soft); margin: 0 0 10px; }
+  .prompt { white-space: pre-wrap; background: #fbf6ef; border: 1px dashed var(--line); border-radius: 10px; padding: 12px; font-size: 14px; margin: 0 0 10px; }
+  .btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  button { cursor: pointer; border: 1px solid var(--ink); background: var(--ink); color: #fff; border-radius: 999px; padding: 7px 14px; font: inherit; font-size: 13px; }
+  button.ghost { background: transparent; color: var(--ink); }
+  button.done { background: #3f6b3a; border-color: #3f6b3a; }
+  .copyall { margin: 0 0 22px; }
+  .styles { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 8px 16px; font-size: 13px; color: var(--soft); }
+  .styles b { color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Vana Ekantha — sticker prompts</h1>
+  <p class="lead">28 more stickers in a mix of styles: mostly flat vector, line art, retro badges, paper-cut and doodles, with only a few watercolour ones, so the set isn't all realistic. The graphic and animated stickers are listed first. Each card says its style and how I'll animate it on the site.</p>
+
+  <div class="box">
+    <h2>How to use this</h2>
+    <ol>
+      <li>Click <b>Copy prompt</b> and paste it into ChatGPT. The style and colour rules are already inside every prompt.</li>
+      <li>Download the result as a <b>PNG with a transparent background</b>, about <b>1024 × 1024 px</b> or larger.</li>
+      <li>Save it with the exact file name in the black tag.</li>
+      <li>Put every image in <code>web/public/images/organize/</code>, then tell me. I'll place and animate them across the pages.</li>
+    </ol>
+    <h2>Already done (keep these)</h2>
+    <p class="where"><code>mango-branch.png</code> and <code>bamboo-stalks.png</code> are great and count as the realistic watercolour ones. No need to redo them.</p>
+    <h2>Tips</h2>
+    <ul>
+      <li>If a result comes out realistic, reply: "make it a flat graphic sticker, not realistic, same subject".</li>
+      <li>If it has a solid background, reply: "same image, transparent background PNG".</li>
+      <li>No words or letters in any sticker.</li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <h2>The six styles used</h2>
+    <div class="styles" id="styles"></div>
+  </div>
+
+  <div class="copyall"><button class="ghost" id="copyAll">Copy all prompts</button></div>
+  <div class="grid" id="list"></div>
+</div>
+
+<script>
+const BASE = 'Isolated on a fully transparent background (PNG), centered single subject with empty space around it, square 1:1, high resolution. Warm earthy palette only: cream #FAF0E6, terracotta #A85A32, olive #6B7A3A, sage #A9B79A, mustard gold #C9A46A, deep brown #3B2A1E. Rustic Indian farmhouse mood. No text, no letters, no logos, no watermark.';
+
+const STYLES = {
+  vector: ['Flat vector', 'Flat vector illustration sticker: clean geometric shapes, solid flat fills with at most one subtle shade tone, no gradients, no texture, not realistic, crisp edges, thin white die-cut border.'],
+  line: ['Line art', 'Minimal line-art icon: a single-weight deep-brown outline, one small mustard-gold accent fill, no shading, no border, lots of negative space, like a refined hand-drawn logo mark. Not realistic.'],
+  badge: ['Retro badge', 'Retro circular badge sticker: flat vector in a limited three-colour print look with a faint risograph grain, the subject inside a round frame with a simple decorative ring, thin white die-cut border. Not realistic.'],
+  papercut: ['Paper-cut', 'Layered paper-cut craft illustration: three or four stacked flat paper layers with soft shadows between them, matte paper texture, clean cut edges, thin white die-cut border. Not realistic.'],
+  doodle: ['Doodle', 'Playful hand-drawn doodle sticker: slightly wobbly brown ink outline, flat crayon-like colour fill that sits a little off the lines, a few tiny sparkle marks, thin white die-cut border. Not realistic.'],
+  watercolour: ['Watercolour', 'Soft watercolour-and-gouache sticker illustration with fine ink outlines and paper grain, thin white die-cut border with a very soft shadow.'],
+};
+
+// [name, file, style, placement, subject, motion]
+const S = [
+  ['Hanging lantern', 'hanging-lantern.png', 'vector', 'Farm Dining & Events, beside reserve / enquiry', 'A vintage hanging oil lantern with a glowing amber flame and a rope loop on top, upright and symmetrical.', 'Gentle swing + soft glow'],
+  ['String lights', 'string-lights.png', 'vector', 'Events, hero and gallery gaps', 'A short swag of five round festoon bulbs on a thin curved wire, evenly spaced, warm yellow bulbs.', 'Bulbs twinkle one by one'],
+  ['Butterfly', 'butterfly.png', 'vector', 'Small accent on every page', 'A butterfly seen from directly above, wings fully open and symmetrical, mustard and terracotta wing pattern.', 'Wing flutter + slow drift'],
+  ['Sun over hills', 'sun-hills.png', 'papercut', 'Home & Stay, wide empty areas', 'A round mustard sun rising behind two rolling olive hills, a tiny farmhouse silhouette on the front hill.', 'Sun rises a little on scroll'],
+  ['Moon and stars', 'moon-stars.png', 'vector', 'Farm Dining & About, "stillness" / night', 'A cream crescent moon with four small four-point stars around it.', 'Stars twinkle'],
+  ['Cup of chai', 'chai-kulhad.png', 'line', 'Contact & Farm Dining, near the forms', 'A terracotta kulhad clay cup of chai with three curling lines of steam rising from it.', 'Steam drifts up in a loop'],
+  ['Leaf seal badge', 'leaf-badge.png', 'badge', 'Any page, round accent near titles', 'A single mango leaf in the centre of a terracotta round seal with a dotted inner ring.', 'Slow rotation'],
+  ['Farmhouse badge', 'farmhouse-badge.png', 'badge', 'Stay page, hero / stays list gap', 'A small farmhouse with a tiled roof and a palm tree beside it, inside a round frame with a sky and hill background.', 'Gentle float'],
+  ['Marigold garland', 'marigold-garland.png', 'vector', 'Events, customise / celebrations', 'A gently curved toran garland of round orange and yellow marigold flowers with small mango leaves hanging between them.', 'Soft sway'],
+  ['Bonfire', 'bonfire.png', 'doodle', 'Events & Full House, evenings', 'A small bonfire of three crossed logs with friendly rounded flames and a few sparks.', 'Flame flicker'],
+  ['Sparrow on a twig', 'sparrow-twig.png', 'doodle', 'FAQs, beside the question list', 'A round little sparrow perched on a short twig with two leaves, looking curious.', 'Head tilt + small hop'],
+  ['Watering can and sapling', 'watering-can.png', 'line', 'About, founder note', 'A small watering can tilted, pouring three drops onto a tiny two-leaf sapling.', 'Drops fall in a loop'],
+  ['Wooden signpost', 'wooden-signpost.png', 'papercut', 'Contact & FAQs, wayfinding gaps', 'A rustic wooden signpost with two blank arrow boards pointing left and right, grass tufts at its base.', 'Boards sway'],
+  ['Coconut palm', 'coconut-palm.png', 'vector', 'Any page, tall narrow gaps', 'A single slender coconut palm with five arching fronds and three coconuts, slightly leaning.', 'Fronds sway'],
+  ['Sunflower', 'sunflower.png', 'doodle', 'Home & Stay, scattered accent', 'A single sunflower bloom on a curved stem with two leaves.', 'Gentle nod'],
+  ['Hammock between palms', 'hammock-palms.png', 'vector', 'Full House, highlights / ideal for', 'A woven hammock hanging between two short palm trunks.', 'Hammock sways'],
+  ['Movie night', 'movie-night.png', 'doodle', 'Stay, outdoor projector amenity', 'A vintage film reel leaning on a folded checked picnic blanket, with a small striped popcorn box.', 'Reel spins slowly'],
+  ['Badminton set', 'badminton-set.png', 'line', 'Stay, outdoor games amenity', 'Two crossed badminton rackets with a shuttlecock above them.', 'Shuttle bobs'],
+  ['Bicycle with basket', 'bicycle-basket.png', 'line', 'Stay & About, slow-living gaps', 'A vintage bicycle in side view with a front basket holding a few wildflowers.', 'Wheels turn on scroll'],
+  ['Grazing cow', 'grazing-cow.png', 'doodle', 'About & Home, wide empty areas', 'A gentle white Indian cow with small curved horns, grazing a tuft of grass.', 'Tail swish'],
+  ['Carrom board', 'carrom-board.png', 'vector', 'Stay, indoor games amenity', 'A square wooden carrom board seen slightly from above, with a few round coins and the striker.', 'Static'],
+  ['Banana-leaf meal', 'banana-leaf-meal.png', 'vector', 'Farm Dining, experience area', 'Top-down view of a banana leaf with a simple meal: a mound of rice and four small round bowls of curry.', 'Static'],
+  ['Basket of vegetables', 'vegetable-basket.png', 'papercut', 'Farm Dining, kitchen-garden mention', 'A woven basket holding a tomato, a brinjal, two green chillies, a carrot and a sprig of coriander.', 'Static'],
+  ['Clay water pot', 'clay-water-pot.png', 'badge', 'About, "nature" philosophy area', 'A round terracotta matka water pot on a woven ring, inside a round frame.', 'Static'],
+  ['Rooster', 'rooster.png', 'papercut', 'Farm Dining, section corners', 'A proud rooster standing side-on, russet body and olive-green tail feathers.', 'Static'],
+  ['Peacock feather', 'peacock-feather.png', 'watercolour', 'Events & About, elegant accent', 'A single gently curved peacock feather with its iridescent eye.', 'Slow sway'],
+  ['Tamarind tree', 'tamarind-tree.png', 'watercolour', 'About, story / nature section', 'A broad old tamarind tree with a twisted trunk and a rounded leafy canopy.', 'Static'],
+  ['Stone cottage', 'stone-cottage.png', 'watercolour', 'Stone House, amenities / gallery gaps', 'A stacked-stone cottage wall corner with a wooden window and a climbing plant.', 'Static'],
+];
+
+const full = (s) => `${STYLES[s[2]][1]} Subject: ${s[4]} ${BASE}`;
+
+function copy(text, btn, label) {
+  const done = () => { btn.textContent = 'Copied'; btn.classList.add('done'); setTimeout(() => { btn.textContent = label; btn.classList.remove('done'); }, 1500); };
+  if (navigator.clipboard) navigator.clipboard.writeText(text).then(done).catch(() => fallback(text, done));
+  else fallback(text, done);
+}
+function fallback(text, done) {
+  const t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select();
+  try { document.execCommand('copy'); done(); } catch (e) {}
+  t.remove();
+}
+
+const styleBox = document.getElementById('styles');
+Object.values(STYLES).forEach(([name, desc]) => {
+  const d = document.createElement('div'); d.innerHTML = `<b>${name}</b> — `; d.append(desc); styleBox.appendChild(d);
+});
+
+const list = document.getElementById('list');
+S.forEach((s, i) => {
+  const c = document.createElement('div'); c.className = 'card';
+  const still = s[5] === 'Static';
+  c.innerHTML = `<div class="top"><span class="num">${String(i + 1).padStart(2, '0')}</span><span class="name"></span><span class="file"></span><span class="tag"></span><span class="tag motion"></span></div>
+    <p class="where"></p><p class="prompt"></p>
+    <div class="btns"><button class="cp">Copy prompt</button><button class="ghost cf">Copy file name</button></div>`;
+  c.querySelector('.name').textContent = s[0];
+  c.querySelector('.file').textContent = s[1];
+  c.querySelector('.tag').textContent = STYLES[s[2]][0];
+  c.querySelector('.motion').textContent = still ? 'Static' : 'Animated: ' + s[5];
+  c.querySelector('.where').textContent = 'Placement: ' + s[3];
+  c.querySelector('.prompt').textContent = full(s);
+  const cp = c.querySelector('.cp'), cf = c.querySelector('.cf');
+  cp.onclick = () => copy(full(s), cp, 'Copy prompt');
+  cf.onclick = () => copy(s[1], cf, 'Copy file name');
+  list.appendChild(c);
+});
+
+const all = document.getElementById('copyAll');
+all.onclick = () => copy(S.map((s, i) => `${i + 1}. ${s[1]}\n${full(s)}`).join('\n\n'), all, 'Copy all prompts');
+</script>
+</body>
+</html>

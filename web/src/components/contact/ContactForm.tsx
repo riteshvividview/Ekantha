@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import type { Contact } from '@/payload-types'
 import { gsap } from '@/lib/animations/gsap'
+import { MangoSprig, Icon } from '../illustrations/Line'
 import styles from './contact.module.css'
 
 /**
@@ -46,12 +47,19 @@ export function ContactForm({ data }: { data: Contact['form'] }) {
 
   return (
     <section className="bg-silver" id="form" ref={sectionRef}>
+      <div className={styles.cfLayout}>
       <div className={styles.formSectionHead}>
         <span className="eyebrow">{data.eyebrow}</span>
         <h2 className={`section-title ${styles.sectionTitle}`} style={{ marginTop: '1rem' }}>
           {renderHeading(data.heading)}
         </h2>
         <p>{data.intro}</p>
+        <ol className={styles.cfSteps}>
+          <li><Icon name="leaf" className={styles.cfStepIcon} /><span>You write to us, as briefly or fully as you like.</span></li>
+          <li><Icon name="house" className={styles.cfStepIcon} /><span>Someone from the estate reads it, not a bot.</span></li>
+          <li><Icon name="check" className={styles.cfStepIcon} /><span>We reply with answers, dates or a call back.</span></li>
+        </ol>
+        <MangoSprig className={styles.cfIllo} />
       </div>
 
       <form
@@ -104,6 +112,7 @@ export function ContactForm({ data }: { data: Contact['form'] }) {
           {data.submitNote && <p className={styles.cfSubmitNote}>{data.submitNote}</p>}
         </div>
       </form>
+      </div>
     </section>
   )
 }

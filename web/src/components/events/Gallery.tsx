@@ -3,8 +3,9 @@
 import { useEffect, useRef } from 'react'
 import Image from 'next/image'
 import type { Event } from '@/payload-types'
-import { resolveMedia } from '@/lib/media'
+import { resolveMedia } from '@/lib/realMedia'
 import { gsap } from '@/lib/animations/gsap'
+import { Landscape, MangoSprig, Toast, Envelope, EstateMap, Icon } from '../illustrations/Line'
 import styles from './events.module.css'
 
 /**
@@ -29,17 +30,14 @@ export function Gallery({ data }: { data: Event['gallery'] }) {
         ease: 'power3.out',
         scrollTrigger: { trigger: section, start: 'top 80%', once: true },
       })
-
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-
       gsap.from(section.querySelectorAll(`.${styles.collageItem}`), {
         opacity: 0,
-        y: 32,
-        scale: 0.85,
-        duration: 0.7,
+        y: 30,
+        duration: 0.9,
         ease: 'power3.out',
         stagger: 0.08,
-        scrollTrigger: { trigger: `.${styles.collage}`, start: 'top 85%', once: true },
+        scrollTrigger: { trigger: section.querySelector(`.${styles.collage}`), start: 'top 82%', once: true },
       })
     }, section)
 
@@ -48,9 +46,12 @@ export function Gallery({ data }: { data: Event['gallery'] }) {
 
   return (
     <section id="gallery" ref={sectionRef}>
-      <div className={styles.sectionHead}>
-        <span className="eyebrow">{data.eyebrow}</span>
-        <h2 className={`section-title ${styles.sectionTitle}`}>{renderHeading(data.heading)}</h2>
+      <div className={styles.splitHead}>
+        <div className={styles.sectionHead}>
+          <span className="eyebrow">{data.eyebrow}</span>
+          <h2 className={`section-title ${styles.sectionTitle}`}>{renderHeading(data.heading)}</h2>
+        </div>
+        <MangoSprig className={styles.headIllo} />
       </div>
 
       <div className={styles.collage}>
@@ -58,7 +59,8 @@ export function Gallery({ data }: { data: Event['gallery'] }) {
           const image = resolveMedia(item.image)
           return (
             <div className={styles.collageItem} key={item.id ?? i}>
-              <div className={styles.collagePlate}>{image.url && <Image src={image.url} alt={item.caption ?? ''} fill sizes="210px" style={{ objectFit: 'cover' }} />}</div>
+              <span className={styles.tape} aria-hidden="true" />
+              <div className={styles.collagePlate}>{image.url && <Image src={image.url} alt={item.caption ?? ''} fill sizes="420px" quality={90} style={{ objectFit: 'cover' }} />}</div>
               {item.caption && <p className={styles.collageCaption}>{item.caption}</p>}
             </div>
           )

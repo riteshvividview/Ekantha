@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Faq } from '@/payload-types'
 import { gsap } from '@/lib/animations/gsap'
+import { Conversation, Envelope, Icon } from '../illustrations/Line'
 import styles from './faqs.module.css'
 
 /**
@@ -147,6 +148,7 @@ export function FaqPage({ data }: { data: Faq }) {
   return (
     <div ref={rootRef}>
       <section className={styles.faqIntro} id="top">
+        <div className={styles.faqHero}>
         <div className={styles.faqIntroInner}>
           <span className="eyebrow">{data.eyebrow}</span>
           <h1 className={`display-lg ${styles.sectionTitle}`}>{renderHeading(data.heading)}</h1>
@@ -174,13 +176,18 @@ export function FaqPage({ data }: { data: Faq }) {
             </p>
           )}
         </div>
+        <div className={styles.faqArt} aria-hidden="true">
+          <Conversation className={styles.faqArtSvg} />
+        </div>
+        </div>
       </section>
 
       <section id="faq-body">
         <div className={styles.faqShell}>
           <nav className={styles.faqRail} aria-label="FAQ categories">
-            {categories.map((cat) => (
+            {categories.map((cat, i) => (
               <a href={`#${cat.slug}`} className={activeSlug === cat.slug ? 'active' : undefined} key={cat.id ?? cat.slug}>
+                <Icon name={ICONS[i % ICONS.length]} className={styles.railIcon} />
                 {cat.title}
               </a>
             ))}
@@ -196,6 +203,7 @@ export function FaqPage({ data }: { data: Faq }) {
                   key={cat.id ?? cat.slug}
                 >
                   <div className={styles.faqCategoryHead}>
+                    <Icon name={ICONS[ci % ICONS.length]} className={styles.catIcon} />
                     <span className={styles.faqCategoryNum}>{cat.number}</span>
                     <h2 className={styles.categoryTitle}>{cat.title}</h2>
                   </div>
@@ -218,6 +226,15 @@ export function FaqPage({ data }: { data: Faq }) {
                 </div>
               )
             })}
+
+            <div className={styles.faqMore}>
+              <Envelope className={styles.faqMoreIllo} />
+              <div>
+                <h2 className={styles.categoryTitle}>Still curious?</h2>
+                <p>If your question isn&apos;t here, write to us and a person from the estate will answer.</p>
+              </div>
+              <a href="/contact" className="btn btn-primary">Contact us</a>
+            </div>
           </div>
         </div>
       </section>
@@ -246,3 +263,5 @@ function renderLastLine(line: string) {
     </>
   )
 }
+
+const ICONS = ['house', 'leaf', 'plate', 'moon', 'path', 'flower', 'star'] as const

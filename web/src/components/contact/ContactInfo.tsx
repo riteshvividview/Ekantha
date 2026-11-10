@@ -2,7 +2,10 @@
 
 import { useEffect, useRef } from 'react'
 import type { Contact } from '@/payload-types'
+import Image from 'next/image'
 import { InfoIcon } from './icons'
+import { assetUrl } from '@/lib/assetUrl'
+import { Envelope } from '../illustrations/Line'
 import { gsap } from '@/lib/animations/gsap'
 import styles from './contact.module.css'
 
@@ -41,6 +44,7 @@ export function ContactInfo({ data }: { data: Contact['info'] }) {
         scrollTrigger: { trigger: `.${styles.infoList}`, start: 'top 85%', once: true },
       })
 
+      gsap.from(section.querySelectorAll(`.${styles.ciVisual}`), { opacity: 0, y: 24, duration: 1, ease: 'power3.out', delay: 0.2 })
       gsap.from(section.querySelectorAll(`.${styles.mapCard}`), {
         opacity: 0,
         y: 14,
@@ -55,10 +59,21 @@ export function ContactInfo({ data }: { data: Contact['info'] }) {
 
   return (
     <section id="top" ref={sectionRef}>
-      <div className={styles.contactHead}>
-        <span className="eyebrow">{data.eyebrow}</span>
-        <h1 className={`display-lg ${styles.sectionTitle}`}>{renderHeading(data.heading)}</h1>
-        <p>{data.intro}</p>
+      <div className={styles.ciHero}>
+        <div className={styles.contactHead}>
+          <span className="eyebrow">{data.eyebrow}</span>
+          <h1 className={`display-lg ${styles.sectionTitle}`}>{renderHeading(data.heading)}</h1>
+          <p>{data.intro}</p>
+        </div>
+        <div className={styles.ciVisual} aria-hidden="true">
+          <div className={styles.ciPhoto}>
+            <Image src={assetUrl('/images/site/why-us-hrs-away-img-two.jpg')} alt="" fill sizes="(max-width: 860px) 92vw, 44vw" quality={90} style={{ objectFit: 'cover' }} priority />
+          </div>
+          <div className={styles.ciLetter}>
+            <Envelope className={styles.ciEnvelope} />
+            <span>A real person replies, usually within a day.</span>
+          </div>
+        </div>
       </div>
 
       <div className={styles.contactGrid}>
@@ -79,9 +94,14 @@ export function ContactInfo({ data }: { data: Contact['info'] }) {
 
         <div className={styles.mapCard}>
           <div className={styles.mapVisual}>
-            <svg viewBox="0 0 200 160" aria-hidden="true">
-              <path d="M15,20 Q90,5 185,25 Q195,80 175,140 Q100,155 25,140 Q5,80 15,20 Z" strokeDasharray="3,4" />
-              <path d="M20,120 Q80,60 180,30" strokeDasharray="2,4" />
+            <svg viewBox="0 0 320 200" aria-hidden="true">
+              <path d="M10 170 C 60 150, 70 110, 120 112 S 190 60, 250 70" strokeDasharray="5 6" className={styles.route} />
+              <circle cx="38" cy="160" r="6" />
+              <text x="38" y="186" textAnchor="middle">HYDERABAD</text>
+              <path d="M150 30 l10 -16 l10 16 z M 200 40 l8 -13 l8 13 z M 60 60 l8 -13 l8 13 z" />
+              <path d="M20 40 q 6 -6 12 0 q 6 -6 12 0 M 260 140 q 6 -6 12 0 q 6 -6 12 0" />
+              <path d="M110 150 C 130 140, 150 160, 170 150 S 210 160, 230 150" />
+              <text x="250" y="102" textAnchor="middle">VANA EKANTHA</text>
             </svg>
             <div className={styles.mapPin} />
           </div>

@@ -3,20 +3,16 @@
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import type { StayPage } from '@/payload-types'
-import { resolveMedia } from '@/lib/media'
+import { resolveMedia } from '@/lib/realMedia'
 import { WhyStayIconSvg } from './icons'
 import { gsap } from '@/lib/animations/gsap'
-import { PAGE_DARK, PAGE_LIGHT, THEME_SECONDS } from '@/lib/pageTheme'
 import styles from './stay.module.css'
 
 /**
- * WhyStay's own motion concept — and the page's one deliberate "color
- * difference" moment the client asked for: the whole page crossfades to a
- * near-black palette for this section (same body-tween pattern the
- * homepage's Why section uses) and back to the light base after it, so
- * the reasons-to-book panels read as a distinct, immersive beat rather
- * than another silver block. Panels also rise in with a stagger, and each
- * reveal its own icon with a little rotate-in instead of a flat fade.
+ * WhyStay's own motion concept: the reasons-to-book panels unfold like a
+ * folding screen as the row scrolls in (alternate leaves hinging from
+ * opposite sides, tied to the scroll), and each panel's icon turns in.
+ * Phones get a simple rise-in.
  */
 export function WhyStay({ data }: { data: StayPage['whyStay'] }) {
   const items = data.items ?? []
@@ -28,12 +24,6 @@ export function WhyStay({ data }: { data: StayPage['whyStay'] }) {
     if (!section) return undefined
 
     const ctx = gsap.context(() => {
-      gsap.fromTo(document.body, PAGE_LIGHT, {
-        ...PAGE_DARK,
-        duration: THEME_SECONDS,
-        ease: 'power2.out',
-        scrollTrigger: { trigger: section, start: 'top 75%', end: 'bottom 60%', toggleActions: 'play reverse play reverse' },
-      })
 
       gsap.from(section.querySelectorAll('.section-head'), {
         opacity: 0,
@@ -46,14 +36,18 @@ export function WhyStay({ data }: { data: StayPage['whyStay'] }) {
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
       const panels = section.querySelectorAll(`.${styles.accPanel}`)
-      gsap.from(panels, {
-        opacity: 0,
-        y: 48,
-        duration: 1,
-        ease: 'power3.out',
-        stagger: 0.14,
-        scrollTrigger: { trigger: panels[0], start: 'top 88%', once: true },
-      })
+      // The panels unfold like a folding screen as the row scrolls in:
+      // alternate leaves hinge from opposite angles and flatten together.
+      const row = section.querySelector(`.${styles.accRow}`)
+      if (row && window.matchMedia('(min-width: 701px)').matches) {
+        gsap.fromTo(
+          panels,
+          { rotationY: (i: number) => (i % 2 === 0 ? 62 : -62), opacity: 0.2, transformPerspective: 1400, transformOrigin: (i: number) => (i % 2 === 0 ? '0% 50%' : '100% 50%') },
+          { rotationY: 0, opacity: 1, ease: 'none', stagger: 0.06, scrollTrigger: { trigger: row, start: 'top 95%', end: 'top 40%', scrub: 0.6 } },
+        )
+      } else {
+        gsap.from(panels, { opacity: 0, y: 40, duration: 0.9, ease: 'power3.out', stagger: 0.12, scrollTrigger: { trigger: panels[0], start: 'top 88%', once: true } })
+      }
       gsap.from(section.querySelectorAll(`.${styles.accIcon}`), {
         opacity: 0,
         rotate: -40,
@@ -91,7 +85,7 @@ export function WhyStay({ data }: { data: StayPage['whyStay'] }) {
               }
             }}
           >
-            <div className={styles.accMedia} aria-hidden="true">{image.url && <Image src={image.url} alt="" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover' }} />}</div>
+            <div className={styles.accMedia} aria-hidden="true">{image.url && <Image src={image.url} alt="" fill sizes="(max-width: 768px) 100vw, 50vw" quality={90} style={{ objectFit: 'cover' }} />}</div>
             <div className={styles.accScrim} aria-hidden="true" />
             <div className={styles.accPanelTop}>
               <div className={styles.accIcon} aria-hidden="true">

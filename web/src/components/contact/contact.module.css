@@ -289,3 +289,90 @@
   font-size: clamp(0.78rem, 1.7vw, 0.85rem);
   color: var(--ink-soft);
 }
+
+/* ════ Layout refresh ════ */
+.ciHero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+  margin-bottom: clamp(2.5rem, 6vw, 4rem);
+}
+.ciHero .contactHead { margin-bottom: 0; }
+.ciVisual { position: relative; padding-bottom: clamp(2rem, 5vw, 3rem); }
+.ciPhoto {
+  position: relative;
+  aspect-ratio: 5 / 4;
+  border-radius: 999px 999px 24px 24px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(29, 29, 27, 0.15);
+}
+.ciLetter {
+  position: absolute;
+  left: clamp(-1.5rem, -2vw, 0rem);
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  max-width: 300px;
+  padding: 0.85rem 1.1rem;
+  border-radius: 16px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  box-shadow: 0 16px 40px rgba(29, 29, 27, 0.12);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.ciEnvelope { flex: none; width: 58px; height: auto; color: var(--ink); }
+@media (max-width: 860px) {
+  .ciHero { grid-template-columns: 1fr; }
+  .ciVisual { max-width: 560px; width: 100%; }
+  .ciLetter { left: 0; }
+}
+@media (max-width: 420px) {
+  .ciVisual { padding-bottom: 0; }
+  .ciLetter { position: static; margin-top: 0.75rem; max-width: none; }
+}
+
+/* Contact rows as cards. */
+.infoList { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 0.75rem; align-content: start; }
+.infoRow, .infoRow:first-child {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: clamp(1rem, 2.4vw, 1.4rem);
+  background: var(--white);
+}
+.infoValue { overflow-wrap: anywhere; }
+
+/* Route-sketch map. */
+.mapVisual svg { width: 92%; height: auto; }
+.mapVisual text { fill: var(--ink-faint); stroke: none; font-size: 9px; letter-spacing: 2px; font-family: var(--font-body); }
+.route { stroke: var(--accent, #c9a46a) !important; stroke-width: 1.6 !important; }
+.mapPin { top: 35%; left: 78%; }
+
+/* Form: notes + steps on the left, form card on the right. */
+.cfLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: start;
+}
+.cfLayout .formSectionHead { margin-bottom: 0; }
+.contactForm {
+  max-width: none;
+  background: var(--white);
+  border-radius: 24px;
+  padding: clamp(1.25rem, 3.5vw, 2.5rem);
+}
+.cfSteps { list-style: none; padding: 0; margin: clamp(1.5rem, 4vw, 2.25rem) 0 0; display: flex; flex-direction: column; gap: 0.9rem; }
+.cfSteps li { display: flex; align-items: center; gap: 0.9rem; font-size: 0.9rem; line-height: 1.5; color: var(--ink-soft); }
+.cfStepIcon { flex: none; width: 40px; height: 40px; padding: 8px; border-radius: 50%; background: var(--white); color: var(--ink); }
+.cfIllo { width: 90px; height: auto; margin-top: 1.5rem; color: var(--ink-faint); }
+@media (max-width: 900px) {
+  .cfLayout { grid-template-columns: 1fr; }
+  .cfIllo { display: none; }
+}
+.infoList { grid-template-columns: 1fr; }
+.infoValue { overflow-wrap: normal; word-break: normal; }
+@media (max-width: 360px) { .infoValue { overflow-wrap: anywhere; } }

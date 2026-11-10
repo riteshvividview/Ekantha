@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import type { Event } from '@/payload-types'
 import { LedgerIcon } from './icons'
 import { gsap } from '@/lib/animations/gsap'
+import { Landscape, MangoSprig, Toast, Envelope, EstateMap, Icon } from '../illustrations/Line'
 import styles from './events.module.css'
 
 /**
@@ -28,28 +29,14 @@ export function VenueFeatures({ data }: { data: Event['venueFeatures'] }) {
         ease: 'power3.out',
         scrollTrigger: { trigger: section, start: 'top 80%', once: true },
       })
-
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-
-      const rows = section.querySelectorAll(`.${styles.ledgerRow}`)
-      gsap.from(rows, {
+      gsap.from(section.querySelectorAll(`.${styles.ledgerRow}`), {
         opacity: 0,
-        x: -20,
-        duration: 0.7,
+        y: 18,
+        duration: 0.9,
         ease: 'power3.out',
         stagger: 0.07,
-        scrollTrigger: { trigger: `.${styles.ledger}`, start: 'top 85%', once: true },
-      })
-
-      gsap.from(section.querySelectorAll(`.${styles.ledgerIcon} svg`), {
-        opacity: 0,
-        rotate: -22,
-        scale: 0.7,
-        duration: 0.6,
-        ease: 'back.out(1.8)',
-        stagger: 0.07,
-        delay: 0.1,
-        scrollTrigger: { trigger: `.${styles.ledger}`, start: 'top 85%', once: true },
+        scrollTrigger: { trigger: section.querySelector(`.${styles.ledger}`), start: 'top 82%', once: true },
       })
     }, section)
 
@@ -63,6 +50,11 @@ export function VenueFeatures({ data }: { data: Event['venueFeatures'] }) {
         <h2 className={`section-title ${styles.sectionTitle}`}>{renderHeading(data.heading)}</h2>
       </div>
 
+      <div className={styles.featLayout}>
+      <div className={styles.featMap}>
+        <EstateMap className={styles.featMapSvg} />
+        <p>A sketch of the estate: lawns, the house, shaded parking and the garden path.</p>
+      </div>
       <div className={styles.ledger}>
         {items.map((item, i) => (
           <div className={styles.ledgerRow} key={item.id ?? i}>
@@ -73,6 +65,7 @@ export function VenueFeatures({ data }: { data: Event['venueFeatures'] }) {
             <div className={styles.ledgerDesc}>{item.description}</div>
           </div>
         ))}
+      </div>
       </div>
     </section>
   )

@@ -3,8 +3,9 @@
 import { useEffect, useRef } from 'react'
 import Image from 'next/image'
 import type { FarmDining } from '@/payload-types'
-import { resolveMedia } from '@/lib/media'
+import { resolveMedia } from '@/lib/realMedia'
 import { gsap } from '@/lib/animations/gsap'
+import { Toast, MangoSprig, Conversation, Icon } from '../illustrations/Line'
 import styles from './farm-dining.module.css'
 
 /**
@@ -29,58 +30,9 @@ export function Hero({ data }: { data: FarmDining['hero'] }) {
     // outside it would survive React Strict Mode's dev double-invoke as a
     // second, orphaned instance racing the first on the same elements.
     const ctx = gsap.context(() => {
-      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-      if (!reduced) {
-        gsap.from(section.querySelectorAll(`.${styles.fdHeroBadge}, .${styles.fdHeroHeadline}, .${styles.fdHeroSub}, .${styles.fdHeroFacts}, .${styles.fdHeroCtas}`), {
-          opacity: 0,
-          y: 22,
-          duration: 1,
-          ease: 'power3.out',
-          stagger: 0.1,
-        })
-
-        gsap.from(section.querySelectorAll(`.${styles.fdHeroVisual}`), {
-          opacity: 0,
-          scale: 0.97,
-          duration: 1.1,
-          ease: 'power3.out',
-          delay: 0.1,
-        })
-
-        const img = section.querySelector(`.${styles.fdHeroVisual} img`)
-        if (img) {
-          gsap.fromTo(
-            img,
-            { scale: 1.06 },
-            {
-              scale: 1.16,
-              ease: 'none',
-              scrollTrigger: { trigger: section, start: 'top top', end: 'bottom top', scrub: true },
-            },
-          )
-        }
-
-        gsap.to(section.querySelectorAll(`.${styles.fdHeroEmberA}`), {
-          x: 24,
-          y: -18,
-          scale: 1.08,
-          duration: 7,
-          ease: 'sine.inOut',
-          repeat: -1,
-          yoyo: true,
-        })
-        gsap.to(section.querySelectorAll(`.${styles.fdHeroEmberB}`), {
-          x: -20,
-          y: 16,
-          scale: 1.12,
-          duration: 9,
-          ease: 'sine.inOut',
-          repeat: -1,
-          yoyo: true,
-          delay: 0.4,
-        })
-      }
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      gsap.from(section.querySelectorAll(`.${styles.fdHeroText} > *`), { opacity: 0, y: 22, duration: 0.9, ease: 'power3.out', stagger: 0.08 })
+      gsap.from(section.querySelectorAll(`.${styles.fdHeroVisual}, .${styles.fdHeroNote}`), { opacity: 0, y: 24, duration: 1, ease: 'power3.out', stagger: 0.15, delay: 0.2 })
     }, section)
 
     return () => ctx.revert()
@@ -88,8 +40,6 @@ export function Hero({ data }: { data: FarmDining['hero'] }) {
 
   return (
     <section className={styles.fdHero} id="top" ref={sectionRef}>
-      <div className={styles.fdHeroEmberA} aria-hidden="true" />
-      <div className={styles.fdHeroEmberB} aria-hidden="true" />
 
       <div className={styles.fdHeroText}>
         <div className={styles.fdHeroBadge}>
@@ -121,7 +71,14 @@ export function Hero({ data }: { data: FarmDining['hero'] }) {
         </div>
       </div>
 
-      <div className={styles.fdHeroVisual}>{image.url && <Image src={image.url} alt={image.alt} fill sizes="100vw" style={{ objectFit: 'cover' }} priority />}</div>
+      <div className={styles.fdHeroArt}>
+      <div className={styles.fdHeroVisual}>{image.url && <Image src={image.url} alt={image.alt} fill sizes="(max-width: 900px) 92vw, 45vw" quality={90} style={{ objectFit: 'cover' }} priority />}
+      </div>
+      <div className={styles.fdHeroNote} aria-hidden="true">
+        <Toast className={styles.fdHeroNoteSvg} />
+        <span><strong>Seasonal table</strong>The menu follows what the farm grew that week.</span>
+      </div>
+      </div>
     </section>
   )
 }

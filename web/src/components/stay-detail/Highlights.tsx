@@ -3,9 +3,10 @@
 import { useEffect, useRef } from 'react'
 import Image from 'next/image'
 import type { Stay } from '@/payload-types'
-import { resolveMediaSize } from '@/lib/media'
+import { resolveMediaSize } from '@/lib/realMedia'
 import { HighlightIconSvg, badgeColorClass } from './icons'
 import { gsap } from '@/lib/animations/gsap'
+import { riseTitle } from '@/lib/animations/sectionMotion'
 import styles from './stay-detail.module.css'
 
 /**
@@ -46,6 +47,17 @@ export function Highlights({ data }: { data: Stay['highlightsSection'] }) {
       })
 
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      riseTitle(section)
+
+      // A vine grows down the list as you read it, a leaf riding its tip.
+      const list = section.querySelector(`.${styles.hlList}`)
+      const vine = section.querySelector(`.${styles.hlVineLine}`)
+      const tip = section.querySelector(`.${styles.hlVineTip}`)
+      if (list && vine && tip) {
+        const grow = { trigger: list, start: 'top 70%', end: 'bottom 60%', scrub: 0.5 }
+        gsap.fromTo(vine, { scaleY: 0 }, { scaleY: 1, ease: 'none', scrollTrigger: grow })
+        gsap.fromTo(tip, { top: '0%', rotate: -30 }, { top: '100%', rotate: 30, ease: 'none', scrollTrigger: grow })
+      }
 
       const mediaImg = section.querySelector(`.${styles.hlMedia} img`)
       if (mediaImg) {
@@ -75,8 +87,15 @@ export function Highlights({ data }: { data: Stay['highlightsSection'] }) {
       </div>
 
       <div className={styles.hlSplit}>
-        <div className={styles.hlMedia}>{image.url && <Image src={image.url} alt={image.alt} fill sizes="(max-width: 768px) 100vw, 40vw" style={{ objectFit: 'cover' }} />}</div>
+        <div className={styles.hlMedia}>{image.url && <Image src={image.url} alt={image.alt} fill sizes="(max-width: 860px) 100vw, 80vw" quality={90} style={{ objectFit: 'cover' }} />}</div>
         <div className={styles.hlList}>
+          <div className={styles.hlVine} aria-hidden="true">
+            <i className={styles.hlVineLine} />
+            <svg className={styles.hlVineTip} viewBox="0 0 24 24">
+              <path d="M12 2C6 7 5 15 12 22C19 15 18 7 12 2Z" />
+              <path d="M12 4V20" />
+            </svg>
+          </div>
           {items.map((item, i) => (
             <div className={styles.hlRow} key={item.id ?? i}>
               <div className={styles.hlIcon} aria-hidden="true">

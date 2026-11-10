@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import type { About } from '@/payload-types'
 import { gsap } from '@/lib/animations/gsap'
+import { Landscape, MangoSprig, Toast, Envelope, EstateMap, Icon } from '../illustrations/Line'
 import styles from './about.module.css'
 
 /**
@@ -32,8 +33,7 @@ export function Story({ data }: { data: About['story'] }) {
         scrollTrigger: { trigger: section, start: 'top 82%', once: true },
       })
 
-      const paras = section.querySelectorAll(`.${styles.storyBody} p`)
-      paras.forEach((p) => {
+      section.querySelectorAll(`.${styles.storyBody} p`).forEach((p) => {
         gsap.from(p, {
           opacity: 0,
           y: 22,
@@ -42,7 +42,6 @@ export function Story({ data }: { data: About['story'] }) {
           scrollTrigger: { trigger: p, start: 'top 88%', once: true },
         })
       })
-
       const underlines = section.querySelectorAll(`.${styles.storyUnderline}`)
 
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -71,8 +70,9 @@ export function Story({ data }: { data: About['story'] }) {
       <div className={styles.storyInner}>
         <div className={styles.storyLeft}>
           <span className="eyebrow">the name</span>
+          <MangoSprig className={styles.storyIllo} />
           {glosses.map((g, i) => (
-            <div className={styles.storyWord} style={i > 0 ? { marginTop: '1.5rem' } : undefined} key={g.id ?? g.word}>
+            <div className={styles.storyWord} key={g.id ?? g.word}>
               {g.word}
               <span className={styles.storyUnderline} aria-hidden="true" />
               <span>{g.translation}</span>

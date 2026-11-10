@@ -1,16 +1,18 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import type { Stay } from '@/payload-types'
-import { resolveMedia } from '@/lib/media'
+import { resolveMedia } from '@/lib/realMedia'
 import { gsap } from '@/lib/animations/gsap'
+import { riseTitle } from '@/lib/animations/sectionMotion'
+import { GalleryLightbox } from './GalleryLightbox'
 import styles from './stay-detail.module.css'
 
 /**
  * Mango House's gallery opens like dappled light through the grove: each
  * photo irises in through a soft clip-path instead of a flat fade, and
- * alternating tiles drift up or down at slightly different speeds while
+ * each photo drifts inside its own frame while
  * you scroll past — a gentle, uneven rhythm (not the uniform masonry
  * entrance a denser "stay" catalog would use) that matches a page about a
  * small, quiet cottage rather than a full estate.
@@ -18,6 +20,8 @@ import styles from './stay-detail.module.css'
 export function Gallery({ items, title }: { items: Stay['gallery']; title: string }) {
   const gallery = items ?? []
   const sectionRef = useRef<HTMLElement>(null)
+  const [open, setOpen] = useState<{ index: number; from: DOMRect | null } | null>(null)
+  const photos = gallery.map((item) => ({ url: resolveMedia(item.image).url, caption: item.caption }))
 
   useEffect(() => {
     if (!gallery.length) return undefined
@@ -36,16 +40,22 @@ export function Gallery({ items, title }: { items: Stay['gallery']; title: strin
       })
 
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      riseTitle(section)
 
+      // Parallax lives inside each frame (the photo drifts, the tile
+      // stays put), so tiles never slide into one another.
       tiles.forEach((tile, i) => {
-        const speed = i % 2 === 0 ? 14 : -14
+        const img = tile.querySelector('img')
+        if (!img) return
+        const speed = i % 2 === 0 ? 7 : -7
         gsap.fromTo(
-          tile,
-          { yPercent: -speed },
+          img,
+          { yPercent: -speed, scale: 1.18 },
           {
             yPercent: speed,
+            scale: 1.18,
             ease: 'none',
-            scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom top', scrub: true },
+            scrollTrigger: { trigger: tile, start: 'top bottom', end: 'bottom top', scrub: true },
           },
         )
       })
@@ -69,14 +79,31 @@ export function Gallery({ items, title }: { items: Stay['gallery']; title: strin
         {gallery.map((item, i) => {
           const image = resolveMedia(item.image)
           return (
-            <div className={styles.galleryItem} style={{ aspectRatio: item.aspectRatio ?? '4/3' }} key={item.id ?? i}>
+            <button
+              type="button"
+              className={styles.galleryItem}
+              style={{ aspectRatio: item.aspectRatio ?? '4/3' }}
+              key={item.id ?? i}
+              onClick={(e) => setOpen({ index: i, from: e.currentTarget.getBoundingClientRect() })}
+              aria-label={`View photo: ${item.caption}`}
+            >
               {image.url && <Image src={image.url} alt={item.caption} fill sizes="(max-width: 768px) 50vw, 33vw" style={{ objectFit: 'cover' }} />}
               <div className={styles.galleryScrim} aria-hidden="true" />
               <p className={styles.galleryCaption}>{item.caption}</p>
-            </div>
+              <span className={styles.galleryView} aria-hidden="true">View</span>
+            </button>
           )
         })}
       </div>
+      {open && (
+        <GalleryLightbox
+          photos={photos}
+          index={open.index}
+          from={open.from}
+          onIndex={(index) => setOpen({ index, from: null })}
+          onClose={() => setOpen(null)}
+        />
+      )}
     </section>
   )
 }

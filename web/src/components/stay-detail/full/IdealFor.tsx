@@ -3,14 +3,14 @@
 import { useEffect, useRef } from 'react'
 import Image from 'next/image'
 import type { Stay } from '@/payload-types'
-import { resolveMedia } from '@/lib/media'
+import { resolveMedia } from '@/lib/realMedia'
 import { gsap } from '@/lib/animations/gsap'
 import styles from './full.module.css'
 
 /** Full House's numbered card grid — matches FullHouse.html's `.ideal-*`
  *  design. Reuses the same `idealFor` field Mango House's circular-photo
- *  rows and Stone House's alternating rows use. Cards scale up into place
- *  together rather than queuing one at a time, and each number badge pops
+ *  rows and Stone House's alternating rows use. Cards stand up from the
+ *  table in 3D, hinged at their base, and each number badge pops
  *  in with a little overshoot right after — like place cards being set
  *  down and then stamped, fitting a page about groups arriving at once. */
 export function IdealFor({ items }: { items: Stay['idealFor'] }) {
@@ -22,23 +22,30 @@ export function IdealFor({ items }: { items: Stay['idealFor'] }) {
 
     const ctx = gsap.context(() => {
       const cards = section.querySelectorAll(`.${styles.idealCard}`)
-      gsap.from(cards, {
-        opacity: 0,
-        scale: 0.92,
-        duration: 0.8,
-        ease: 'power3.out',
-        stagger: 0.1,
-        scrollTrigger: { trigger: section, start: 'top 82%', once: true },
-      })
-      gsap.from(section.querySelectorAll(`.${styles.idealNum}`), {
-        opacity: 0,
-        scale: 0.5,
-        duration: 0.6,
-        ease: 'back.out(1.9)',
-        stagger: 0.1,
-        delay: 0.25,
-        scrollTrigger: { trigger: cards[0] ?? section, start: 'top 82%', once: true },
-      })
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      // Calm entrance: each card rises and fades in a beat after the last,
+      // its photo settling from a slight zoom as it arrives.
+      const st = { trigger: section.querySelector(`.${styles.idealGrid}`) ?? section, start: 'top 80%', once: true }
+      gsap.fromTo(
+        cards,
+        { opacity: 0, y: 40, transition: 'none' },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: 'power3.out',
+          stagger: 0.12,
+          scrollTrigger: st,
+          onComplete: () => {
+            gsap.set(cards, { clearProps: 'transform,transition' })
+          },
+        },
+      )
+      gsap.fromTo(
+        section.querySelectorAll(`.${styles.idealMedia} img`),
+        { scale: 1.12 },
+        { scale: 1, duration: 1.6, ease: 'power2.out', stagger: 0.12, scrollTrigger: st },
+      )
     }, section)
 
     return () => ctx.revert()
@@ -60,7 +67,7 @@ export function IdealFor({ items }: { items: Stay['idealFor'] }) {
           return (
             <div className={styles.idealCard} key={item.id ?? i}>
               <div className={styles.idealMedia}>
-                {image.url && <Image src={image.url} alt={image.alt} fill sizes="(max-width: 768px) 50vw, 25vw" style={{ objectFit: 'cover' }} />}
+                {image.url && <Image src={image.url} alt={image.alt} fill sizes="(max-width: 500px) 100vw, (max-width: 900px) 50vw, 30vw" quality={90} style={{ objectFit: 'cover' }} />}
                 <span className={styles.idealNum} aria-hidden="true">
                   {String(i + 1).padStart(2, '0')}
                 </span>

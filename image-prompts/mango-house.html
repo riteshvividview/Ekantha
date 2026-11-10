@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mango House Prompts</title>
+<style>
+:root{--bg:#f7f5f0;--ink:#1d1c19;--mute:#6b675e;--line:#dcd7cc;--card:#fff;--accent:#7a5a1e}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141310;--ink:#eeeae0;--mute:#a19b8e;--line:#34312b;--card:#1d1b17;--accent:#d9b56a}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,sans-serif}
+main{max-width:980px;margin:0 auto;padding:40px 16px 80px}
+h1{font:600 2rem/1.2 Georgia,serif;margin:0 0 6px}p.lead{color:var(--mute);margin:0 0 28px}
+.rules{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin-bottom:32px}
+.rules li{margin:4px 0}
+.slot{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:18px;display:grid;grid-template-columns:200px 1fr;gap:20px}
+.slot img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;background:var(--line)}
+.slot h2{font:600 1.1rem/1.3 Georgia,serif;margin:0 0 4px}
+.meta{font:12px/1.5 ui-monospace,monospace;color:var(--accent);word-break:break-all;margin-bottom:10px}
+.prompt{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px;font-size:14px;white-space:pre-wrap;position:relative}
+button{float:right;font:12px system-ui;padding:4px 10px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+small{color:var(--mute)}
+@media (max-width:640px){.slot{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<h1>Mango House: image prompts</h1>
+<p class="lead">At the moment, Mango House borrows photos from other parts of the site. Each card below is one slot on the page. Attach the reference image shown, use the prompt, and save the result under the file name given.</p>
+
+<div class="rules">
+<strong>For every image</strong>
+<ul>
+<li>Style: real photograph, natural daylight, warm and earthy colour, 35mm lens look, no text, no watermark, no people facing the camera unless the prompt says so.</li>
+<li>Export as JPG, sRGB, 2400px on the long edge, quality around 80.</li>
+<li>Put the files in <code>C:\VividView Websites\Ekantha\image-prompts\mango-house\</code>. I'll optimise them, upload them to R2 at <code>images/site/</code> and connect them to the page.</li>
+<li>Reference image: use it for the architecture, materials and palette. Don't copy its framing.</li>
+</ul>
+</div>
+
+<div id="slots"></div>
+</main>
+<script>
+const R2='https://pub-430c69e6cefc4f0ea46efa4448408e9b.r2.dev/images/site/';
+const slots=[
+['Hero (full-bleed, lens shader)','mango-hero.jpg','16:9 landscape, subject in the left two thirds, calm sky on the right for the title','testimonials-mango-house-peaceful-tab.jpg',
+'Wide eye-level photograph of a single-storey farm cottage with a terracotta tile roof and lime-washed walls, set under the canopy of large old mango trees. Late-afternoon golden light filters through the leaves and leaves dappled shadow on a red-earth path to the verandah. Unripe green mangoes hang in the foreground and are softly out of focus. Peaceful, lived-in, rural South India.'],
+['Hero postcard (tilted card)','mango-postcard.jpg','4:5 portrait','gallery-preview-mango-2.jpg',
+'Close, intimate portrait-format photo: a cane chair on a shaded verandah, a brass tumbler of filter coffee on a low wooden stool, mango leaves overhead, and soft morning light. It should read like a holiday postcard.'],
+['Description accent portrait','mango-description.jpg','4:5 portrait','gallery-preview-mango-3.jpg',
+'A hand reaching up to pick a ripe yellow-orange mango from a low branch, with the cottage roof blurred in the background, early morning light and gentle haze. Show the crop, not a face.'],
+['Highlights (sticky photo)','mango-highlights.jpg','4:5 portrait (crops to 16:9 on phones, so keep the subject central)','testimonials-mango-house-room-peaceful-tab.jpg',
+'Interior of the Mango House bedroom: a queen bed with off-white handloom linen, a narrow daybed along the wall, and a large wooden-framed window opening straight onto mango and guava trees. Daylight only, terracotta floor, minimal decor.'],
+['Amenity: orchard window','mango-amenity-window.jpg','16:10 landscape','testimonials-mango-house-room-unhurried-tab.jpg',
+'The view from inside through an open wooden window: green orchard leaves fill the frame and morning light falls across the sill, where a ceramic cup sits.'],
+['Amenity: verandah','mango-amenity-verandah.jpg','16:10 landscape','why-us-just-for-you-img.jpg',
+'A covered verandah with two cane loungers, a woven mat, and potted plants along the edge, looking out to the orchard. Soft overcast light.'],
+['Amenity: outdoor shower','mango-amenity-shower.jpg','16:10 landscape','why-us-throughtfully-planned-img.jpg',
+'A rain-fed outdoor shower with stone-clad walls, a copper shower head and ferns growing in the cracks. The sky is visible above the open roof and water droplets catch the light. No people.'],
+['Amenity: dairy neighbours','mango-amenity-goats.jpg','16:10 landscape','why-us-untouched-land-img.jpg',
+'Two friendly goats at a wooden fence in a small dairy yard. The cottage is visible far behind under the trees, in warm evening light.'],
+['Gallery 1: morning','mango-gallery-1.jpg','3:2 landscape','gallery-preview-mango-thumb.jpg',
+'The cottage at dawn, with mist between the mango trees and a single warm light on in the window.'],
+['Gallery 2: breakfast','mango-gallery-2.jpg','3:2 landscape','footer-memories-a-toast.jpg',
+'A farm breakfast on the verandah table: fresh-cut mangoes, dosa, coconut chutney, filter coffee and banana-leaf plates, shot top-down at a slight angle.'],
+['Gallery 3: night','mango-gallery-3.jpg','3:2 landscape','footer-memories-quiet-walks.jpg',
+'The cottage at blue hour, with warm lanterns on the verandah, fireflies (subtle), and silhouetted mango trees against a deep blue sky.'],
+['Ideal For: hover image (couples)','mango-ideal-couples.jpg','4:5 portrait','events-preview-inside-mango-house.jpg',
+'Two people seen from behind, sitting on the verandah steps with tea and looking out at the orchard at golden hour.'],
+['Ideal For: hover image (small family)','mango-ideal-family.jpg','4:5 portrait','events-preview-a-setting-for-every-occasion-2.jpg',
+'A child holding a mango in the orchard while a parent\'s hand reaches in from the edge of frame. Candid, faces not visible, and dappled light.'],
+];
+document.getElementById('slots').innerHTML=slots.map(([name,file,ratio,ref,prompt],i)=>`
+<section class="slot">
+<div><img src="${R2+ref}" alt="Reference for ${name}" loading="lazy"><small>Reference: <a href="${R2+ref}" target="_blank" rel="noopener">${ref}</a><br>Download this and attach it.</small></div>
+<div><h2>${i+1}. ${name}</h2>
+<div class="meta">Save as: ${file} · ${ratio}</div>
+<div class="prompt"><button onclick="navigator.clipboard.writeText(this.parentElement.dataset.p);this.textContent='Copied'">Copy</button><span></span></div></div>
+</section>`).join('');
+document.querySelectorAll('.prompt').forEach((el,i)=>{el.dataset.p=slots[i][4];el.querySelector('span').textContent=slots[i][4]});
+</script>
+</body>
+</html>

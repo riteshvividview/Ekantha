@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import type { FarmDining } from '@/payload-types'
 import { gsap } from '@/lib/animations/gsap'
+import { Toast, MangoSprig, Conversation, Icon } from '../illustrations/Line'
 import styles from './farm-dining.module.css'
 
 export function Faq({ data }: { data: FarmDining['faq'] }) {
@@ -49,9 +50,11 @@ export function Faq({ data }: { data: FarmDining['faq'] }) {
 
   return (
     <section id="faq" ref={sectionRef}>
+      <div className={styles.faqLayout}>
       <div className={`${styles.sectionHead}`}>
         <span className="eyebrow">{data.eyebrow}</span>
         <h2 className={`section-title ${styles.sectionTitle}`}>{renderHeading(data.heading)}</h2>
+        <Conversation className={styles.faqIllo} />
       </div>
 
       <div className={styles.faqList} ref={listRef}>
@@ -64,6 +67,7 @@ export function Faq({ data }: { data: FarmDining['faq'] }) {
             <div className={styles.faqAnswer}>{item.answer}</div>
           </details>
         ))}
+      </div>
       </div>
     </section>
   )

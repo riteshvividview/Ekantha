@@ -3,9 +3,10 @@
 import { useEffect, useRef } from 'react'
 import Image from 'next/image'
 import type { About } from '@/payload-types'
-import { resolveMedia } from '@/lib/media'
+import { resolveMedia } from '@/lib/realMedia'
 import { CountUp } from '@/components/shared/CountUp'
 import { gsap } from '@/lib/animations/gsap'
+import { Landscape, MangoSprig, Toast, Envelope, EstateMap, Icon } from '../illustrations/Line'
 import styles from './about.module.css'
 
 /**
@@ -91,7 +92,10 @@ export function Overview({ data }: { data: About['overview'] }) {
           </div>
         </div>
 
-        <div className={styles.overviewVisual}>{image.url && <Image src={image.url} alt={image.alt} fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover' }} />}</div>
+        <div className={styles.overviewVisual}>
+          <div className={styles.overviewMap} aria-hidden="true"><EstateMap /></div>
+          {image.url && <Image src={image.url} alt={image.alt} fill sizes="(max-width: 768px) 100vw, 60vw" quality={90} style={{ objectFit: 'cover' }} />}
+        </div>
       </div>
     </section>
   )

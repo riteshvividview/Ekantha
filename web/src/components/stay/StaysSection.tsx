@@ -3,7 +3,7 @@
 import { useEffect, useRef, type CSSProperties } from 'react'
 import Image from 'next/image'
 import type { Stay, StayPage } from '@/payload-types'
-import { resolveMediaSize } from '@/lib/media'
+import { resolveMedia } from '@/lib/realMedia'
 import { CountUp } from '@/components/shared/CountUp'
 import { gsap, ScrollTrigger } from '@/lib/animations/gsap'
 import styles from './stay.module.css'
@@ -65,31 +65,29 @@ export function StaysSection({ data, stays }: { data: StayPage['staysSection']; 
           )
         }
 
-        // Plate: clip-path wipe in on first entry, then a slow continuous
-        // parallax drift on the image itself while the block is in view.
+        // Plate: a diagonal wipe tied to scroll (a sliver at the bottom-left
+        // corner opening to the whole frame), with the photo settling from
+        // a zoom inside it.
         const plate = block.querySelector(`.${styles.stayPlate}`)
         const plateImg = plate?.querySelector('img')
+        const wipe = { trigger: block, start: 'top 85%', end: 'top 25%', scrub: 0.5 }
         if (plate) {
-          gsap.from(plate, {
-            clipPath: 'inset(0% 0% 100% 0%)',
-            duration: 1.1,
-            ease: 'power3.out',
-            scrollTrigger: { trigger: block, start: 'top 80%', once: true },
-          })
-        }
-        if (plateImg) {
           gsap.fromTo(
-            plateImg,
-            { scale: 1.16, yPercent: -6 },
-            {
-              scale: 1.04,
-              yPercent: 6,
-              ease: 'none',
-              scrollTrigger: { trigger: block, start: 'top bottom', end: 'bottom top', scrub: true },
-            },
+            plate,
+            { clipPath: 'polygon(0% 100%, 0% 100%, 0% 100%, 0% 100%)' },
+            { clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)', ease: 'none', scrollTrigger: wipe },
           )
         }
-
+        if (plateImg) gsap.fromTo(plateImg, { scale: 1.3 }, { scale: 1.02, ease: 'none', scrollTrigger: wipe })
+        // A huge outlined numeral slides sideways behind the block.
+        const numeral = block.querySelector(`.${styles.stayNumeral}`)
+        if (numeral) {
+          gsap.fromTo(numeral, { xPercent: 30 }, {
+            xPercent: -30,
+            ease: 'none',
+            scrollTrigger: { trigger: block, start: 'top bottom', end: 'bottom top', scrub: true },
+          })
+        }
         // Copy column staggers in once.
         const copyBits = block.querySelectorAll(
           `.${styles.stayQuote}, .${styles.staySpecs}, .${styles.stayLists} > *, .${styles.stayNote}, .${styles.stayCtaRow}`,
@@ -126,11 +124,14 @@ export function StaysSection({ data, stays }: { data: StayPage['staysSection']; 
       </div>
 
       {stays.map((stay, i) => {
-        const image = resolveMediaSize(stay.heroImage, 'card')
+        const image = resolveMedia(stay.heroImage)
         const lists = stay.overviewBlock?.lists ?? []
         const accent = ACCENTS[i % ACCENTS.length]
         return (
           <div className={styles.stayBlock} key={stay.id} style={{ '--stay-accent': accent } as CSSProperties}>
+            <span className={styles.stayNumeral} aria-hidden="true">
+              {String(i + 1).padStart(2, '0')}
+            </span>
             <div className={styles.stayBlockHeader}>
               <div className={styles.stayBlockNum}>
                 <span className={styles.stayRailTrack} aria-hidden="true">
@@ -185,7 +186,7 @@ export function StaysSection({ data, stays }: { data: StayPage['staysSection']; 
                 </div>
               </div>
 
-              <div className={styles.stayPlate}>{image.url && <Image src={image.url} alt={image.alt} fill sizes="(max-width: 768px) 100vw, 45vw" style={{ objectFit: 'cover' }} />}</div>
+              <div className={styles.stayPlate}>{image.url && <Image src={image.url} alt={image.alt} fill sizes="(max-width: 768px) 100vw, 60vw" quality={90} style={{ objectFit: 'cover' }} />}</div>
             </div>
           </div>
         )

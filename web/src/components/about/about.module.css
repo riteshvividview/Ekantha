@@ -269,6 +269,8 @@
   font-style: italic;
   font-size: clamp(1.2rem, 2.5vw, 1.6rem);
   color: var(--ink-faint);
+  text-decoration: line-through;
+  text-decoration-color: var(--line-strong);
 }
 
 .contrastYes {
@@ -340,3 +342,158 @@
   object-fit: cover;
   display: block;
 }
+
+/* Eyebrow on the dark Overview panel. */
+.overview :global(.eyebrow) { color: rgba(255, 255, 255, 0.7); }
+.overview :global(.eyebrow)::before { background: var(--white); }
+
+/* ════ Layout refresh: illustrated hero, gloss cards, philosophy cards,
+   not/instead comparison, two-column founder note, mapped overview. ════ */
+
+.manifestoGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+}
+.manifestoArt {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 28px;
+  background: var(--silver);
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 3vw, 2rem);
+  color: var(--ink-soft);
+}
+.manifestoSvg { width: 100%; height: auto; }
+@media (max-width: 860px) {
+  .manifestoGrid { grid-template-columns: 1fr; }
+  .manifestoArt { max-width: 520px; width: 100%; }
+}
+
+/* Story: glosses become cards with a sprig above. */
+.storyIllo { display: block; width: 64px; height: auto; color: var(--ink-faint); margin: 1.25rem 0 0.5rem; }
+.storyLeft { display: flex; flex-direction: column; align-items: flex-start; gap: 0.9rem; }
+.storyWord {
+  display: block;
+  width: 100%;
+  margin-top: 0;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: clamp(1rem, 2.5vw, 1.4rem) clamp(1.1rem, 2.5vw, 1.5rem);
+}
+.storyUnderline { display: none; }
+.storyWord span { margin-top: 0.5rem; }
+
+/* Philosophy: a row of icon cards instead of stacked slabs. */
+.philoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: clamp(0.75rem, 1.8vw, 1.25rem);
+}
+.philoSlab,
+.philoSlab:last-of-type {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: clamp(1.4rem, 3vw, 2.2rem);
+  background: var(--silver);
+  border: none;
+  border-radius: 22px;
+}
+.philoIcon { width: 46px; height: 46px; color: var(--ink); }
+.philoBody { max-width: none; }
+
+/* Different: two columns, cross vs check. */
+.contrastList { max-width: none; }
+.contrastRow {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(0.6rem, 1.5vw, 1rem);
+  padding: clamp(0.4rem, 1vw, 0.6rem) 0;
+  border: none;
+}
+.contrastRow:first-child { border-top: none; }
+.contrastNot,
+.contrastYes {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: left;
+  border-radius: 16px;
+  padding: clamp(0.9rem, 2.2vw, 1.25rem) clamp(1rem, 2.5vw, 1.5rem);
+  height: 100%;
+}
+.contrastNot { background: transparent; border: 1px dashed var(--line-strong); }
+.contrastYes { background: var(--silver); }
+.contrastIcon { flex: none; width: 24px; height: 24px; color: var(--ink-faint); }
+@media (max-width: 600px) {
+  .contrastRow { grid-template-columns: 1fr; gap: 0.4rem; padding: 0.6rem 0; }
+}
+
+/* Founder: quote column with illustration, letter column beside it. */
+.founderInner {
+  max-width: 1080px;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(1.5rem, 5vw, 5rem);
+  align-items: start;
+}
+.founderInner > :global(.eyebrow) { grid-column: 1 / -1; }
+.founderSide { position: relative; }
+.founderMarkIcon { width: 52px; height: 52px; }
+.founderQuote { margin: 0.75rem 0 1.25rem; }
+.founderIllo { width: clamp(80px, 12vw, 120px); height: auto; color: var(--ink-faint); }
+@media (max-width: 800px) {
+  .founderInner { grid-template-columns: 1fr; }
+  .founderIllo { display: none; }
+}
+
+/* Overview: facts as tiles; a site-plan card on the photo. */
+.overviewFact {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  padding: 1rem 1.1rem;
+  background: rgba(255, 255, 255, 0.03);
+}
+.overviewMap {
+  position: absolute;
+  z-index: 2;
+  right: clamp(0.75rem, 2vw, 1.25rem);
+  bottom: clamp(0.75rem, 2vw, 1.25rem);
+  width: clamp(96px, 26%, 170px);
+  padding: 0.5rem;
+  border-radius: 14px;
+  background: rgba(250, 245, 238, 0.92);
+  color: var(--ink-soft);
+}
+.overviewMap svg { width: 100%; height: auto; display: block; }
+
+/* ════ Calmer type scale for the About page ════ */
+.manifesto .manifestoStatement,
+h1.manifestoStatement {
+  font-size: clamp(1.75rem, 3.4vw, 2.75rem) !important;
+  line-height: 1.18;
+  max-width: 20ch;
+}
+.manifestoSub { font-size: clamp(0.92rem, 1.3vw, 1rem); }
+
+.storyWord { font-size: clamp(1.5rem, 2.6vw, 2.1rem); padding: 0.9rem 1.2rem; }
+.storyBody p { font-size: clamp(0.9rem, 1.2vw, 0.98rem); }
+
+.philoSlab, .philoSlab:last-of-type { align-items: flex-start; text-align: left; gap: 0.75rem; }
+.philoSlab > div { text-align: left; }
+.philoIcon { width: 36px; height: 36px; }
+.philoWord { font-size: clamp(1.4rem, 2.2vw, 1.85rem); letter-spacing: -0.01em; }
+.philoNum { margin-bottom: 0.4rem; }
+.philoBody { font-size: clamp(0.88rem, 1.1vw, 0.95rem); line-height: 1.7; }
+
+.founderQuote { font-size: clamp(1.15rem, 2vw, 1.55rem); }
+.founderBody p { font-size: clamp(0.88rem, 1.1vw, 0.96rem); }
+.contrastYes { font-size: clamp(0.92rem, 1.3vw, 1.05rem); }
+.contrastNot { font-size: clamp(0.85rem, 1.1vw, 0.92rem); }
+.overviewFact .num { font-size: clamp(1.5rem, 2.8vw, 2.1rem); }
+.founderQuote { font-size: clamp(1.3rem, 2.3vw, 1.8rem); line-height: 1.5; }
+.philoWord { font-size: clamp(1.6rem, 2.5vw, 2.1rem); }
+.storyWord { font-size: clamp(1.7rem, 2.9vw, 2.4rem); }

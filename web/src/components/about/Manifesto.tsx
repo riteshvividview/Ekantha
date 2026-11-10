@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import type { About } from '@/payload-types'
 import { gsap } from '@/lib/animations/gsap'
+import { Landscape, MangoSprig, Toast, Envelope, EstateMap, Icon } from '../illustrations/Line'
 import styles from './about.module.css'
 
 /**
@@ -20,22 +21,14 @@ export function Manifesto({ data }: { data: About['manifesto'] }) {
     if (!section) return undefined
 
     const ctx = gsap.context(() => {
-      const lines = section.querySelectorAll(`.${styles.manifestoStatement} > span`)
-      gsap.from(lines, {
+      gsap.from(section.querySelectorAll(`.${styles.manifestoStatement} > span`), {
         opacity: 0,
         y: 28,
         duration: 1,
         ease: 'power3.out',
         stagger: 0.16,
       })
-
-      gsap.from(section.querySelectorAll(`.${styles.manifestoEyebrow}`), {
-        opacity: 0,
-        y: 10,
-        duration: 0.7,
-        ease: 'power2.out',
-      })
-
+      gsap.from(section.querySelectorAll(`.${styles.manifestoEyebrow}`), { opacity: 0, y: 10, duration: 0.7, ease: 'power2.out' })
       gsap.from(section.querySelectorAll(`.${styles.manifestoSub}, .${styles.manifestoCtas}`), {
         opacity: 0,
         y: 16,
@@ -51,6 +44,8 @@ export function Manifesto({ data }: { data: About['manifesto'] }) {
 
   return (
     <section className={styles.manifesto} id="top" ref={sectionRef}>
+      <div className={styles.manifestoGrid}>
+      <div>
       <span className={`eyebrow ${styles.manifestoEyebrow}`}>{data.eyebrow}</span>
 
       <h1 className={styles.manifestoStatement}>{renderStatement(data.headline)}</h1>
@@ -68,6 +63,11 @@ export function Manifesto({ data }: { data: About['manifesto'] }) {
             {data.secondaryCtaLabel}
           </a>
         )}
+      </div>
+      </div>
+      <div className={styles.manifestoArt} aria-hidden="true">
+        <Landscape className={styles.manifestoSvg} />
+      </div>
       </div>
     </section>
   )
