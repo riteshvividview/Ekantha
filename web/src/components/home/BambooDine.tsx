@@ -5,6 +5,7 @@ import type { Home } from '@/payload-types'
 import { resolveMediaSize } from '@/lib/media'
 import { assetUrl } from '@/lib/assetUrl'
 import { reportProgress } from '@/lib/loadProgress'
+import { onWarmup } from '@/lib/warmup'
 import { gsap } from '@/lib/animations/gsap'
 import styles from './home.module.css'
 import dine from './BambooDine.module.css'
@@ -16,7 +17,9 @@ import dine from './BambooDine.module.css'
 // from the original raw PNG sequence (not the WebP frames, to avoid
 // compounding lossy compression) via ffmpeg -g 8 -keyint_min 8; one ~4MB
 // file now.
-const VIDEO_SRC = assetUrl('/videos/bamboo-dine.mp4')
+// All-keyframe encode (every frame seekable) so scroll scrubbing never
+// stutters. Served locally until it's uploaded to R2 — then wrap in assetUrl.
+const VIDEO_SRC = '/videos/bamboo-dine-intra.mp4'
 
 // How much scroll distance (px) the section stays pinned for — not tied
 // to real time or frame count, just scroll depth; the video's own
@@ -195,12 +198,15 @@ export function BambooDine({ data }: { data: Home['dine'] }) {
     video.addEventListener('progress', reportBufferedProgress)
     video.addEventListener('loadedmetadata', reportBufferedProgress)
     video.addEventListener('canplaythrough', reportBufferedProgress)
-    video.preload = 'auto'
-    // Below the hero, not visible on arrival — never contends with
-    // Hero's own video (fetchpriority "high") for bandwidth. Not in JSX:
-    // @types/react doesn't type fetchPriority for <video> yet.
+    // Below the hero, not visible on arrival — so it only starts downloading
+    // once the page has settled (lib/warmup), never contending with the
+    // hero's video for bandwidth. fetchPriority isn't typed for <video> yet.
     video.setAttribute('fetchpriority', 'low')
-    video.load()
+    onWarmup(() => {
+      if (cancelled) return
+      video.preload = 'auto'
+      video.load()
+    })
 
     // -- scroll-driven pin + text timeline ------------------------------
 
@@ -366,7 +372,7 @@ export function BambooDine({ data }: { data: Home['dine'] }) {
           src={VIDEO_SRC}
           muted
           playsInline
-          preload="auto"
+          preload="none"
           aria-hidden="true"
         />
 

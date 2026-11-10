@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { onWarmup } from '@/lib/warmup'
 import type { Map as MapLibreMap, Marker, GeoJSONSource } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { gsap } from '@/lib/animations/gsap'
@@ -565,6 +566,10 @@ export function Reach() {
     )
     mapObserver.observe(section)
     cleanups.push(() => mapObserver.disconnect())
+    // Also build the map in the background once the page has settled, so the
+    // heavy MapLibre set-up happens long before the visitor scrolls here
+    // (the observer above stays as a fallback).
+    cleanups.push(onWarmup(() => window.setTimeout(startMap, 1500)))
 
     // Pin the map only while its route story plays, then release directly
     // into the next homepage section.

@@ -12,7 +12,9 @@ import styles from './home.module.css'
 // redrawing a 440-WebP-frame sequence loaded as separate <img>s (the
 // previous approach here). The replacement is a fast-start, 1600x900 H.264
 // file with short GOPs for quick scroll seeks, optimized to about 7MB.
-const VIDEO_SRC = assetUrl('/videos/hero-drone-clip-01.mp4')
+// All-keyframe encode (every frame seekable) so scroll scrubbing never
+// stutters. Served locally until it's uploaded to R2 — then wrap in assetUrl.
+const VIDEO_SRC = '/videos/hero-drone-intra.mp4'
 
 // Scroll distance (px) the hero stays pinned for — not tied to real time
 // or frame count, just scroll depth; the video's own duration is what

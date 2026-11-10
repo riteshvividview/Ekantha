@@ -1,0 +1,64 @@
+/* Background nature graphics — see BackgroundDecor.tsx. Purely decorative:
+   sits behind section content, never overlaps it, never takes clicks.
+   Positions (top/left/…) are set inline by the component. */
+.dc-host { isolation: isolate; overflow-x: clip; }
+.dc {
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.28;
+  line-height: 0;
+}
+.dc img { display: block; width: 100%; height: auto; }
+
+.dc-frond  { width: clamp(200px, 24vw, 380px); transform-origin: 100% 0; }
+.dc-mirror img { transform: scaleX(-1); }
+.dc-frond { transform-origin: 0 0; }
+.dc-frond.dc-mirror { transform-origin: 100% 0; }
+.dc-grass  { width: clamp(200px, 26vw, 400px); transform-origin: 50% 100%; opacity: 0.4; }
+.dc-bamboo { width: clamp(120px, 13vw, 220px); transform-origin: 50% 100%; opacity: 0.24; }
+.dc-leaf   { width: clamp(150px, 16vw, 250px); transform-origin: 0 30%; }
+.dc-palm   { width: clamp(140px, 15vw, 260px); transform-origin: 50% 100%; opacity: 0.2; }
+.dc-birds  { width: clamp(150px, 16vw, 260px); opacity: 0.24; }
+
+/* Quiet sway for the anchored plants, drift for the birds. */
+@keyframes dc-sway  { 0%, 100% { transform: rotate(-1.6deg); } 50% { transform: rotate(1.6deg); } }
+@keyframes dc-drift { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(18px, -8px); } }
+.dc-frond, .dc-leaf { animation: dc-sway 9s ease-in-out infinite; }
+.dc-grass, .dc-bamboo, .dc-palm { animation: dc-sway 11s ease-in-out infinite; }
+.dc-bamboo { animation-delay: -5s; }
+.dc-birds { animation: dc-drift 14s ease-in-out infinite; }
+
+/* Mango sprig: carried by the wind from top-left, down and out towards the
+   bottom-right, tumbling gently, then it starts again. */
+.dc-wind {
+  top: 4%;
+  left: 2%;
+  width: clamp(110px, 11vw, 170px);
+  opacity: 0;
+  animation: dc-wind 22s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+@keyframes dc-wind {
+  0%   { opacity: 0;    transform: translate(0, 0) rotate(-18deg); }
+  8%   { opacity: 0.34; }
+  25%  { transform: translate(calc(var(--dx) * 0.22), calc(var(--dy) * 0.18)) rotate(8deg); }
+  50%  { transform: translate(calc(var(--dx) * 0.5), calc(var(--dy) * 0.46)) rotate(-12deg); }
+  75%  { transform: translate(calc(var(--dx) * 0.78), calc(var(--dy) * 0.72)) rotate(14deg); }
+  88%  { opacity: 0.3; }
+  100% { opacity: 0;    transform: translate(var(--dx), var(--dy)) rotate(28deg); }
+}
+
+@media (max-width: 760px) {
+  .dc { opacity: 0.16; }
+  .dc-frond { width: 130px; }
+  .dc-grass { width: 170px; opacity: 0.24; }
+  .dc-leaf { width: 100px; }
+  .dc-bamboo, .dc-palm { width: 90px; }
+  .dc-birds { width: 120px; }
+  .dc-wind { width: 80px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dc { animation: none !important; }
+  .dc-wind { opacity: 0.25; }
+}

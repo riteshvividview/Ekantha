@@ -47,7 +47,7 @@ export function Hero({ data }: { data: FarmDining['hero'] }) {
           {data.badgeLabel}
         </div>
 
-        <h1 className={`display-xl ${styles.fdHeroHeadline}`}>{renderHeadline(data.headline)}</h1>
+        <h1 className={`display-xl ${styles.fdHeroHeadline}`}>{renderHeadline(data.headline)}<span className={styles.fdHeroEmoji} aria-hidden="true">🎋</span></h1>
 
         <p className={styles.fdHeroSub}>{data.sub}</p>
 

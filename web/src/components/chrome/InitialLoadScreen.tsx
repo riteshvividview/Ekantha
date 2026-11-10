@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { onProgress } from '@/lib/loadProgress'
+import { fireWarmup } from '@/lib/warmup'
 import { INITIAL_LOAD_COOKIE } from '@/lib/initialLoadCookie'
 
 // Real signals only — no fake timer dressed up as progress, and no
@@ -59,7 +60,6 @@ export function InitialLoadScreen({ skip }: { skip: boolean }) {
   const [lineIndex, setLineIndex] = useState(0)
   const progressRef = useRef<Record<string, number>>({ fonts: 0, hero: 0, logo: 0 })
   const doneRef = useRef(false)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
 
   // Rotating mood line, independent of load progress — it's atmosphere,
   // not a status readout.
@@ -95,7 +95,10 @@ export function InitialLoadScreen({ skip }: { skip: boolean }) {
       setContentHidden(true)
       window.setTimeout(() => {
         setCurtainOpen(true)
-        window.setTimeout(() => setShouldRender(false), 950)
+        window.setTimeout(() => {
+          setShouldRender(false)
+          fireWarmup() // homepage is showing: start background preloads
+        }, 950)
       }, 320)
     }
 
@@ -125,81 +128,38 @@ export function InitialLoadScreen({ skip }: { skip: boolean }) {
     }
   }, [shouldRender])
 
-  // Ambient drifting embers — the same warm-mote technique as the "Hold a
-  // date" console (FinalCtaBanner), without the cursor interaction: here
-  // it's atmosphere behind a loading screen, not a hover surface.
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!shouldRender || !canvas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
-    const ctx2d = canvas.getContext('2d')
-    if (!ctx2d) return undefined
-
-    type Mote = { x: number; y: number; r: number; vx: number; vy: number; a: number; tw: number }
-    let width = 0
-    let height = 0
-    const dpr = Math.min(window.devicePixelRatio || 1, 2)
-    let motes: Mote[] = []
-    let raf = 0
-
-    const spawn = (): Mote => ({
-      x: Math.random() * width,
-      y: Math.random() * height,
-      r: Math.random() * 1.4 + 0.4,
-      vx: (Math.random() - 0.5) * 0.06,
-      vy: -Math.random() * 0.14 - 0.03,
-      a: Math.random() * 0.4 + 0.12,
-      tw: Math.random() * Math.PI * 2,
-    })
-
-    const resize = () => {
-      width = window.innerWidth
-      height = window.innerHeight
-      canvas.width = width * dpr
-      canvas.height = height * dpr
-      canvas.style.width = `${width}px`
-      canvas.style.height = `${height}px`
-      ctx2d.setTransform(dpr, 0, 0, dpr, 0, 0)
-      const count = Math.min(60, Math.round((width * height) / 22000))
-      motes = Array.from({ length: count }, spawn)
-    }
-
-    const draw = () => {
-      ctx2d.clearRect(0, 0, width, height)
-      for (const m of motes) {
-        m.x += m.vx
-        m.y += m.vy
-        m.tw += 0.02
-        if (m.y < -10) {
-          m.y = height + 10
-          m.x = Math.random() * width
-        }
-        if (m.x < -10) m.x = width + 10
-        if (m.x > width + 10) m.x = -10
-        const flicker = 0.7 + Math.sin(m.tw) * 0.3
-        ctx2d.beginPath()
-        ctx2d.fillStyle = `rgba(227, 196, 140, ${m.a * flicker})`
-        ctx2d.arc(m.x, m.y, m.r, 0, Math.PI * 2)
-        ctx2d.fill()
-      }
-      raf = requestAnimationFrame(draw)
-    }
-
-    window.addEventListener('resize', resize)
-    resize()
-    draw()
-    return () => {
-      window.removeEventListener('resize', resize)
-      cancelAnimationFrame(raf)
-    }
-  }, [shouldRender])
-
   if (!shouldRender) return null
 
   const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   return (
-    <div className="ve-load-screen" aria-hidden={contentHidden}>
-      <canvas className="ve-load-embers" ref={canvasRef} data-hidden={contentHidden} aria-hidden="true" />
+    <div className="ve-load-screen ve-load-light" aria-hidden={contentHidden}>
+      {/* Line-art landscape that draws itself in along the bottom. */}
+      <svg className="ve-load-land" viewBox="0 0 1440 320" preserveAspectRatio="xMidYMax slice" fill="none" aria-hidden="true" data-hidden={contentHidden}>
+        <g className="ve-load-sun">
+          <circle cx="1120" cy="120" r="46" />
+          <circle cx="1120" cy="120" r="68" strokeDasharray="2 9" />
+        </g>
+        <path d="M0 250 C 180 190, 320 205, 470 238 S 760 190, 960 222 S 1260 196, 1440 214" />
+        <path d="M0 290 C 220 262, 420 270, 610 288 S 980 262, 1180 280 S 1360 276, 1440 282" />
+        <path d="M660 236 V 198 L 696 172 L 732 198 V 236 M 650 204 L 696 166 L 742 204 M 688 236 V 216 H 704 V 236" />
+        <path d="M300 236 V 168 M 300 168 C 270 150, 250 156, 236 172 M 300 168 C 330 150, 350 156, 364 172 M 300 168 C 286 142, 278 134, 262 132 M 300 168 C 314 142, 322 134, 338 132" />
+        <path d="M1300 226 V 150 M 1300 150 C 1274 136, 1256 142, 1244 156 M 1300 150 C 1326 136, 1344 142, 1356 156 M 1300 150 C 1288 128, 1280 122, 1266 120" />
+        <path d="M180 120 q 9 -9 18 0 q 9 -9 18 0 M 236 96 q 7 -7 14 0 q 7 -7 14 0" />
+      </svg>
+
+      {/* Leaf sprigs tucked into two corners. */}
+      <svg className="ve-load-sprig ve-load-sprig-tl" viewBox="0 0 160 160" fill="none" aria-hidden="true">
+        <path d="M8 150 C 40 110, 80 64, 150 10" />
+        <path d="M46 108 C 22 104, 10 84, 14 66 C 34 68, 50 86, 46 108 Z" />
+        <path d="M76 76 C 92 56, 114 52, 128 58 C 116 76, 96 82, 76 76 Z" />
+        <path d="M102 48 C 96 30, 100 14, 110 6 C 120 22, 116 38, 102 48 Z" />
+      </svg>
+      <svg className="ve-load-sprig ve-load-sprig-br" viewBox="0 0 160 160" fill="none" aria-hidden="true">
+        <path d="M8 150 C 40 110, 80 64, 150 10" />
+        <path d="M46 108 C 22 104, 10 84, 14 66 C 34 68, 50 86, 46 108 Z" />
+        <path d="M76 76 C 92 56, 114 52, 128 58 C 116 76, 96 82, 76 76 Z" />
+      </svg>
 
       <div className="ve-load-content" data-hidden={contentHidden}>
         <div className="ve-load-screen-mark">
@@ -207,7 +167,15 @@ export function InitialLoadScreen({ skip }: { skip: boolean }) {
           <video src="/logo-loader.mp4" autoPlay={!reduced} loop muted playsInline />
         </div>
 
-        <h1 className="ve-load-headline">Loading your Experience</h1>
+        {/* Outlined wordmark; a filled copy is revealed left to right with the real progress. */}
+        <div className="ve-load-word" aria-hidden="true">
+          <span className="ve-load-word-stroke">Vana Ekantha</span>
+          <span className="ve-load-word-fill" style={{ clipPath: `inset(0 ${100 - pct}% 0 0)` }}>
+            Vana Ekantha
+          </span>
+        </div>
+
+        <h1 className="ve-load-headline">Loading your experience</h1>
 
         <div className="ve-load-lines" aria-live="polite">
           {MOOD_LINES.map((line, i) => (
@@ -218,11 +186,10 @@ export function InitialLoadScreen({ skip }: { skip: boolean }) {
         </div>
 
         <div className="ve-load-progress">
-          <span className="ve-load-dash" aria-hidden="true" />
-          <p className="ve-load-screen-pct">{pct}%</p>
           <div className="ve-load-screen-bar">
             <div className="ve-load-screen-bar-fill" style={{ transform: `scaleX(${pct / 100})` }} />
           </div>
+          <p className="ve-load-screen-pct">{pct}%</p>
         </div>
       </div>
 

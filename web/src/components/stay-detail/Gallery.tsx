@@ -21,6 +21,7 @@ export function Gallery({ items, title }: { items: Stay['gallery']; title: strin
   const gallery = items ?? []
   const sectionRef = useRef<HTMLElement>(null)
   const [open, setOpen] = useState<{ index: number; from: DOMRect | null } | null>(null)
+  const [ratios, setRatios] = useState<Record<number, string>>({})
   const photos = gallery.map((item) => ({ url: resolveMedia(item.image).url, caption: item.caption }))
 
   useEffect(() => {
@@ -82,12 +83,14 @@ export function Gallery({ items, title }: { items: Stay['gallery']; title: strin
             <button
               type="button"
               className={styles.galleryItem}
-              style={{ aspectRatio: item.aspectRatio ?? '4/3' }}
+              // Tile takes the photo's own shape (measured on load) so the whole
+              // image shows uncropped; the CMS ratio is only a first guess.
+              style={{ aspectRatio: ratios[i] ?? item.aspectRatio ?? '4/3' }}
               key={item.id ?? i}
               onClick={(e) => setOpen({ index: i, from: e.currentTarget.getBoundingClientRect() })}
               aria-label={`View photo: ${item.caption}`}
             >
-              {image.url && <Image src={image.url} alt={item.caption} fill sizes="(max-width: 768px) 50vw, 33vw" style={{ objectFit: 'cover' }} />}
+              {image.url && <Image src={image.url} alt={item.caption} fill sizes="(max-width: 768px) 50vw, 33vw" quality={90} style={{ objectFit: 'cover' }} onLoad={(e) => { const im = e.currentTarget; if (im.naturalWidth) setRatios((r) => (r[i] ? r : { ...r, [i]: `${im.naturalWidth} / ${im.naturalHeight}` })) }} />}
               <div className={styles.galleryScrim} aria-hidden="true" />
               <p className={styles.galleryCaption}>{item.caption}</p>
               <span className={styles.galleryView} aria-hidden="true">View</span>

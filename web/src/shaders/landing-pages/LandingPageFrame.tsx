@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { onWarmup } from "@/lib/warmup";
 
 import {
   applyPageCustomization,
@@ -165,8 +166,27 @@ export function LandingPageFrame({
       { rootMargin: "1600px 0px" },
     );
     observer.observe(el);
-    return () => observer.disconnect();
+    // Background start once the homepage has settled (lib/warmup): the frame's
+    // three.js boot and shader compile then happen while the visitor is still
+    // near the top, not as they scroll into this section.
+    const stopWarmup = onWarmup(() => window.setTimeout(() => setShouldLoad(true), 3500));
+    return () => {
+      observer.disconnect();
+      stopWarmup();
+    };
   }, []);
+
+  // Pause when far off-screen: a display:none iframe stops painting, so its
+  // WebGL render loop is throttled by the browser instead of costing frames
+  // while the visitor is elsewhere on the page.
+  const [offscreen, setOffscreen] = useState(false);
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || !ready) return;
+    const io = new IntersectionObserver(([e]) => setOffscreen(!e.isIntersecting), { rootMargin: "600px 0px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [ready]);
 
   // Retry-until-loaded: if the iframe hasn't fired `onLoad` within 6s of
   // this attempt starting, remount it (new key => new request) and try
@@ -219,7 +239,7 @@ export function LandingPageFrame({
           style={{
             position: "absolute",
             inset: 0,
-            display: "block",
+            display: offscreen ? "none" : "block",
             width: "100%",
             height: "100%",
             border: 0,

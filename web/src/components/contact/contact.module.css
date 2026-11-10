@@ -376,3 +376,7 @@
 .infoList { grid-template-columns: 1fr; }
 .infoValue { overflow-wrap: normal; word-break: normal; }
 @media (max-width: 360px) { .infoValue { overflow-wrap: anywhere; } }
+
+/* Clear the floating header: hero starts below it. */
+.ciHero { padding-top: clamp(1.5rem, 2.6vw, 2.25rem); }
+@media (max-width: 860px) { .ciHero { padding-top: 1.5rem; } }

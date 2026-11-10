@@ -76,7 +76,17 @@ export function IdealFor({ items, title }: { items: Stay['idealFor']; title: str
       let lastX = 0
       const onMove = (e: PointerEvent) => {
         const box = list.getBoundingClientRect()
-        x(e.clientX - box.left)
+        // The card follows the cursor but never covers the round row photos
+        // on the left; it may pass over the row text and the big numbers.
+        const cardW = float.offsetWidth
+        const offsetX = 110 // matches the CSS margin-left: -110px
+        const photoRight = Math.max(
+          0,
+          ...Array.from(list.querySelectorAll<HTMLElement>(`.${styles.idealPhoto}`)).map((c) => c.getBoundingClientRect().right - box.left),
+        )
+        const minX = photoRight + 24 + offsetX
+        const maxX = Math.max(minX, box.width - cardW + offsetX)
+        x(gsap.utils.clamp(minX, maxX, e.clientX - box.left))
         y(e.clientY - box.top)
         r(gsap.utils.clamp(-8, 8, (e.clientX - lastX) * 0.6))
         lastX = e.clientX
