@@ -439,22 +439,6 @@ section {
     display: none;
   }
 }
-/* ── Page-switch aperture transition ───────────────────────── */
-
-.ve-page-transition {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 2147483000;
-  pointer-events: none;
-  visibility: hidden;
-}
-.ve-page-transition[data-visible='true'] {
-  visibility: visible;
-  pointer-events: auto;
-}
-
 /* ── First-load screen ──────────────────────────────────────── */
 /* The loader itself is just a positioning root — the two curtain panels
    below carry the actual black background, so when they split apart there
