@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { onProgress } from '@/lib/loadProgress'
 import { fireWarmup } from '@/lib/warmup'
 import { INITIAL_LOAD_COOKIE } from '@/lib/initialLoadCookie'
+import { assetUrl } from '@/lib/assetUrl'
 
 // Real signals only — no fake timer dressed up as progress, and no
 // artificial minimum-display floor either: the percentage is exactly the
@@ -164,7 +165,7 @@ export function InitialLoadScreen({ skip }: { skip: boolean }) {
       <div className="ve-load-content" data-hidden={contentHidden}>
         <div className="ve-load-screen-mark">
           {/* eslint-disable-next-line jsx-a11y/media-has-caption -- silent decorative loop, nothing to caption */}
-          <video src="/logo-loader.mp4" autoPlay={!reduced} loop muted playsInline />
+          <video src={assetUrl('/brand/logo-loader.mp4')} autoPlay={!reduced} loop muted playsInline />
         </div>
 
         {/* Outlined wordmark; a filled copy is revealed left to right with the real progress. */}

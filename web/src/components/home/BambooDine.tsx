@@ -18,8 +18,8 @@ import dine from './BambooDine.module.css'
 // compounding lossy compression) via ffmpeg -g 8 -keyint_min 8; one ~4MB
 // file now.
 // All-keyframe encode (every frame seekable) so scroll scrubbing never
-// stutters. Served locally until it's uploaded to R2 — then wrap in assetUrl.
-const VIDEO_SRC = '/videos/bamboo-dine-intra.mp4'
+// stutters. Served from R2 (videos/).
+const VIDEO_SRC = assetUrl('/videos/bamboo-dine-intra.mp4')
 
 // How much scroll distance (px) the section stays pinned for — not tied
 // to real time or frame count, just scroll depth; the video's own
@@ -44,7 +44,7 @@ const CHAPTERS = [
   { icon: 'fa-moon', title: 'Served at Dusk', text: 'Under lantern light, as the sky turns to gold.' },
 ]
 
-const AMBIENT_AUDIO_SRC = '/audio/farm-dinner-audio.mp3'
+const AMBIENT_AUDIO_SRC = assetUrl('/audio/farm-dinner-audio.mp3')
 // Ambient background level, not full blast — and never an instant on/off:
 // both directions ramp `audio.volume` itself, so playback always fades in
 // and (crucially) actually stops only once it's faded to silence, rather

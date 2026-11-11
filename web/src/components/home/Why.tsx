@@ -8,9 +8,9 @@ import styles from './Why.module.css'
 
 // WHY LOCAL IMAGES — BEGIN (set entries to null to restore gradient placeholders)
 const IMAGES: Record<string, string | null> = {
-  land: assetUrl('/images/home/03-why-us/Untouched-Land-img.png'),
-  private: assetUrl('/images/home/03-why-us/Just-For-You-img.png'),
-  planned: assetUrl('/images/home/03-why-us/Throughtfully-planned-img.png'),
+  land: assetUrl('/images/home/03-why-us/Untouched-Land-img-opt.jpg'),
+  private: assetUrl('/images/home/03-why-us/Just-For-You-img.jpg'),
+  planned: assetUrl('/images/home/03-why-us/Throughtfully-planned-img.jpg'),
   away: assetUrl('/images/home/03-why-us/Hrs-away-img-two.webp'),
 }
 // WHY LOCAL IMAGES — END

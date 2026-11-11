@@ -325,7 +325,7 @@ export function FinalCtaBanner({
       <canvas className="ve-hold-motes" ref={canvasRef} aria-hidden="true" />
       <div className="ve-hold-lines" aria-hidden="true" />
 
-      <img className="ve-hold-mark" data-mark src="/icon-mark.svg" alt="" aria-hidden="true" />
+      <img className="ve-hold-mark" data-mark src={assetUrl('/brand/icon-mark.svg')} alt="" aria-hidden="true" />
 
       <span className="ve-hold-photo ve-hold-photo-a" data-photo aria-hidden="true">
         <Image src={assetUrl('/images/home/09-gallery-preview/mango-1.jpg')} alt="" fill sizes="140px" style={{ objectFit: 'cover' }} />

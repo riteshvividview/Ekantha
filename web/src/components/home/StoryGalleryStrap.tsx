@@ -9,7 +9,7 @@ export function StoryGalleryStrap() {
         <span className={styles.rule} aria-hidden="true" />
         <p className={styles.copy}>
           <span className={styles.brand}>
-            <Image className={styles.logo} src={assetUrl('/icon-mark.svg')} alt="" aria-hidden="true" width={18} height={18} unoptimized />
+            <Image className={styles.logo} src={assetUrl('/brand/icon-mark.svg')} alt="" aria-hidden="true" width={18} height={18} unoptimized />
             <span className={styles.eyebrow}>Vana Ekantha</span>
           </span>
           <span className={styles.heading}>Every stay leaves a story.</span>

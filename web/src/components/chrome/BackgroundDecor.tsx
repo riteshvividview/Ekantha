@@ -3,9 +3,10 @@
 import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import './decor.css'
+import { assetUrl } from '@/lib/assetUrl'
 
 /**
- * Background nature graphics (web/public/images/organize/*). On inner pages
+ * Background nature graphics (R2: images/decor/*). On inner pages
  * each light section gets one silhouette behind its content (negative
  * z-index inside an isolated section, low opacity, pointer-events off).
  *
@@ -20,9 +21,9 @@ import './decor.css'
  * Remove the feature: delete this file + decor.css and the <BackgroundDecor />
  * line in app/(site)/layout.tsx — or reset to git tag `pre-stickers`.
  */
-const SRC = (name: string) => `/images/organize/${name}.png`
+const SRC = (name: string) => assetUrl(`/images/decor/${name}.png`)
 
-/** Pixel sizes of the PNGs in /images/organize. */
+/** Pixel sizes of the PNGs in R2 images/decor/. */
 const SIZE: Record<string, [number, number]> = {
   'birds-flight': [1774, 887],
   'grass-tuft': [1774, 887],

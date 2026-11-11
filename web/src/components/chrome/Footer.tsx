@@ -112,7 +112,7 @@ export function Footer({ data, nav }: { data: FooterData; nav?: Navigation }) {
                   the time a page scrolls this far (every dark section tweens
                   the page back to light before its own end — see Reach.tsx),
                   so this is the one spot that never needs to swap logos. */}
-              <Image src="/ekantha-logo-brown.webp" alt="Vana Ekantha" width={700} height={235} />
+              <Image src={assetUrl('/brand/ekantha-logo-brown.webp')} alt="Vana Ekantha" width={700} height={235} />
             </a>
             <p className="ve-foot-tagline">{data.brand?.tagline}</p>
             {data.brand?.note && <p className="ve-foot-note">{data.brand.note}</p>}

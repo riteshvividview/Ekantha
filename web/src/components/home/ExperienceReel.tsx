@@ -16,13 +16,13 @@ const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(mi
 // LOCAL EXPERIENCE IMAGE OVERRIDE — BEGIN (set the flag to false to restore CMS images)
 const USE_LOCAL_EXPERIENCE_IMAGES = true
 const LOCAL_EXPERIENCE_IMAGES = [
-  assetUrl('/images/home/04-experience-reel/experience-the-estate-img1.JPG'),
-  assetUrl('/images/home/04-experience-reel/experience-the-estate-img2.JPG'),
-  assetUrl('/images/home/04-experience-reel/experience-the-estate-img3.JPG'),
-  assetUrl('/images/home/04-experience-reel/experience-the-estate-img4.JPG'),
-  assetUrl('/images/home/04-experience-reel/experience-the-estate-img5.png'),
-  assetUrl('/images/home/04-experience-reel/experience-the-estate-img6.png'),
-  assetUrl('/images/home/04-experience-reel/experience-the-estate-img7.png'),
+  assetUrl('/images/home/04-experience-reel/experience-the-estate-img1-opt.jpg'),
+  assetUrl('/images/home/04-experience-reel/experience-the-estate-img2-opt.jpg'),
+  assetUrl('/images/home/04-experience-reel/experience-the-estate-img3-opt.jpg'),
+  assetUrl('/images/home/04-experience-reel/experience-the-estate-img4-opt.jpg'),
+  assetUrl('/images/home/04-experience-reel/experience-the-estate-img5-opt.jpg'),
+  assetUrl('/images/home/04-experience-reel/experience-the-estate-img6-opt.jpg'),
+  assetUrl('/images/home/04-experience-reel/experience-the-estate-img7-opt.jpg'),
 ]
 // LOCAL EXPERIENCE IMAGE OVERRIDE — END
 

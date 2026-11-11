@@ -13,8 +13,8 @@ import styles from './home.module.css'
 // previous approach here). The replacement is a fast-start, 1600x900 H.264
 // file with short GOPs for quick scroll seeks, optimized to about 7MB.
 // All-keyframe encode (every frame seekable) so scroll scrubbing never
-// stutters. Served locally until it's uploaded to R2 — then wrap in assetUrl.
-const VIDEO_SRC = '/videos/hero-drone-intra.mp4'
+// stutters. Served from R2 (videos/).
+const VIDEO_SRC = assetUrl('/videos/hero-drone-intra.mp4')
 
 // Scroll distance (px) the hero stays pinned for — not tied to real time
 // or frame count, just scroll depth; the video's own duration is what

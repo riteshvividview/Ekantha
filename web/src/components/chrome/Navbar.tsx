@@ -11,6 +11,7 @@ import { NavbarMobileMenu } from './NavbarMobileMenu'
 import { buildNavModel, isItemActive } from './navModel'
 import { gsap } from '@/lib/animations/gsap'
 import './navbar.css'
+import { assetUrl } from '@/lib/assetUrl'
 
 // Scroll distance (px) before the nav swaps from its dark glass resting state
 // to the solid pill. Deliberately small so it reads as an immediate response.
@@ -225,7 +226,7 @@ export function Navbar({ data }: { data: Navigation }) {
   const glass = onDarkHero || !scrolled || !!openKey
   // Glass is always a dark translucent surface regardless of theme; solid
   // follows whichever page theme is currently active.
-  const logoSrc = glass || darkTheme || mobileMenuOpen ? '/ekantha-logo-white.webp' : '/ekantha-logo-brown.webp'
+  const logoSrc = glass || darkTheme || mobileMenuOpen ? assetUrl('/brand/ekantha-logo-white.webp') : assetUrl('/brand/ekantha-logo-brown.webp')
   const navClass = [
     've-nav',
     glass ? 've-nav-glass' : 've-nav-solid',
