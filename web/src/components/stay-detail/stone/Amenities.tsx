@@ -55,7 +55,7 @@ export function Amenities({ data }: { data: Stay['amenitiesSection'] }) {
   return (
     <section id="amenities" ref={sectionRef}>
       <div className="section-head reveal">
-        <h2 className={`section-title ${styles.sectionTitle}`}>amenities &amp; <em>inclusions.</em></h2>
+        <h2 className={`section-title ${styles.sectionTitle}`}>Amenities &amp; <em>inclusions.</em></h2>
         <p>Everything below comes with the house. Nothing here needs to be requested twice.</p>
       </div>
 

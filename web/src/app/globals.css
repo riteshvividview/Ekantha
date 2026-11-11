@@ -950,3 +950,48 @@ html body p[class*="ChooseEscape-module"][class*="cardQuote"] { font-size: clamp
   html body h3[class*="ChooseEscape-module"][class*="cardTitle"] { font-size: 1.75rem !important; }
   html body p[class*="ChooseEscape-module"][class*="cardQuote"] { font-size: 0.85rem !important; }
 }
+
+/* No blue tap flash on phones. */
+* { -webkit-tap-highlight-color: transparent; }
+
+/* ══ Phones only (≤760px) — desktop untouched ══ */
+@media (max-width: 760px) {
+  /* Tap-to-reveal card descriptions (see components/chrome/TapReveal.tsx). */
+  :is([class*="stone-module"][class$="__hlHeroBody"], [class*="stone-module"][class$="__hlRowBody"], [class*="stone-module"][class$="__amCellBody"],
+      [class*="full-module"][class$="__hlBody"], [class*="farm-dining-module"][class$="__expBody"], [class*="farm-dining-module"][class$="__suitBody"]) {
+    max-height: 0 !important;
+    opacity: 0 !important;
+    overflow: hidden !important;
+    transform: translateY(8px);
+    margin-top: 0 !important;
+    transition: max-height 520ms cubic-bezier(0.22, 1, 0.36, 1), opacity 420ms ease, transform 520ms cubic-bezier(0.22, 1, 0.36, 1), margin-top 420ms ease !important;
+    -webkit-line-clamp: unset !important;
+  }
+  .tap-open :is([class$="__hlHeroBody"], [class$="__hlRowBody"], [class$="__amCellBody"], [class$="__hlBody"], [class$="__expBody"], [class$="__suitBody"]) {
+    max-height: 14rem !important;
+    opacity: 1 !important;
+    transform: none;
+    margin-top: 0.4rem !important;
+  }
+  :is([class*="stone-module"][class*="__hlHero"], [class*="stone-module"][class*="__hlRow"], [class*="stone-module"][class*="__amCell"],
+      [class*="full-module"][class*="__hlCard"], [class*="farm-dining-module"][class*="__expRow"], [class*="farm-dining-module"][class*="__suitCard"]) { cursor: pointer; }
+
+  /* Mango House "a glimpse inside": small captions that scale with the screen. */
+  [class*="stay-detail-module"][class$="__galleryCaption"] { font-size: clamp(0.72rem, 3.3vw, 0.85rem) !important; line-height: 1.35 !important; }
+
+  /* Stone House "a glimpse inside": no Roman numerals on the photos. */
+  [class*="stone-module"][class$="__brickNumeral"] { display: none !important; }
+
+  /* Pinned house heroes fill the screen on iPhone even as Safari's bar hides. */
+  [class*="stay-detail-module"][class$="__hero"] { height: 100lvh !important; }
+}
+
+@media (max-width: 480px) {
+  /* Bigger page titles and second-section titles, tighter below them. */
+  body:not(:has(#living-stories)) { --inner-hero: 2.35rem; }
+  html body:not(:has(#living-stories)) :is(#stays, #unique, #events-we-host, #form) :is(h2.section-title, h2[class*="sectionTitle"]),
+  html body:not(:has(#living-stories)) #description [class*="introPull"] { font-size: 2.1rem !important; line-height: 1.15 !important; margin-bottom: 0.6rem !important; }
+  html body:not(:has(#living-stories)) #description [class*="introBody"] { margin-top: 0.6rem !important; }
+  html body:not(:has(#living-stories)) .section-head h2 + p,
+  html body:not(:has(#living-stories)) [class*="sectionHead"] h2 + p { margin-top: 0.5rem !important; }
+}

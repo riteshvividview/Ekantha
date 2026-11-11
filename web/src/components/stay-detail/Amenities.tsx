@@ -86,7 +86,7 @@ export function Amenities({ data }: { data: Stay['amenitiesSection'] }) {
     <section className={styles.amSection} id="amenities" ref={sectionRef}>
       <div className={styles.amHead}>
         <div className="section-head reveal">
-          <h2 className={`section-title ${styles.sectionTitle}`}>amenities &amp; {italic('inclusions.')}</h2>
+          <h2 className={`section-title ${styles.sectionTitle}`}>Amenities &amp; {italic('inclusions.')}</h2>
           <p>Everything below comes with the room. Nothing here needs to be requested twice.</p>
         </div>
         <div className={styles.amMeter} aria-hidden="true">

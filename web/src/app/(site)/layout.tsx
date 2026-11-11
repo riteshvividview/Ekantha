@@ -7,6 +7,7 @@ import { SmoothScrollProvider } from '@/components/layout/SmoothScrollProvider'
 import { TheatreStudioLoader } from '@/components/layout/TheatreStudioLoader'
 import { PageTransitionOverlay } from '@/components/chrome/PageTransitionOverlay'
 import { BackgroundDecor } from '@/components/chrome/BackgroundDecor'
+import { TapReveal } from '@/components/chrome/TapReveal'
 import { InitialLoadScreen } from '@/components/chrome/InitialLoadScreen'
 import { InteractionEffects } from '@/components/chrome/InteractionEffects'
 import { IdleNudge } from '@/components/chrome/IdleNudge'
@@ -94,6 +95,7 @@ export default async function SiteRootLayout({ children }: { children: React.Rea
         <InitialLoadScreen skip={hasLoadedBefore} />
         <PageTransitionOverlay />
         <BackgroundDecor />
+        <TapReveal />
         <TheatreStudioLoader />
         <InteractionEffects />
         <IdleNudge />

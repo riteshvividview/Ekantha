@@ -13,6 +13,9 @@ let registered = false
 export function ensureGsapRegistered() {
   if (registered || typeof window === 'undefined') return
   gsap.registerPlugin(ScrollTrigger)
+  // Phones: the address bar showing/hiding resizes the viewport; don't let
+  // that re-measure pins mid-scroll (it left gaps under pinned sections).
+  ScrollTrigger.config({ ignoreMobileResize: true })
   registered = true
 }
 

@@ -510,3 +510,10 @@
   }
 }
 
+
+/* Phones: the photo strip's caption sits on top, centred, just above the
+   string instead of behind the prints; the strip keeps its height. */
+@media (max-width: 760px) {
+  .ve-foot-frames .pl-bar { top: 0; bottom: auto; left: 1rem; right: 1rem; justify-content: center; text-align: center; }
+  .ve-foot-frames .pl-cap { flex: none; max-width: 100%; }
+}
