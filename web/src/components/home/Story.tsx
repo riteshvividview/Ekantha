@@ -82,8 +82,9 @@ export function Story() {
       const headlineLines = q<HTMLElement>('[data-line]')
       headlineLines.forEach((line, index) => {
         gsap.to(line, {
+          // Vertical drift only: a sideways drift made the lines look
+          // unevenly indented.
           y: (index - 1) * -26,
-          x: (index - 1) * 18,
           ease: 'none',
           scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom top', scrub: true },
         })
